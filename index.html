@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POSTER_ v4 — PRO_STORY Animated Generator</title>
+<title>POSTER_ v5 — PRO_STORY Animated Generator</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -434,8 +434,12 @@ html, body {
 <div class="app">
     <aside class="sidebar">
         <header class="app-header">
-            <h1>POSTER_ v4</h1>
+            <h1>POSTER_ v5</h1>
             <p class="subtitle">PRO_STORY Animated Generator</p>
+            <div class="btn-row" style="margin-top: 8px;">
+                <button class="btn" id="btnShuffle" style="flex:1;">Shuffle</button>
+                <button class="btn" id="btnReset" style="flex:1;">Reset</button>
+            </div>
         </header>
 
         <div class="controls">
@@ -457,15 +461,15 @@ html, body {
                     </div>
                     <div class="cr">
                         <label>Columns <span class="val" id="colsVal">80</span></label>
-                        <input type="range" id="cols" min="40" max="160" step="1" value="80">
+                        <input type="range" id="cols" min="40" max="200" step="1" value="80">
                     </div>
                     <div class="cr">
                         <label>Font Size <span class="val" id="fontSizeVal">20</span></label>
                         <input type="range" id="fontSize" min="6" max="48" step="1" value="20">
                     </div>
                     <div class="cr">
-                        <label>Margin <span class="val" id="marginVal">0</span></label>
-                        <input type="range" id="margin" min="0" max="80" step="1" value="0">
+                        <label>Margin <span class="val" id="marginVal">10</span></label>
+                        <input type="range" id="margin" min="0" max="80" step="1" value="10">
                     </div>
                     <div class="info-row">
                         <span>Grid</span>
@@ -487,7 +491,7 @@ html, body {
                         <button class="preset-btn" data-preset="gradient">B<br>Grad</button>
                         <button class="preset-btn" data-preset="columns">C<br>Cols</button>
                         <button class="preset-btn" data-preset="cells">D<br>Cells</button>
-                        <button class="preset-btn" data-preset="blocks">E<br>Block</button>
+                        <button class="preset-btn" data-preset="blocks">E<br>Edit</button>
                         <button class="preset-btn" data-preset="l-frame">F<br>L-Fr</button>
                         <button class="preset-btn" data-preset="windows">G<br>Win</button>
                         <button class="preset-btn" data-preset="hybrid">H<br>Hybr</button>
@@ -495,6 +499,24 @@ html, body {
                         <button class="preset-btn" data-preset="split">J<br>Split</button>
                         <button class="preset-btn" data-preset="stack">K<br>Stack</button>
                         <button class="preset-btn" data-preset="cross">L<br>Cross</button>
+                        <button class="preset-btn" data-preset="void">M<br>Void</button>
+                        <button class="preset-btn" data-preset="baseline">N<br>Base</button>
+                        <button class="preset-btn" data-preset="diagonal">O<br>Diag</button>
+                        <button class="preset-btn" data-preset="margin">P<br>Marg</button>
+                        <button class="preset-btn" data-preset="ratio">Q<br>Ratio</button>
+                        <button class="preset-btn" data-preset="verso">R<br>Verso</button>
+                        <button class="preset-btn" data-preset="grid-system">S<br>Grid</button>
+                        <button class="preset-btn" data-preset="broadsheet">T<br>Broad</button>
+                        <button class="preset-btn" data-preset="halftone">U<br>Half</button>
+                        <button class="preset-btn" data-preset="zigzag">V<br>Zig</button>
+                        <button class="preset-btn" data-preset="curtain">W<br>Curt</button>
+                        <button class="preset-btn" data-preset="horizon">X<br>Horiz</button>
+                        <button class="preset-btn" data-preset="scatter">Y<br>Scat</button>
+                        <button class="preset-btn" data-preset="frame">Z<br>Frame</button>
+                        <button class="preset-btn" data-preset="strata">AA<br>Strat</button>
+                        <button class="preset-btn" data-preset="specimen">AB<br>Spec</button>
+                        <button class="preset-btn" data-preset="dissolve-edge">AC<br>Diss</button>
+                        <button class="preset-btn" data-preset="monolith">AD<br>Mono</button>
                     </div>
                 </div>
             </details>
@@ -587,6 +609,10 @@ html, body {
                             <label>Dither Size <span class="val" id="imgDitherResVal">100</span>%</label>
                             <input type="range" id="imgDitherRes" min="5" max="150" step="5" value="100">
                         </div>
+                        <div class="chk">
+                            <input type="checkbox" id="imageOnTop">
+                            <label for="imageOnTop">Image On Top (covers text)</label>
+                        </div>
                     </div>
                 </div>
             </details>
@@ -601,34 +627,90 @@ html, body {
                     </div>
                     <div class="cr">
                         <label>Artist</label>
-                        <textarea id="cArtist" rows="2">JINDŘICH ŠTREIT</textarea>
+                        <input type="text" id="cArtist" value="JMÉNO PŘÍJMENÍ">
                     </div>
                     <div class="cr">
                         <label>Title</label>
-                        <textarea id="cTitle" rows="2">_NEZAPOMENUTELNÍ</textarea>
+                        <input type="text" id="cTitle" value="NÁZEV VÝSTAVY">
                     </div>
-                    <div class="cr">
-                        <label>Tagline</label>
-                        <textarea id="cTagline" rows="2">Fotografoval lidi,
-které nikdo nefotografoval.</textarea>
+                    <div class="chk">
+                        <input type="checkbox" id="showTagline" checked>
+                        <label for="showTagline">Tagline</label>
                     </div>
-                    <div class="cr">
-                        <label>Date</label>
-                        <textarea id="cDate" rows="1">09_07_2026</textarea>
+                    <div id="taglineFields">
+                        <div class="cr">
+                            <label>Text</label>
+                            <textarea id="cTagline" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:11px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:6px;">Spolupráce oborů SUPŠ UH,
+Multimédia, Obuv, Design</textarea>
+                        </div>
                     </div>
-                    <div class="cr">
-                        <label>Time</label>
-                        <textarea id="cTime" rows="1">od 18_00</textarea>
+                    <div class="chk" style="display:flex;align-items:center;gap:8px;">
+                        <input type="checkbox" id="showVernisaz" checked>
+                        <label for="showVernisaz" style="flex:1;">Vernisáž</label>
+                        <input type="checkbox" id="boldVernisaz" title="Bold">
+                        <label for="boldVernisaz" style="font-weight:bold;font-size:11px;cursor:pointer;">B</label>
                     </div>
-                    <div class="cr">
-                        <label>Location</label>
-                        <textarea id="cLocation" rows="2">SUPŠ
-Uherské Hradiště</textarea>
+                    <div id="vernisazFields">
+                        <div class="cr">
+                            <label>Label</label>
+                            <input type="text" id="cVernL" value="VERNISÁŽ">
+                        </div>
+                        <div class="cr">
+                            <label>Date / Time</label>
+                            <input type="text" id="cVernD" value="10_05_2026 | 16_00">
+                        </div>
                     </div>
-                    <div class="cr">
-                        <label>Admission</label>
-                        <textarea id="cAdmission" rows="1">vstup volný</textarea>
+                    <div class="chk" style="display:flex;align-items:center;gap:8px;">
+                        <input type="checkbox" id="showVystava" checked>
+                        <label for="showVystava" style="flex:1;">Výstava</label>
+                        <input type="checkbox" id="boldVystava" title="Bold">
+                        <label for="boldVystava" style="font-weight:bold;font-size:11px;cursor:pointer;">B</label>
                     </div>
+                    <div id="vystavaFields">
+                        <div class="cr">
+                            <label>Label</label>
+                            <input type="text" id="cVystL" value="VÝSTAVA">
+                        </div>
+                        <div class="cr">
+                            <label>From</label>
+                            <input type="text" id="cVystF" value="OD 10_05_2026">
+                        </div>
+                        <div class="cr">
+                            <label>To</label>
+                            <input type="text" id="cVystT" value="DO 10_07_2026">
+                        </div>
+                    </div>
+                    <div class="chk">
+                        <input type="checkbox" id="showSocial" checked>
+                        <label for="showSocial">Social</label>
+                    </div>
+                    <div id="socialFields">
+                        <div class="cr">
+                            <label>Handle</label>
+                            <input type="text" id="cSocial" value="@PRO_STORY_UH | PROSTORY.GALLERY">
+                        </div>
+                    </div>
+                    <div class="chk">
+                        <input type="checkbox" id="showAddr" checked>
+                        <label for="showAddr">Address</label>
+                    </div>
+                    <div id="addrFields">
+                        <div class="cr">
+                            <label>Address</label>
+                            <input type="text" id="cAddr" value="Všehrdova 267, Uherské Hradiště">
+                        </div>
+                    </div>
+                    <div class="chk">
+                        <input type="checkbox" id="showHours" checked>
+                        <label for="showHours">Hours</label>
+                    </div>
+                    <div id="hoursFields">
+                        <div class="cr">
+                            <label>Hours</label>
+                            <input type="text" id="cHours" value="Otevřeno každou středu od 12–17">
+                        </div>
+                    </div>
+                    <hr style="border-color: var(--border); margin: 12px 0;">
                     <div class="cr">
                         <label>Heading Scale</label>
                         <div class="heading-presets" id="headingPresets">
@@ -649,22 +731,8 @@ Uherské Hradiště</textarea>
                         </select>
                     </div>
                     <div class="chk">
-                        <input type="checkbox" id="showExtended">
-                        <label for="showExtended">Extended info</label>
-                    </div>
-                    <div id="extendedFields" class="hidden">
-                        <div class="cr">
-                            <label>URL</label>
-                            <input type="text" id="cUrl" value="">
-                        </div>
-                        <div class="cr">
-                            <label>Tags</label>
-                            <input type="text" id="cTags" value="">
-                        </div>
-                        <div class="cr">
-                            <label>Extra</label>
-                            <textarea id="cExtra" rows="2"></textarea>
-                        </div>
+                        <input type="checkbox" id="headingBg">
+                        <label for="headingBg">Heading Background</label>
                     </div>
                 </div>
             </details>
@@ -688,6 +756,12 @@ Uherské Hradiště</textarea>
                             <button class="anim-preset" data-anim="cell-swap">Swap</button>
                             <button class="anim-preset" data-anim="breathe">Breathe</button>
                             <button class="anim-preset" data-anim="scan">Scan</button>
+                            <button class="anim-preset" data-anim="erosion">Erode</button>
+                            <button class="anim-preset" data-anim="pulse">Pulse</button>
+                            <button class="anim-preset" data-anim="cascade">Casc</button>
+                            <button class="anim-preset" data-anim="flicker">Flick</button>
+                            <button class="anim-preset" data-anim="gravity">Grav</button>
+                            <button class="anim-preset" data-anim="invert">Invert</button>
                         </div>
                     </div>
                     <div class="transport">
@@ -730,7 +804,7 @@ Uherské Hradiště</textarea>
                     <div class="color-row">
                         <div class="cr">
                             <label>Background</label>
-                            <input type="color" id="bgColor" value="#ffffff">
+                            <input type="color" id="bgColor" value="#000000">
                         </div>
                         <div class="cr">
                             <label>Foreground</label>
@@ -793,9 +867,11 @@ Uherské Hradiště</textarea>
                     </div>
                     <div class="btn-row" style="margin-top: 6px;">
                         <button class="btn" id="exportWebm">WebM Video</button>
-                        <button class="btn" id="exportPngSeq">PNG Seq</button>
+                        <button class="btn" id="exportMp4">MP4 Video</button>
+                        <button class="btn" id="exportMov">MOV Video</button>
                     </div>
                     <div class="btn-row" style="margin-top: 6px;">
+                        <button class="btn" id="exportPngSeq">PNG Seq</button>
                         <button class="btn" id="exportJpgSeq">JPG Seq</button>
                     </div>
                 </div>
@@ -831,8 +907,8 @@ Uherské Hradiště</textarea>
 
 <script>
 /* ===================================================================
-   POSTER_ v4 — PRO_STORY Animated Generator
-   Animation system with 12 effects, video export, photo import
+   POSTER_ v5 — PRO_STORY Animated Generator
+   Word wrapping, SPACE parameter, optional fields, margin enforcement
    =================================================================== */
 
 // === STATE ============================================================
@@ -843,45 +919,55 @@ const S = {
     fontSize: 20,
     leading: 24,
     preset: 'floor-plan',
-    bgColor: '#ffffff',
+    bgColor: '#000000',
     fgColor: '#ffffff',
     blendMode: 'difference',
     fillChar: '\u2592',
     wallStyle: 'single',
     headingScale: 1,
-    headingFont: 'display-semibold', // mono-regular, display-semibold, etc.
-    margin: 0,
+    headingFont: 'display-semibold',
+    headingBg: false,
+    imageOnTop: false,
+    margin: 10,
     exportScale: 2,
     image: {
-        position: 'bottom',   // top, center, bottom
-        align: 'page',        // page (full canvas) or grid (within margin/text block)
-        cropTop: 0,           // 0-50 percent
+        position: 'bottom',
+        align: 'page',
+        cropTop: 0,
         cropBottom: 0,
         cropLeft: 0,
         cropRight: 0,
-        offsetX: 0,           // -100 to 100 percent of canvas width
-        offsetY: 0,           // -100 to 100 percent of canvas height
+        offsetX: 0,
+        offsetY: 0,
         opacity: 1,
-        brightness: 0,        // -100 to 100
-        contrast: 0,          // -100 to 100
-        gamma: 1.0,           // 0.2 to 3.0
-        blur: 0,              // 0 to 20 px (applied before dithering)
-        filter: 'dither',     // none, dither, bayer
-        ditherRes: 100,       // 5-100 percent of target resolution
+        brightness: 0,
+        contrast: 0,
+        gamma: 1.0,
+        blur: 0,
+        filter: 'dither',
+        ditherRes: 100,
     },
     content: {
         gallery: 'PRO_STORY',
-        artist: 'JINDŘICH ŠTREIT',
-        title: '_NEZAPOMENUTELNÍ',
-        tagline: 'Fotografoval lidi,\nkteré nikdo nefotografoval.',
-        date: '09_07_2026',
-        time: 'od 18_00',
-        location: 'SUPŠ\nUherské Hradiště',
-        admission: 'vstup volný',
-        url: '',
-        tags: '',
-        extra: '',
-        showExtended: false,
+        artist: 'JMÉNO PŘÍJMENÍ',
+        title: 'NÁZEV VÝSTAVY',
+        tagline: 'Spolupráce oborů SUPŠ UH,\nMultimédia, Obuv, Design',
+        showTagline: true,
+        vernL: 'VERNISÁŽ',
+        vernD: '10_05_2026 | 16_00',
+        showVernisaz: true,
+        boldVernisaz: false,
+        vystL: 'VÝSTAVA',
+        vystF: 'OD 10_05_2026',
+        vystT: 'DO 10_07_2026',
+        showVystava: true,
+        boldVystava: false,
+        social: '@PRO_STORY_UH | PROSTORY.GALLERY',
+        showSocial: true,
+        addr: 'Všehrdova 267, Uherské Hradiště',
+        showAddr: true,
+        hours: 'Otevřeno každou středu od 12\u201317',
+        showHours: true,
     },
     anim: {
         effect: 'none',
@@ -894,11 +980,19 @@ const S = {
     },
 };
 
+// === MARGIN CONSTANTS =================================================
+
+const MARGIN = {
+    vGap: 1,    // empty row above/below text blocks
+    hPad: 2,    // chars from cell border on each side
+};
+
 // Computed from duration * fps
 function totalFrames() { return Math.round(S.anim.duration * S.anim.fps); }
 
 // Heading positions collected during grid build
 let headings = [];
+let boldTexts = [];
 
 // Seeded RNG
 function mulberry32(seed) {
@@ -955,7 +1049,7 @@ function vline(grid, r, c, h, ch) {
     for (var i = 0; i < h; i++) set(grid, r + i, c, ch);
 }
 
-function placeText(grid, r, c, maxW, text, pad, isHeading) {
+function placeText(grid, r, c, maxW, text, pad, isHeading, isBold) {
     pad = pad || 0;
     var lines = text.split('\n');
     var row = 0;
@@ -963,6 +1057,9 @@ function placeText(grid, r, c, maxW, text, pad, isHeading) {
         var line = lines[li];
         if (isHeading && S.headingScale > 1) {
             headings.push({ text: line.substring(0, maxW - pad), r: r + row, c: c + pad });
+        } else if (isBold) {
+            // Bold text: only collect for overlay, skip grid placement to avoid double rendering
+            boldTexts.push({ text: line.substring(0, maxW - pad), r: r + row, c: c + pad });
         } else {
             for (var i = 0; i < Math.min(line.length, maxW - pad); i++) {
                 set(grid, r + row, c + pad + i, line[i]);
@@ -971,6 +1068,79 @@ function placeText(grid, r, c, maxW, text, pad, isHeading) {
         row++;
     }
     return row;
+}
+
+// Word wrapping: break text at word boundaries (space, pipe, comma)
+function wrapText(text, maxW, pad) {
+    pad = pad || 2;
+    var avail = maxW - pad;
+    if (avail <= 0) return [text];
+    var result = [];
+    var explicit = text.split('\n');
+    for (var li = 0; li < explicit.length; li++) {
+        var line = explicit[li];
+        while (line.length > avail) {
+            var bp = -1;
+            for (var i = avail; i > 0; i--) {
+                if (line[i] === ' ' || line[i] === '|' || line[i] === ',') {
+                    bp = i;
+                    if (line[i] === ',') bp = i + 1;
+                    break;
+                }
+            }
+            if (bp <= 0) bp = avail;
+            result.push(line.substring(0, bp).trimEnd());
+            line = line.substring(bp).trimStart();
+        }
+        if (line.length > 0) result.push(line);
+        else result.push('');
+    }
+    return result;
+}
+
+// Place wrapped text, returns number of rows used
+function placeWrapped(grid, r, c, maxW, text, pad) {
+    pad = pad || 2;
+    var lines = wrapText(text, maxW, pad);
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i]) placeText(grid, r + i, c, maxW, lines[i], pad);
+    }
+    return lines.length;
+}
+
+// Logo: ▚▚ marker
+function placeLogo(grid, r, c) {
+    set(grid, r, c, '\u259A');
+    set(grid, r, c + 1, '\u259A');
+}
+
+// Linear interpolation helper
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+// Get active content fields based on toggle state
+// Tagline is a single string; split on \n to get tagLines array
+function getActiveContent() {
+    var ct = S.content;
+    var tagLines = [];
+    if (ct.showTagline && ct.tagline) {
+        tagLines = ct.tagline.split('\n').filter(function(l) { return l.length > 0; });
+    }
+    return {
+        gallery: ct.gallery,
+        artist: ct.artist,
+        title: ct.title,
+        tagLines: tagLines,
+        vernL: ct.showVernisaz ? ct.vernL : '',
+        vernD: ct.showVernisaz ? ct.vernD : '',
+        boldVern: ct.showVernisaz && ct.boldVernisaz,
+        vystL: ct.showVystava ? ct.vystL : '',
+        vystF: ct.showVystava ? ct.vystF : '',
+        vystT: ct.showVystava ? ct.vystT : '',
+        boldVyst: ct.showVystava && ct.boldVystava,
+        social: ct.showSocial ? ct.social : '',
+        addr: ct.showAddr ? ct.addr : '',
+        hours: ct.showHours ? ct.hours : '',
+    };
 }
 
 // Box-drawing character sets
@@ -998,7 +1168,19 @@ function computeRows(cols, ar) {
     return Math.round(cols * (ar[1] / ar[0]) / charAspect);
 }
 
+function autoColumns(ar) {
+    // Scale columns to keep text content visible at any aspect ratio.
+    // Reference: 80 cols at 3:4. Wider ratios need more columns;
+    // taller ratios need fewer. Linear interpolation validated by testing:
+    // 9:16→68, 3:4→80, 4:5→83, 1:1→96, 4:3→117, 16:9→145
+    var ratio = ar[0] / ar[1];
+    var cols = Math.round(80 + (ratio - 0.75) * 63);
+    return Math.max(40, Math.min(200, cols));
+}
+
 // === LAYOUT PRESETS ===================================================
+// V5: All layouts use getActiveContent(), word wrapping,
+//     consistent margins, SPACE parameter (S.space)
 
 const PRESETS = {
 
@@ -1006,59 +1188,39 @@ const PRESETS = {
 'floor-plan': {
     name: 'Floor Plan',
     build(grid, cols, rows, ct) {
-        var W = getW();
-        var lw = Math.round(cols * 0.275);
-        var rw = cols - lw - 3;
+        var W = getW(), F = S.fillChar;
+        var lw = 22, rw = cols - lw - 3;
         var lc = 1, mc = lw + 1, rc = lw + 2, re = cols - 1;
-        var topH = 4, identH = 6, fillH = 10, logH = 8;
-        var imgH = Math.max(rows - topH - identH - fillH - logH - 7, 5);
         var y = 0;
+        // Top border
         set(grid, y, 0, W.tl); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.tt); hline(grid, y, rc, rw, W.h); set(grid, y, re, W.tr); y++;
-        for (var i = 0; i < topH; i++, y++) {
-            set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v);
-            fillCheckerboard(grid, y, lc, lw, 1, S.fillChar);
-            fillCheckerboard(grid, y, rc, rw, 1, S.fillChar);
-        }
-        var rFillExtra = 4;
-        set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.rt);
-        fillCheckerboard(grid, y, rc, rw, 1, S.fillChar); set(grid, y, re, W.v); y++;
-        for (var i = 0; i < rFillExtra - 1; i++, y++) {
-            set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v);
-            if (i === 0) placeText(grid, y, lc, lw, '\u2588\u2588  \u2588\u2588', 2);
-            else if (i === 1) placeText(grid, y, lc, lw, '\u2588\u2588  \u2588\u2588', 2);
-            else if (i === 2) placeText(grid, y, lc, lw, ct.gallery, 2);
-            fillCheckerboard(grid, y, rc, rw, 1, S.fillChar);
-        }
-        set(grid, y, 0, W.v);
-        set(grid, y, mc, W.lt); hline(grid, y, rc, rw, W.h); set(grid, y, re, W.rt); y++;
-        for (var i = 0; i < 3; i++, y++) {
-            set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v);
-            if (i === 1) {
-                placeText(grid, y, lc, lw, ct.gallery, 2);
-                placeText(grid, y, rc, rw, ct.artist, 2, true);
-            }
-        }
-        set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.rt);
-        placeText(grid, y, rc, rw, ct.title, 2, true); set(grid, y, re, W.v); y++;
-        for (var i = 0; i < fillH; i++, y++) {
-            set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v);
-            fillCheckerboard(grid, y, lc, lw, 1, S.fillChar);
-            if (i === 4) placeText(grid, y, rc, rw, ct.tagline.split('\n')[0] || '', 2);
-            else if (i === 5) placeText(grid, y, rc, rw, ct.tagline.split('\n')[1] || '', 2);
-        }
-        set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.rt);
-        set(grid, y, re, W.v); y++;
-        var logLines = [ct.date, ct.time, '', ct.location.split('\n')[0], ct.location.split('\n')[1] || '', ct.admission];
-        if (ct.showExtended) {
-            if (ct.url) logLines.push('', ct.url);
-            if (ct.tags) logLines.push(ct.tags);
-            if (ct.extra) logLines.push.apply(logLines, ct.extra.split('\n'));
-        }
-        for (var i = 0; i < logH && y < rows - imgH - 2; i++, y++) {
-            set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v);
-            if (i < logLines.length && logLines[i]) placeText(grid, y, lc, lw, logLines[i], 2);
-        }
+        // Top fill
+        for (var i = 0; i < 4; i++, y++) { set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v); fillCheckerboard(grid, y, lc, lw, 1, F); fillCheckerboard(grid, y, rc, rw, 1, F); }
+        // Identity: logo + gallery
+        set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.rt); fillCheckerboard(grid, y, rc, rw, 1, F); set(grid, y, re, W.v); y++;
+        for (var i = 0; i < 3; i++, y++) { set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v); fillCheckerboard(grid, y, rc, rw, 1, F); if (i === 1) placeText(grid, y, lc, lw, ct.gallery, 2); }
+        // Artist + title right panel
+        set(grid, y, 0, W.v); set(grid, y, mc, W.lt); hline(grid, y, rc, rw, W.h); set(grid, y, re, W.rt); y++;
+        for (var i = 0; i < 5; i++, y++) { set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v); if (i === 1) placeText(grid, y, rc, rw, ct.artist, 2, true); if (i === 3) placeText(grid, y, rc, rw, ct.title, 2, true); }
+        // Left fill + right tagline
+        set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.rt); set(grid, y, re, W.v); y++;
+        for (var i = 0; i < 10; i++, y++) { set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v); fillCheckerboard(grid, y, lc, lw, 1, F); for (var ti = 0; ti < ct.tagLines.length; ti++) { if (i === 4 + ti) placeText(grid, y, rc, rw, ct.tagLines[ti], 2); } }
+        // Logistics left
+        set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.rt); set(grid, y, re, W.v); y++;
+        var ll = [], llB = [];
+        ll.push(''); llB.push(false);
+        if (ct.vernL) { ll.push(ct.vernL); llB.push(ct.boldVern); ll.push(ct.vernD); llB.push(false); ll.push(''); llB.push(false); }
+        if (ct.vystL) { ll.push(ct.vystL); llB.push(ct.boldVyst); ll.push(ct.vystF); llB.push(false); ll.push(ct.vystT); llB.push(false); ll.push(''); llB.push(false); }
+        ll.push(''); llB.push(false);
+        for (var i = 0; i < ll.length; i++, y++) { set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v); if (ll[i]) placeText(grid, y, lc, lw, ll[i], 2, false, llB[i]); if (i === ll.length - 3 && ct.social) placeText(grid, y, rc, rw, ct.social, 2); }
+        // Full-width bottom sep
         set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.bt); hline(grid, y, rc, rw, W.h); set(grid, y, re, W.rt); y++;
+        // Photo area (SPACE controlled)
+        for (; y < rows - 4; y++) { set(grid, y, 0, W.v); set(grid, y, re, W.v); }
+        // Address + hours with margin
+        set(grid, y, 0, W.v); set(grid, y, re, W.v); y++;
+        if (ct.addr) { set(grid, y, 0, W.v); placeText(grid, y, 1, cols - 2, ct.addr, 2); set(grid, y, re, W.v); y++; }
+        if (ct.hours) { set(grid, y, 0, W.v); placeText(grid, y, 1, cols - 2, ct.hours, 2); set(grid, y, re, W.v); y++; }
         for (; y < rows - 1; y++) { set(grid, y, 0, W.v); set(grid, y, re, W.v); }
         set(grid, y, 0, W.bl); hline(grid, y, 1, cols - 2, W.h); set(grid, y, re, W.br);
     }
@@ -1074,33 +1236,20 @@ const PRESETS = {
             { ch: '\u2592', sp: 2, n: 1 }, { ch: '\u2592', sp: 6, n: 1 }, { ch: '\u2592', sp: 14, n: 1 },
             { ch: '\u2591', sp: 6, n: 1 }, { ch: '\u2591', sp: 14, n: 1 },
         ];
-        var y = 0;
-        for (var s = 0; s < steps.length; s++) {
-            for (var n = 0; n < steps[s].n && y < rows; n++, y++) {
-                if (steps[s].sp === 0) fillSolid(grid, y, 0, cols, 1, steps[s].ch);
-                else fillRepeat(grid, y, 0, cols, steps[s].ch, steps[s].sp);
-            }
-        }
+        var ind = 3, y = 0;
+        for (var s = 0; s < steps.length; s++) for (var n = 0; n < steps[s].n && y < rows; n++, y++) { if (steps[s].sp === 0) fillSolid(grid, y, 0, cols, 1, steps[s].ch); else fillRepeat(grid, y, 0, cols, steps[s].ch, steps[s].sp); }
         y++;
-        placeText(grid, y, 0, cols, ct.artist, 3, true); y += 2;
-        fillRepeat(grid, y, 0, cols, '\u2591', 30); y += 2;
-        placeText(grid, y, 0, cols, ct.title, 3, true); y += 3;
-        var tagLines = ct.tagline.split('\n');
-        for (var t = 0; t < tagLines.length; t++) { placeText(grid, y, 0, cols, tagLines[t], 3); y++; }
         y += 2;
-        placeText(grid, y, 0, cols, '\u2588\u2588  ' + ct.gallery, 3); y += 2;
-        var dateLine = '   ' + ct.date, timeLine = ct.time;
-        for (var i = 0; i < dateLine.length && i < cols; i++) set(grid, y, i, dateLine[i]);
-        var timeStart = Math.round(cols * 0.5);
-        for (var i = 0; i < timeLine.length; i++) set(grid, y, timeStart + i, timeLine[i]); y++;
-        var locLine = '   ' + ct.location.split('\n').join(' '), admLine = ct.admission;
-        for (var i = 0; i < locLine.length && i < cols; i++) set(grid, y, i, locLine[i]);
-        for (var i = 0; i < admLine.length; i++) set(grid, y, timeStart + i, admLine[i]);
-        if (ct.showExtended) {
-            y += 2;
-            if (ct.url) { placeText(grid, y, 0, cols, ct.url, 3); y++; }
-            if (ct.tags) { placeText(grid, y, 0, cols, ct.tags, 3); y++; }
-        }
+        placeText(grid, y, 0, cols, ct.artist, ind, true); y += 2;
+        placeText(grid, y, 0, cols, ct.title, ind, true); y += 2;
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, y, 0, cols, ct.tagLines[ti], ind); y++; }
+        y++;
+        placeText(grid, y, 0, cols, ct.gallery, ind); y += 3;
+        if (ct.vernL) { placeText(grid, y, 0, cols, ct.vernL, ind, false, ct.boldVern); y++; placeText(grid, y, 0, cols, ct.vernD, ind); y += 2; }
+        if (ct.vystL) { placeText(grid, y, 0, cols, ct.vystL, ind, false, ct.boldVyst); y++; placeText(grid, y, 0, cols, ct.vystF, ind); y++; placeText(grid, y, 0, cols, ct.vystT, ind); y += 2; }
+        if (ct.social) { placeText(grid, y, 0, cols, ct.social, ind); y += 3; }
+        if (ct.addr) { placeText(grid, y, 0, cols, ct.addr, ind); y++; }
+        if (ct.hours) { placeText(grid, y, 0, cols, ct.hours, ind); }
     }
 },
 
@@ -1112,49 +1261,39 @@ const PRESETS = {
         var w0 = 0, w1 = c1 + 1, w2 = c1 + c2 + 2, w3 = cols - 1;
         function colRow(r) { set(grid, r, w0, '\u258F'); set(grid, r, w1, '\u258F'); set(grid, r, w2, '\u258F'); set(grid, r, w3, '\u258F'); }
         function bar(r) { fillSolid(grid, r, 0, cols, 1, '\u2588'); }
-        var secH = Math.max(Math.round(rows / 7), 4);
-        var y = 0;
+        var secH = Math.max(Math.round(rows / 7), 4), y = 0;
         for (var i = 0; i < secH; i++, y++) colRow(y);
         bar(y); y++;
+        // Gallery left + logo, artist+title right
         for (var i = 0; i < secH + 2; i++, y++) {
             colRow(y);
-            if (i === 1) placeText(grid, y, 1, c1, '\u2588\u2588  \u2588\u2588', 2);
-            if (i === 2) placeText(grid, y, 1, c1, '\u2588\u2588  \u2588\u2588', 2);
-            if (i === 4) placeText(grid, y, 1, c1, ct.gallery.substring(0, 4) + '_', 2);
-            if (i === 5) placeText(grid, y, 1, c1, '   ' + ct.gallery.substring(4), 2);
+            if (i === 2) placeText(grid, y, 1, c1, ct.gallery.substring(0, 4) + '_', 2);
+            if (i === 3) placeText(grid, y, 1, c1, '   ' + ct.gallery.substring(4), 2);
+            if (i === 5) placeText(grid, y, w2 + 1, c3, ct.artist, 2, true);
+            if (i === 7) placeText(grid, y, w2 + 1, c3, ct.title, 2, true);
         }
         bar(y); y++;
         for (var i = 0; i < secH; i++, y++) {
             colRow(y);
-            var artistLines = ct.artist.split(' ');
-            if (i === 2 && artistLines[0]) placeText(grid, y, 1, c1, artistLines[0], 2, true);
-            if (i === 3 && artistLines.slice(1).join(' ')) placeText(grid, y, 1, c1, artistLines.slice(1).join(' '), 2, true);
+            for (var ti = 0; ti < ct.tagLines.length; ti++) { if (i === 2 + ti) placeText(grid, y, w2 + 1, c3, ct.tagLines[ti], 2); }
         }
         bar(y); y++;
         var sec4H = secH + 4;
+        var logR = [], logB = [];
+        logR.push(''); logB.push(false);
+        if (ct.vernL) { logR.push(ct.vernL); logB.push(ct.boldVern); logR.push(ct.vernD); logB.push(false); logR.push(''); logB.push(false); }
+        if (ct.vystL) { logR.push(ct.vystL); logB.push(ct.boldVyst); logR.push(ct.vystF); logB.push(false); logR.push(ct.vystT); logB.push(false); logR.push(''); logB.push(false); }
+        if (ct.social) { logR.push(ct.social); logB.push(false); logR.push(''); logB.push(false); }
         for (var i = 0; i < sec4H; i++, y++) {
             colRow(y);
-            if (i === 1) {
-                var parts = ct.title.length > c1 - 4 ? [ct.title.substring(0, c1 - 4) + '-', ' ' + ct.title.substring(c1 - 4)] : [ct.title];
-                placeText(grid, y, 1, c1, parts[0], 2, true);
-            }
-            if (i === 2 && ct.title.length > c1 - 4) placeText(grid, y, 1, c1, ' ' + ct.title.substring(c1 - 4), 2, true);
-            var tagLines = ct.tagline.split('\n');
-            var tagStart = 5;
-            if (i >= tagStart && i - tagStart < tagLines.length) placeText(grid, y, 1, c1, tagLines[i - tagStart], 2);
+            if (i < logR.length && logR[i]) placeText(grid, y, w2 + 1, c3, logR[i], 2, false, logB[i]);
         }
         bar(y); y++;
-        var logLines = [ct.date, ct.time, '', ct.location.split('\n')[0], ct.location.split('\n')[1] || '', '', ct.admission];
-        if (ct.showExtended) {
-            if (ct.url) logLines.push('', ct.url);
-            if (ct.tags) logLines.push(ct.tags);
-        }
-        for (var i = 0; i < secH + 4 && y < rows - secH - 1; i++, y++) {
+        for (var i = 0; y < rows; i++, y++) {
             colRow(y);
-            if (i < logLines.length && logLines[i]) placeText(grid, y, 1, c1, logLines[i], 2);
+            if (i === 1 && ct.addr) placeText(grid, y, w2 + 1, c3, ct.addr, 2);
+            if (i === 2 && ct.hours) placeText(grid, y, w2 + 1, c3, ct.hours, 2);
         }
-        bar(y); y++;
-        for (; y < rows; y++) colRow(y);
     }
 },
 
@@ -1162,8 +1301,8 @@ const PRESETS = {
 'cells': {
     name: 'Large Cells',
     build(grid, cols, rows, ct) {
-        var W = getW();
-        var sw = Math.round((cols - 6) * 0.18), bw = cols - sw * 4 - 6;
+        var W = getW(), F = S.fillChar;
+        var sw = 9, bw = cols - sw * 4 - 6;
         var sc = [1, sw + 2, sw * 2 + 3, sw * 3 + 4], bc = sw * 4 + 5;
         var y = 0;
         set(grid, y, 0, W.tl);
@@ -1172,52 +1311,46 @@ const PRESETS = {
         var cellH = 6;
         for (var i = 0; i < cellH; i++, y++) {
             set(grid, y, 0, W.v);
-            for (var j = 0; j < 4; j++) {
-                if (j < 3 && i > 0 && i < cellH - 1) fillCheckerboard(grid, y, sc[j], sw, 1, S.fillChar);
-                set(grid, y, sc[j] + sw, W.v);
-            }
+            for (var j = 0; j < 4; j++) { if (j < 3 && i > 0 && i < cellH - 1) fillCheckerboard(grid, y, sc[j], sw, 1, F); set(grid, y, sc[j] + sw, W.v); }
             set(grid, y, cols - 1, W.v);
-            if (i === 2) placeText(grid, y, bc, bw, ct.artist, 2, true);
+            if (i === 3) placeText(grid, y, bc, bw, ct.artist, 2, true);
         }
         set(grid, y, 0, W.lt);
         for (var i = 0; i < 4; i++) { hline(grid, y, sc[i], sw, W.h); set(grid, y, sc[i] + sw, W.cr); }
         for (var c = bc; c < cols - 1; c++) set(grid, y, c, ' '); set(grid, y, cols - 1, W.v); y++;
         for (var i = 0; i < 5; i++, y++) {
-            set(grid, y, 0, W.v);
-            for (var j = 0; j < 4; j++) set(grid, y, sc[j] + sw, W.v);
-            set(grid, y, cols - 1, W.v);
-            if (i === 1) { placeText(grid, y, sc[0], sw, '\u2588\u2588  \u2588\u2588', 2); placeText(grid, y, bc, bw, ct.title, 2, true); }
-            if (i === 2) { placeText(grid, y, sc[0], sw, '\u2588\u2588  \u2588\u2588', 2); placeText(grid, y, sc[1], sw, ct.gallery.substring(0, sw - 2), 2); }
-            if (i === 3) placeText(grid, y, sc[1], sw, ct.gallery.substring(0, sw - 2), 2);
+            set(grid, y, 0, W.v); for (var j = 0; j < 4; j++) set(grid, y, sc[j] + sw, W.v); set(grid, y, cols - 1, W.v);
+            if (i === 1) placeText(grid, y, bc, bw, ct.title, 2, true);
         }
         var mw = sw * 4 + 3;
         set(grid, y, 0, W.lt);
         for (var i = 0; i < 4; i++) { hline(grid, y, sc[i], sw, W.h); if (i < 3) set(grid, y, sc[i] + sw, W.bt); }
         set(grid, y, sc[3] + sw, W.rt);
         for (var c = bc; c < cols - 1; c++) set(grid, y, c, ' '); set(grid, y, cols - 1, W.v); y++;
-        var tagLines = ct.tagline.split('\n');
         for (var i = 0; i < 6; i++, y++) {
             set(grid, y, 0, W.v); set(grid, y, mw + 1, W.v); set(grid, y, cols - 1, W.v);
-            if (i < tagLines.length) placeText(grid, y, bc, bw, tagLines[i], 2);
+            if (i === 1) placeText(grid, y, 1, mw, ct.gallery, 2);
+            for (var ti = 0; ti < ct.tagLines.length; ti++) { if (i === 3 + ti) placeText(grid, y, bc, bw, ct.tagLines[ti], 2); }
         }
         set(grid, y, 0, W.v); set(grid, y, mw + 1, W.lt); hline(grid, y, bc, bw, W.h); set(grid, y, cols - 1, W.rt); y++;
-        var logLines = ['', ct.date, ct.time, '', ct.location.split('\n').join(' '), ct.admission];
-        if (ct.showExtended && ct.url) logLines.push('', ct.url);
-        for (var i = 0; i < logLines.length + 2 && y < rows - cellH - 2; i++, y++) {
+        var ll = [], llB = [];
+        ll.push(''); llB.push(false);
+        if (ct.vernL) { ll.push(ct.vernL); llB.push(ct.boldVern); ll.push(ct.vernD); llB.push(false); ll.push(''); llB.push(false); }
+        if (ct.vystL) { ll.push(ct.vystL); llB.push(ct.boldVyst); ll.push(ct.vystF); llB.push(false); ll.push(ct.vystT); llB.push(false); ll.push(''); llB.push(false); }
+        if (ct.social) { ll.push(ct.social); llB.push(false); ll.push(''); llB.push(false); }
+        for (var i = 0; i < ll.length && y < rows - cellH - 2; i++, y++) {
             set(grid, y, 0, W.v); set(grid, y, mw + 1, W.v); set(grid, y, cols - 1, W.v);
-            if (i < logLines.length && logLines[i]) placeText(grid, y, bc, bw, logLines[i], 2);
-            if (i >= logLines.length) fillCheckerboard(grid, y, bc, bw, 1, S.fillChar);
+            if (ll[i]) placeText(grid, y, bc, bw, ll[i], 2, false, llB[i]);
         }
         set(grid, y, 0, W.lt);
         for (var i = 0; i < 4; i++) { hline(grid, y, sc[i], sw, W.h); set(grid, y, sc[i] + sw, i < 3 ? W.tt : W.rt); }
         for (var c = bc; c < cols - 1; c++) set(grid, y, c, ' '); set(grid, y, cols - 1, W.v); y++;
         for (var i = 0; i < cellH - 1 && y < rows - 1; i++, y++) {
             set(grid, y, 0, W.v);
-            for (var j = 0; j < 4; j++) {
-                if (j % 2 === 0 && i > 0 && i < cellH - 2) fillCheckerboard(grid, y, sc[j], sw, 1, S.fillChar);
-                set(grid, y, sc[j] + sw, W.v);
-            }
+            for (var j = 0; j < 4; j++) { if (j % 2 === 0 && i > 0 && i < cellH - 2) fillCheckerboard(grid, y, sc[j], sw, 1, F); set(grid, y, sc[j] + sw, W.v); }
             set(grid, y, cols - 1, W.v);
+            if (i === 1 && ct.addr) placeText(grid, y, bc, bw, ct.addr, 2);
+            if (i === 2 && ct.hours) placeText(grid, y, bc, bw, ct.hours, 2);
         }
         set(grid, y, 0, W.bl);
         for (var i = 0; i < 4; i++) { hline(grid, y, sc[i], sw, W.h); set(grid, y, sc[i] + sw, W.bt); }
@@ -1225,34 +1358,88 @@ const PRESETS = {
     }
 },
 
-// --- E: Blocks on Canvas ---
+// --- E: Editorial --- Minimalist exhibition poster, scattered block accents, horizontal divide
 'blocks': {
-    name: 'Blocks',
+    name: 'Editorial',
     build(grid, cols, rows, ct) {
-        var indent = 3, center = Math.round(cols * 0.32), right = cols - 2;
-        var y = 1;
-        placeText(grid, y, 0, cols, '\u2588\u2588  \u2588\u2588', indent); y++;
-        placeText(grid, y, 0, cols, '\u2588\u2588  \u2588\u2588', indent); set(grid, y, right, '\u2588'); set(grid, y, right + 1, '\u2588'); y++;
-        set(grid, y, right, '\u2588'); set(grid, y, right + 1, '\u2588'); y += 3;
-        placeText(grid, y, 0, cols, ct.gallery, indent); y += 3;
-        placeText(grid, y, center - indent, cols - center + indent, ct.artist, indent, true); y += 5;
-        placeText(grid, y, center - indent, cols - center + indent, ct.title, indent, true); y += 4;
-        var tagLines = ct.tagline.split('\n');
-        for (var t = 0; t < tagLines.length; t++) { placeText(grid, y, center - indent, cols - center + indent, tagLines[t], indent); y++; }
-        y += 2;
-        set(grid, y, indent, '\u2588'); set(grid, y, indent + 1, '\u2588'); y++;
-        set(grid, y, right, '\u2588'); set(grid, y, right + 1, '\u2588'); y++;
-        placeText(grid, y, 0, cols, ct.date, indent); set(grid, y, right - 1, '\u2588'); set(grid, y, right, '\u2588'); y++;
-        placeText(grid, y, 0, cols, ct.time, indent); y++; y++;
-        placeText(grid, y, 0, cols, ct.location.split('\n').join(' '), indent); y++;
-        placeText(grid, y, 0, cols, ct.admission, indent); y++;
-        if (ct.showExtended && ct.url) { placeText(grid, y, 0, cols, ct.url, indent); y++; }
-        placeText(grid, y, center - indent, cols, '\u2588\u2588', indent); y++;
-        hline(grid, y, 0, cols, '\u2500'); y += 5;
-        var bx = Math.round(cols * 0.65);
-        set(grid, y, bx, '\u2588'); set(grid, y, bx + 1, '\u2588'); set(grid, y, bx + 4, '\u2588'); set(grid, y, bx + 5, '\u2588'); y++;
-        set(grid, y, bx, '\u2588'); set(grid, y, bx + 1, '\u2588'); set(grid, y, bx + 4, '\u2588'); set(grid, y, bx + 5, '\u2588');
-        set(grid, rows - 1, right, '\u2588'); set(grid, rows - 1, right + 1, '\u2588');
+        var B = '\u2588';
+        var ind = 3;
+        var ci = Math.round(cols * 0.31);
+        var cw = cols - ci;
+        var re = cols - 1;
+        var lw = Math.round(cols * 0.5);
+
+        // Top-right accent pair
+        var tr = Math.round(rows * 0.04);
+        set(grid, tr, re - 1, B); set(grid, tr, re, B);
+        set(grid, tr + 1, re - 1, B); set(grid, tr + 1, re, B);
+
+        // Gallery - top left
+        placeText(grid, Math.round(rows * 0.11), 0, lw, ct.gallery, ind);
+
+        // Artist heading - center indent
+        placeText(grid, Math.round(rows * 0.17), ci, cw, ct.artist, 0, true);
+
+        // Title heading - center indent
+        placeText(grid, Math.round(rows * 0.26), ci, cw, ct.title, 0, true);
+
+        // Tagline - center indent
+        var ty = Math.round(rows * 0.34);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) {
+            placeText(grid, ty + ti, ci, cw, ct.tagLines[ti], 0);
+        }
+
+        // Left accent block
+        var accY = Math.round(rows * 0.42);
+        set(grid, accY, ind, B); set(grid, accY, ind + 1, B);
+        // Right accent block (one row below)
+        set(grid, accY + 1, re - 1, B); set(grid, accY + 1, re, B);
+
+        // Logistics - left margin
+        var by = Math.round(rows * 0.45);
+        // Right-side accent on first logistics row
+        set(grid, by, re - 3, B); set(grid, by, re - 2, B);
+
+        if (ct.vernL) {
+            placeText(grid, by, 0, lw, ct.vernL, ind, false, ct.boldVern);
+            by++;
+            placeText(grid, by, 0, lw, ct.vernD, ind);
+            by += 2;
+        }
+        if (ct.vystL) {
+            placeText(grid, by, 0, lw, ct.vystL, ind, false, ct.boldVyst);
+            by++;
+            placeText(grid, by, 0, lw, ct.vystF, ind);
+            by++;
+            placeText(grid, by, 0, lw, ct.vystT, ind);
+            by += 2;
+        }
+        if (ct.addr) { placeText(grid, by, 0, lw, ct.addr, ind); by++; }
+        if (ct.hours) { placeText(grid, by, 0, lw, ct.hours, ind); by++; }
+        by++;
+
+        // Center accent block after logistics
+        set(grid, by, ci, B); set(grid, by, ci + 1, B);
+        by++;
+        // Social on center column
+        if (ct.social) placeText(grid, by, ci, cw, ct.social, 0);
+        by++;
+
+        // Horizontal rule divider
+        var divY = Math.max(by + 1, Math.round(rows * 0.58));
+        hline(grid, divY, 0, cols, '\u2500');
+
+        // Bottom half: scattered accent blocks
+        var botSpace = rows - 1 - divY;
+        var midR = divY + Math.max(3, Math.round(botSpace * 0.25));
+        var midC = Math.round(cols * 0.68);
+        set(grid, midR, midC, B); set(grid, midR, midC + 1, B);
+        set(grid, midR, midC + 4, B); set(grid, midR, midC + 5, B);
+        set(grid, midR + 1, midC, B); set(grid, midR + 1, midC + 1, B);
+        set(grid, midR + 1, midC + 4, B); set(grid, midR + 1, midC + 5, B);
+
+        // Bottom-right corner accent
+        set(grid, rows - 1, re - 1, B); set(grid, rows - 1, re, B);
     }
 },
 
@@ -1260,60 +1447,44 @@ const PRESETS = {
 'l-frame': {
     name: 'L-Frame',
     build(grid, cols, rows, ct) {
-        var W = getW();
-        var lw = Math.round(cols * 0.275), rw = cols - lw - 3;
-        var mc = lw + 1, rc = lw + 2, re = cols - 1;
-        var fw = lw + 1 + rw;
+        var W = getW(), F = S.fillChar;
+        var lw = 22, rw = cols - lw - 3, mc = lw + 1, rc = lw + 2, re = cols - 1, fw = lw + 1 + rw;
         var y = 0;
         set(grid, y, 0, W.tl); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.tt); hline(grid, y, rc, rw, W.h); set(grid, y, re, W.tr); y++;
-        for (var i = 0; i < 4; i++, y++) {
-            set(grid, y, 0, W.v); fillCheckerboard(grid, y, 1, lw, 1, S.fillChar); set(grid, y, mc, W.v); set(grid, y, re, W.v);
-        }
+        for (var i = 0; i < 4; i++, y++) { set(grid, y, 0, W.v); fillCheckerboard(grid, y, 1, lw, 1, F); set(grid, y, mc, W.v); set(grid, y, re, W.v); }
         set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.rt); set(grid, y, re, W.v); y++;
-        var idRows = ['', '\u2588\u2588  \u2588\u2588', '\u2588\u2588  \u2588\u2588', '', ct.gallery, ''];
-        for (var i = 0; i < idRows.length; i++) {
-            set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v);
-            if (idRows[i]) placeText(grid, y, 1, lw, idRows[i], 2);
-            y++;
-        }
+        // Logo + gallery
+        set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v); y++;
+        set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v); placeText(grid, y, 1, lw, ct.gallery, 2); y++;
+        set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v); y++;
         set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.rt); set(grid, y, re, W.v); y++;
-        for (var i = 0; i < 6; i++, y++) {
-            set(grid, y, 0, W.v); fillCheckerboard(grid, y, 1, lw, 1, S.fillChar); set(grid, y, mc, W.v); set(grid, y, re, W.v);
-        }
+        for (var i = 0; i < 6; i++, y++) { set(grid, y, 0, W.v); fillCheckerboard(grid, y, 1, lw, 1, F); set(grid, y, mc, W.v); set(grid, y, re, W.v); }
         set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.rt); set(grid, y, re, W.v); y++;
-        var artistLines = ct.artist.split(' ');
-        var nameRows = ['', artistLines[0] || '', artistLines.slice(1).join(' ') || '', ''];
-        var titleParts = ct.title.length > lw - 4 ? [ct.title.substring(0, lw - 4) + '-', ' ' + ct.title.substring(lw - 4)] : [ct.title, ''];
-        nameRows.push(titleParts[0], titleParts[1], '');
-        for (var i = 0; i < nameRows.length; i++) {
-            if (y >= rows - 10) break;
-            set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v);
-            if (nameRows[i]) {
-                var isH = (i === 1 || i === 2 || i === 4 || i === 5);
-                placeText(grid, y, 1, lw, nameRows[i], 2, isH);
-            }
-            y++;
-        }
+        var nr = ['', ct.artist, '', ct.title, ''];
+        for (var i = 0; i < nr.length; i++) { if (y >= rows - 14) break; set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v); if (nr[i]) placeText(grid, y, 1, lw, nr[i], 2, nr[i] === ct.artist || nr[i] === ct.title); y++; }
         set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.rt); set(grid, y, re, W.v); y++;
-        for (var i = 0; i < 2; i++, y++) {
-            set(grid, y, 0, W.v); fillCheckerboard(grid, y, 1, lw, 1, S.fillChar); set(grid, y, mc, W.v); set(grid, y, re, W.v);
-        }
+        for (var i = 0; i < 2; i++, y++) { set(grid, y, 0, W.v); fillCheckerboard(grid, y, 1, lw, 1, F); set(grid, y, mc, W.v); set(grid, y, re, W.v); }
         set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.bt); hline(grid, y, rc, rw, W.h); set(grid, y, re, W.rt); y++;
+        // Full-width bottom section
         set(grid, y, 0, W.v); set(grid, y, re, W.v); y++;
-        set(grid, y, 0, W.v); placeText(grid, y, 1, fw, ct.tagline.split('\n').join(' '), 2); set(grid, y, re, W.v); y++;
+        var tagStr = ct.tagLines.join(' ');
+        if (tagStr) { set(grid, y, 0, W.v); placeText(grid, y, 1, fw, tagStr, 2); set(grid, y, re, W.v); y++; }
         set(grid, y, 0, W.v); set(grid, y, re, W.v); y++;
-        set(grid, y, 0, W.v); fillCheckerboard(grid, y, 1, fw, 1, S.fillChar); set(grid, y, re, W.v); y++;
-        set(grid, y, 0, W.v); fillCheckerboard(grid, y, 1, fw, 1, S.fillChar); set(grid, y, re, W.v); y++;
+        set(grid, y, 0, W.v); fillCheckerboard(grid, y, 1, fw, 1, F); set(grid, y, re, W.v); y++;
+        set(grid, y, 0, W.v); fillCheckerboard(grid, y, 1, fw, 1, F); set(grid, y, re, W.v); y++;
         set(grid, y, 0, W.v); set(grid, y, re, W.v); y++;
-        var infoLine = ct.date + '              ' + ct.time + '              ' + ct.location.split('\n').join(' ');
-        set(grid, y, 0, W.v); placeText(grid, y, 1, fw, infoLine, 2); set(grid, y, re, W.v); y++;
-        if (ct.showExtended && ct.url) {
-            set(grid, y, 0, W.v); placeText(grid, y, 1, fw, ct.url, 2); set(grid, y, re, W.v); y++;
-        }
+        var vern = [ct.vernL, ct.vernD].filter(Boolean).join(' ');
+        var vyst = [ct.vystL, ct.vystF, ct.vystT].filter(Boolean).join(' ');
+        if (vern) { set(grid, y, 0, W.v); placeText(grid, y, 1, fw, vern, 2, false, ct.boldVern); set(grid, y, re, W.v); y++; }
+        if (vyst) { set(grid, y, 0, W.v); placeText(grid, y, 1, fw, vyst, 2, false, ct.boldVyst); set(grid, y, re, W.v); y++; }
         set(grid, y, 0, W.v); set(grid, y, re, W.v); y++;
-        for (var i = 0; y < rows - 1; i++, y++) {
-            set(grid, y, 0, W.v); fillCheckerboard(grid, y, 1, fw, 1, S.fillChar); set(grid, y, re, W.v);
-        }
+        if (ct.social) { set(grid, y, 0, W.v); placeText(grid, y, 1, fw, ct.social, 2); set(grid, y, re, W.v); y++; }
+        set(grid, y, 0, W.v); set(grid, y, re, W.v); y++;
+        for (; y < rows - 4; y++) { set(grid, y, 0, W.v); fillCheckerboard(grid, y, 1, fw, 1, F); set(grid, y, re, W.v); }
+        set(grid, y, 0, W.v); set(grid, y, re, W.v); y++;
+        if (ct.addr) { set(grid, y, 0, W.v); placeText(grid, y, 1, fw, ct.addr, 2); set(grid, y, re, W.v); y++; }
+        if (ct.hours) { set(grid, y, 0, W.v); placeText(grid, y, 1, fw, ct.hours, 2); set(grid, y, re, W.v); y++; }
+        for (; y < rows - 1; y++) { set(grid, y, 0, W.v); set(grid, y, re, W.v); }
         set(grid, y, 0, W.bl); hline(grid, y, 1, fw, W.h); set(grid, y, re, W.br);
     }
 },
@@ -1322,42 +1493,38 @@ const PRESETS = {
 'windows': {
     name: 'Windows',
     build(grid, cols, rows, ct) {
-        var W = getW();
-        var c1 = Math.round(cols * 0.125), c2 = c1, c3 = Math.round(cols * 0.26);
-        var c4 = cols - c1 - c2 - c3 - 5;
-        var cc = [1, c1 + 2, c1 + c2 + 3, c1 + c2 + c3 + 4];
-        var cw = [c1, c2, c3, c4], fw = cols - 2;
+        var W = getW(), F = S.fillChar;
+        var c1 = Math.round(cols * 0.125), c2 = c1, c3 = Math.round(cols * 0.26), c4 = cols - c1 - c2 - c3 - 5;
+        var cc = [1, c1 + 2, c1 + c2 + 3, c1 + c2 + c3 + 4], cw = [c1, c2, c3, c4], fw = cols - 2;
         var y = 0;
         set(grid, y, 0, W.tl);
         for (var i = 0; i < 4; i++) { hline(grid, y, cc[i], cw[i], W.h); set(grid, y, cc[i] + cw[i], W.tt); }
         set(grid, y, cols - 1, W.tr); y++;
         for (var i = 0; i < 7; i++, y++) {
-            set(grid, y, 0, W.v);
-            for (var j = 0; j < 4; j++) set(grid, y, cc[j] + cw[j], W.v);
-            if (i > 0 && i < 6) {
-                fillCheckerboard(grid, y, cc[0], cw[0], 1, S.fillChar);
-                fillCheckerboard(grid, y, cc[1], cw[1], 1, S.fillChar);
-            }
-            if (i === 2) { placeText(grid, y, cc[2], cw[2], '\u2588\u2588  \u2588\u2588', 2); placeText(grid, y, cc[3], cw[3], ct.artist, 2, true); }
-            if (i === 3) placeText(grid, y, cc[2], cw[2], '\u2588\u2588  \u2588\u2588', 2);
-            if (i === 5) { placeText(grid, y, cc[2], cw[2], ct.gallery, 2); placeText(grid, y, cc[3], cw[3], ct.title, 2, true); }
+            set(grid, y, 0, W.v); for (var j = 0; j < 4; j++) set(grid, y, cc[j] + cw[j], W.v);
+            if (i > 0 && i < 6) { fillCheckerboard(grid, y, cc[0], cw[0], 1, F); fillCheckerboard(grid, y, cc[1], cw[1], 1, F); }
+            if (i === 2) placeText(grid, y, cc[2], cw[2], ct.gallery, 2);
+            if (i === 4) placeText(grid, y, cc[3], cw[3], ct.artist, 2, true);
+            if (i === 6) placeText(grid, y, cc[3], cw[3], ct.title, 2, true);
             set(grid, y, cols - 1, W.v);
-        }
-        set(grid, y, 0, W.lt);
-        for (var i = 0; i < 3; i++) { hline(grid, y, cc[i], cw[i], W.h); set(grid, y, cc[i] + cw[i], W.cr); }
-        for (var c = cc[3]; c < cols - 1; c++) set(grid, y, c, ' '); set(grid, y, cols - 1, W.v); y++;
-        var tagLines = ct.tagline.split('\n');
-        for (var i = 0; i < 5; i++, y++) {
-            set(grid, y, 0, W.v);
-            for (var j = 0; j < 3; j++) set(grid, y, cc[j] + cw[j], W.v);
-            set(grid, y, cc[3] + cw[3], W.v);
-            if (i === 1 && tagLines[0]) placeText(grid, y, cc[2], cw[2], tagLines[0], 2);
-            if (i === 2 && tagLines[1]) placeText(grid, y, cc[2], cw[2], tagLines[1], 2);
         }
         set(grid, y, 0, W.lt);
         for (var i = 0; i < 4; i++) { hline(grid, y, cc[i], cw[i], W.h); set(grid, y, cc[i] + cw[i], W.bt); }
         set(grid, y, cols - 1, W.rt); y++;
-        for (; y < rows - 1; y++) { set(grid, y, 0, W.v); set(grid, y, cols - 1, W.v); }
+        // Open area
+        for (; y < rows - 1; y++) {
+            set(grid, y, 0, W.v); set(grid, y, cols - 1, W.v);
+            var ry = y - (8 + 1);
+            for (var ti = 0; ti < ct.tagLines.length; ti++) { if (ry === 1 + ti) placeText(grid, y, 1, fw, ct.tagLines[ti], 2); }
+            var infoY = rows - 13;
+            var vern = [ct.vernL, ct.vernD].filter(Boolean).join(' ');
+            var vyst = [ct.vystL, ct.vystF, ct.vystT].filter(Boolean).join(' ');
+            if (y === infoY && vern) placeText(grid, y, 1, fw, vern, 2, false, ct.boldVern);
+            if (y === infoY + 1 && vyst) placeText(grid, y, 1, fw, vyst, 2, false, ct.boldVyst);
+            if (y === infoY + 3 && ct.social) placeText(grid, y, 1, fw, ct.social, 2);
+            if (y === infoY + 5 && ct.addr) placeText(grid, y, 1, fw, ct.addr, 2);
+            if (y === infoY + 6 && ct.hours) placeText(grid, y, 1, fw, ct.hours, 2);
+        }
         set(grid, y, 0, W.bl); hline(grid, y, 1, fw, W.h); set(grid, y, cols - 1, W.br);
     }
 },
@@ -1366,35 +1533,31 @@ const PRESETS = {
 'hybrid': {
     name: 'Hybrid',
     build(grid, cols, rows, ct) {
-        var W = getW();
-        var halfW = Math.round(cols * 0.55);
-        var frameL = Math.round(cols * 0.59), frameW = cols - frameL - 1;
+        var W = getW(), F = S.fillChar;
+        var halfW = Math.round(cols * 0.55), frameL = Math.round(cols * 0.59), frameW = cols - frameL - 1;
         var y = 0;
-        fillSolid(grid, y, 0, cols, 1, '\u2588'); y++;
-        fillSolid(grid, y, 0, cols, 1, '\u2588'); y++; y++;
-        for (var i = 0; i < 6; i++, y++) fillCheckerboard(grid, y, 0, halfW, 1, S.fillChar);
-        set(grid, y, cols - 3, '\u2588'); set(grid, y, cols - 2, '\u2588'); y++;
-        placeText(grid, y, 0, cols, '\u2588\u2588  \u2588\u2588', 3);
-        set(grid, y, cols - 5, '\u2588'); set(grid, y, cols - 4, '\u2588'); y++;
-        placeText(grid, y, 0, cols, '\u2588\u2588  \u2588\u2588  ' + ct.gallery, 3); y++;
+        fillSolid(grid, y, 0, cols, 1, '\u2588'); y++; fillSolid(grid, y, 0, cols, 1, '\u2588'); y++; y++;
+        for (var i = 0; i < 6; i++, y++) fillCheckerboard(grid, y, 0, halfW, 1, F);
+        y++;
+        y++;
+        placeText(grid, y, 0, cols, ct.gallery, 3); y++;
         set(grid, y, frameL, W.tl); hline(grid, y, frameL + 1, frameW - 1, W.h); set(grid, y, cols - 1, W.tr); y++;
-        var textLines = ['', ct.artist, '', '', ct.title, '', '', ct.tagline.split('\n')[0] || '', ct.tagline.split('\n')[1] || '', '', '\u2588\u2588', ''];
-        for (var i = 0; i < textLines.length; i++) {
-            if (y >= rows - 6) break;
-            var isH = (textLines[i] === ct.artist || textLines[i] === ct.title);
-            if (textLines[i]) placeText(grid, y, 0, frameL, textLines[i], 3, isH);
-            set(grid, y, frameL, W.v); set(grid, y, cols - 1, W.v); y++;
-        }
-        var infoLines = ['', ct.date, ct.time, '', ct.location.split('\n').join(' '), ct.admission, '', ''];
-        if (ct.showExtended && ct.url) infoLines.push(ct.url);
-        for (var i = 0; i < infoLines.length; i++) {
-            if (y >= rows - 5) break;
-            if (infoLines[i]) placeText(grid, y, 0, frameL, infoLines[i], 3);
-            set(grid, y, frameL, W.v); set(grid, y, cols - 1, W.v); y++;
-        }
+        var tl = ['', ct.artist, '', ct.title, ''];
+        if (ct.tagLines.length > 0) { tl.push(''); for (var ti = 0; ti < ct.tagLines.length; ti++) tl.push(ct.tagLines[ti]); }
+        tl.push('');
+        for (var i = 0; i < tl.length; i++) { if (y >= rows - 12) break; if (tl[i]) placeText(grid, y, 0, frameL, tl[i], 3, tl[i] === ct.artist || tl[i] === ct.title); set(grid, y, frameL, W.v); set(grid, y, cols - 1, W.v); y++; }
+        var il = [], ilB = [];
+        il.push(''); ilB.push(false);
+        if (ct.vernL) { il.push(ct.vernL); ilB.push(ct.boldVern); il.push(ct.vernD); ilB.push(false); il.push(''); ilB.push(false); }
+        if (ct.vystL) { il.push(ct.vystL); ilB.push(ct.boldVyst); il.push(ct.vystF); ilB.push(false); il.push(ct.vystT); ilB.push(false); il.push(''); ilB.push(false); }
+        if (ct.social) { il.push(ct.social); ilB.push(false); }
+        for (var i = 0; i < il.length; i++) { if (y >= rows - 5) break; if (il[i]) placeText(grid, y, 0, frameL, il[i], 3, false, ilB[i]); set(grid, y, frameL, W.v); set(grid, y, cols - 1, W.v); y++; }
         set(grid, y, frameL, W.bl); hline(grid, y, frameL + 1, frameW - 1, W.h); set(grid, y, cols - 1, W.br); y++;
-        if (y < rows) { fillCheckerboard(grid, y, 0, cols, 1, S.fillChar); y++; }
-        if (y < rows) { fillCheckerboard(grid, y, 0, cols, 1, S.fillChar); y++; }
+        if (y < rows) { fillCheckerboard(grid, y, 0, cols, 1, F); y++; }
+        if (y < rows) { fillCheckerboard(grid, y, 0, cols, 1, F); y++; }
+        y++;
+        if (ct.addr && y < rows) { placeText(grid, y, 0, cols, ct.addr, 3); y++; }
+        if (ct.hours && y < rows) { placeText(grid, y, 0, cols, ct.hours, 3); y++; }
         y++;
         if (y < rows) fillSolid(grid, y, 0, cols, 1, '\u2588'); y++;
         if (y < rows) fillSolid(grid, y, 0, cols, 1, '\u2588');
@@ -1405,76 +1568,43 @@ const PRESETS = {
 'gallery': {
     name: 'Gallery Maze',
     build(grid, cols, rows, ct) {
-        var W = getW();
-        // Outer walls
+        var W = getW(), F = S.fillChar;
         set(grid, 0, 0, W.tl); hline(grid, 0, 1, cols - 2, W.h); set(grid, 0, cols - 1, W.tr);
         for (var r = 1; r < rows - 1; r++) { set(grid, r, 0, W.v); set(grid, r, cols - 1, W.v); }
         set(grid, rows - 1, 0, W.bl); hline(grid, rows - 1, 1, cols - 2, W.h); set(grid, rows - 1, cols - 1, W.br);
-
-        // Interior rooms - gallery floor plan
-        var rh = Math.round(rows * 0.22);
-        var rm = Math.round(rows * 0.55);
-        var rb = Math.round(rows * 0.78);
-        var cq1 = Math.round(cols * 0.3);
-        var cq2 = Math.round(cols * 0.5);
-        var cq3 = Math.round(cols * 0.7);
-
+        var rh = Math.round(rows * 0.22), rm = Math.round(rows * 0.55), rb = Math.round(rows * 0.78);
+        var cq1 = Math.round(cols * 0.35), cq2 = Math.round(cols * 0.5), cq3 = Math.round(cols * 0.72);
         // Horizontal walls with doorways
         hline(grid, rh, 1, cq1 - 4, W.h); set(grid, rh, 0, W.lt);
         hline(grid, rh, cq1, cq2 - cq1 - 3, W.h);
         hline(grid, rh, cq2, cols - cq2 - 4, W.h);
         hline(grid, rh, cols - 3, 2, W.h); set(grid, rh, cols - 1, W.rt);
-
         hline(grid, rm, 1, cq1 - 6, W.h); set(grid, rm, 0, W.lt);
         hline(grid, rm, cq1 - 2, cq2 - cq1, W.h);
         hline(grid, rm, cq2 + 3, cq3 - cq2 - 3, W.h);
         hline(grid, rm, cq3 + 3, cols - cq3 - 4, W.h); set(grid, rm, cols - 1, W.rt);
-
         hline(grid, rb, 1, cq1 - 4, W.h); set(grid, rb, 0, W.lt);
         hline(grid, rb, cq1 + 1, cq2 - cq1 - 4, W.h);
         hline(grid, rb, cq3 - 3, cols - cq3 + 2, W.h); set(grid, rb, cols - 1, W.rt);
-
-        // Vertical walls with doorways
-        vline(grid, 1, cq1, rh - 4, W.v);
-        vline(grid, rh + 1, cq1, rm - rh - 3, W.v);
-
-        vline(grid, 1, cq3, rh - 1, W.v);
-        vline(grid, rh + 1, cq3, rm - rh - 4, W.v);
+        // Vertical walls
+        vline(grid, 1, cq1, rh - 4, W.v); vline(grid, rh + 1, cq1, rm - rh - 3, W.v);
+        vline(grid, 1, cq3, rh - 1, W.v); vline(grid, rh + 1, cq3, rm - rh - 4, W.v);
         vline(grid, rm + 1, cq3, rb - rm - 1, W.v);
-
-        vline(grid, rm + 1, cq2, rb - rm - 3, W.v);
-        vline(grid, rb + 1, cq2, rows - rb - 2, W.v);
-
-        // Fill some rooms with checkerboard
-        fillCheckerboard(grid, 1, 1, cq1 - 1, rh - 4, S.fillChar);
-        fillCheckerboard(grid, rb + 1, cq3 + 1, cols - cq3 - 2, rows - rb - 2, S.fillChar);
-
-        // Place content in rooms
+        vline(grid, rm + 1, cq2, rb - rm - 3, W.v); vline(grid, rb + 1, cq2, rows - rb - 2, W.v);
+        // Fills
+        fillCheckerboard(grid, 1, 1, cq1 - 1, rh - 4, F);
+        fillCheckerboard(grid, rb + 1, cq3 + 1, cols - cq3 - 2, rows - rb - 2, F);
+        // Content
+        placeText(grid, 3, cq1 + 2, cq3 - cq1 - 3, ct.gallery, 1);
         placeText(grid, rh + 2, cq1 + 2, cq3 - cq1 - 3, ct.artist, 1, true);
         placeText(grid, rh + 4, cq1 + 2, cq3 - cq1 - 3, ct.title, 1, true);
-
-        var tagLines = ct.tagline.split('\n');
-        for (var t = 0; t < tagLines.length; t++) {
-            placeText(grid, rh + 7 + t, 2, cq1 - 3, tagLines[t], 1);
-        }
-
-        placeText(grid, 2, cq1 + 2, cq3 - cq1 - 3, '\u2588\u2588  \u2588\u2588', 1);
-        placeText(grid, 3, cq1 + 2, cq3 - cq1 - 3, '\u2588\u2588  \u2588\u2588', 1);
-        placeText(grid, 5, cq1 + 2, cq3 - cq1 - 3, ct.gallery, 1);
-
-        placeText(grid, rm + 2, 2, cq1 - 3, ct.date, 1);
-        placeText(grid, rm + 3, 2, cq1 - 3, ct.time, 1);
-        placeText(grid, rm + 5, 2, cq1 - 3, ct.location.split('\n')[0], 1);
-        placeText(grid, rm + 6, 2, cq1 - 3, ct.location.split('\n')[1] || '', 1);
-        placeText(grid, rm + 8, 2, cq1 - 3, ct.admission, 1);
-
-        if (ct.showExtended) {
-            if (ct.url) placeText(grid, rb + 2, 2, cq2 - 3, ct.url, 1);
-            if (ct.tags) placeText(grid, rb + 3, 2, cq2 - 3, ct.tags, 1);
-        }
-
-        placeText(grid, rm + 2, cq2 + 2, cq3 - cq2 - 3, '\u2588\u2588', 1);
-        fillCheckerboard(grid, rm + 4, cq2 + 1, cq3 - cq2 - 1, rb - rm - 5, S.fillChar);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, rh + 7 + ti, cq1 + 2, cq3 - cq1 - 3, ct.tagLines[ti], 1);
+        if (ct.vernL) { placeText(grid, rm + 2, 2, cq2 - 3, ct.vernL, 2, false, ct.boldVern); placeText(grid, rm + 3, 2, cq2 - 3, ct.vernD, 2); }
+        if (ct.vystL) { placeText(grid, rm + 5, 2, cq2 - 3, ct.vystL, 2, false, ct.boldVyst); placeText(grid, rm + 6, 2, cq2 - 3, ct.vystF, 2); placeText(grid, rm + 7, 2, cq2 - 3, ct.vystT, 2); }
+        if (ct.social) placeText(grid, rm + 9, 2, cq2 - 3, ct.social, 2);
+        if (ct.addr) placeText(grid, rb + 2, 2, cq2 - 3, ct.addr, 2);
+        if (ct.hours) placeText(grid, rb + 3, 2, cq2 - 3, ct.hours, 2);
+        fillCheckerboard(grid, rm + 4, cq2 + 1, cq3 - cq2 - 1, rb - rm - 5, F);
     }
 },
 
@@ -1482,37 +1612,30 @@ const PRESETS = {
 'split': {
     name: 'Split',
     build(grid, cols, rows, ct) {
-        var W = getW();
-        var mid = Math.round(cols / 2);
-        var lw = mid - 1, rw = cols - mid - 1;
-        // Outer frame
+        var W = getW(), F = S.fillChar;
+        var mid = Math.round(cols / 2), lw = mid - 1, rw = cols - mid - 1;
         set(grid, 0, 0, W.tl); hline(grid, 0, 1, lw, W.h); set(grid, 0, mid, W.tt); hline(grid, 0, mid + 1, rw, W.h); set(grid, 0, cols - 1, W.tr);
         for (var r = 1; r < rows - 1; r++) { set(grid, r, 0, W.v); set(grid, r, mid, W.v); set(grid, r, cols - 1, W.v); }
         set(grid, rows - 1, 0, W.bl); hline(grid, rows - 1, 1, lw, W.h); set(grid, rows - 1, mid, W.bt); hline(grid, rows - 1, mid + 1, rw, W.h); set(grid, rows - 1, cols - 1, W.br);
-        // Left column: fill top, identity, fill bottom
-        var fillTop = Math.round(rows * 0.15);
-        fillCheckerboard(grid, 1, 1, lw, fillTop, S.fillChar);
-        var hSep1 = fillTop + 1;
-        set(grid, hSep1, 0, W.lt); hline(grid, hSep1, 1, lw, W.h); set(grid, hSep1, mid, W.rt);
-        placeText(grid, hSep1 + 2, 1, lw, '\u2588\u2588  \u2588\u2588', 2);
-        placeText(grid, hSep1 + 3, 1, lw, '\u2588\u2588  \u2588\u2588', 2);
-        placeText(grid, hSep1 + 5, 1, lw, ct.gallery, 2);
-        var nameY = hSep1 + 8;
-        placeText(grid, nameY, 1, lw, ct.artist, 2, true);
-        placeText(grid, nameY + 2, 1, lw, ct.title, 2, true);
-        var tagLines = ct.tagline.split('\n');
-        for (var t = 0; t < tagLines.length; t++) placeText(grid, nameY + 5 + t, 1, lw, tagLines[t], 2);
-        // Left info
-        var infoY = Math.round(rows * 0.7);
-        set(grid, infoY, 0, W.lt); hline(grid, infoY, 1, lw, W.h); set(grid, infoY, mid, W.rt);
-        placeText(grid, infoY + 2, 1, lw, ct.date, 2);
-        placeText(grid, infoY + 3, 1, lw, ct.time, 2);
-        placeText(grid, infoY + 5, 1, lw, ct.location.split('\n')[0], 2);
-        placeText(grid, infoY + 6, 1, lw, ct.location.split('\n')[1] || '', 2);
-        placeText(grid, infoY + 8, 1, lw, ct.admission, 2);
-        if (ct.showExtended && ct.url) placeText(grid, infoY + 10, 1, lw, ct.url, 2);
-        // Right column: empty (for photo or large fill)
-        fillCheckerboard(grid, 1, mid + 1, rw, rows - 2, S.fillChar);
+        fillCheckerboard(grid, 1, mid + 1, rw, rows - 2, F);
+        var ft = Math.round(rows * 0.12);
+        fillCheckerboard(grid, 1, 1, lw, ft, F);
+        var s1 = ft + 1;
+        set(grid, s1, 0, W.lt); hline(grid, s1, 1, lw, W.h); set(grid, s1, mid, W.rt);
+        placeText(grid, s1 + 3, 1, lw, ct.gallery, 2);
+        var ny = s1 + 6;
+        placeText(grid, ny, 1, lw, ct.artist, 2, true);
+        placeText(grid, ny + 2, 1, lw, ct.title, 2, true);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, ny + 5 + ti, 1, lw, ct.tagLines[ti], 2);
+        var iy = Math.round(rows * 0.6);
+        set(grid, iy, 0, W.lt); hline(grid, iy, 1, lw, W.h); set(grid, iy, mid, W.rt);
+        if (ct.vernL) { placeText(grid, iy + 2, 1, lw, ct.vernL, 2, false, ct.boldVern); placeText(grid, iy + 3, 1, lw, ct.vernD, 2); }
+        if (ct.vystL) { placeText(grid, iy + 5, 1, lw, ct.vystL, 2, false, ct.boldVyst); placeText(grid, iy + 6, 1, lw, ct.vystF, 2); placeText(grid, iy + 7, 1, lw, ct.vystT, 2); }
+        if (ct.social) placeText(grid, iy + 9, 1, lw, ct.social, 2);
+        var ay = Math.round(rows * 0.85);
+        set(grid, ay, 0, W.lt); hline(grid, ay, 1, lw, W.h); set(grid, ay, mid, W.rt);
+        if (ct.addr) placeText(grid, ay + 2, 1, lw, ct.addr, 2);
+        if (ct.hours) placeText(grid, ay + 3, 1, lw, ct.hours, 2);
     }
 },
 
@@ -1520,32 +1643,27 @@ const PRESETS = {
 'stack': {
     name: 'Stack',
     build(grid, cols, rows, ct) {
-        var W = getW();
-        // Horizontal thirds
-        var r1 = Math.round(rows * 0.33);
-        var r2 = Math.round(rows * 0.66);
-        // Outer frame
+        var W = getW(), F = S.fillChar;
+        var r1 = Math.round(rows * 0.33), r2 = Math.round(rows * 0.66);
         set(grid, 0, 0, W.tl); hline(grid, 0, 1, cols - 2, W.h); set(grid, 0, cols - 1, W.tr);
         for (var r = 1; r < rows - 1; r++) { set(grid, r, 0, W.v); set(grid, r, cols - 1, W.v); }
         set(grid, rows - 1, 0, W.bl); hline(grid, rows - 1, 1, cols - 2, W.h); set(grid, rows - 1, cols - 1, W.br);
-        // Separators
         set(grid, r1, 0, W.lt); hline(grid, r1, 1, cols - 2, W.h); set(grid, r1, cols - 1, W.rt);
         set(grid, r2, 0, W.lt); hline(grid, r2, 1, cols - 2, W.h); set(grid, r2, cols - 1, W.rt);
-        // Top band: fill + identity
-        fillCheckerboard(grid, 1, 1, cols - 2, 3, S.fillChar);
-        placeText(grid, 5, 1, cols - 2, '\u2588\u2588  \u2588\u2588  ' + ct.gallery, 2);
-        placeText(grid, 7, 1, cols - 2, ct.artist, 2, true);
-        placeText(grid, 9, 1, cols - 2, ct.title, 2, true);
-        // Middle band: tagline + fill
-        var tagLines = ct.tagline.split('\n');
-        for (var t = 0; t < tagLines.length; t++) placeText(grid, r1 + 3 + t, 1, cols - 2, tagLines[t], 2);
-        fillCheckerboard(grid, r1 + 3 + tagLines.length + 2, 1, Math.round(cols * 0.4), r2 - r1 - tagLines.length - 6, S.fillChar);
-        // Bottom band: logistics
-        placeText(grid, r2 + 2, 1, cols - 2, ct.date + '    ' + ct.time, 2);
-        placeText(grid, r2 + 4, 1, cols - 2, ct.location.split('\n').join('    '), 2);
-        placeText(grid, r2 + 6, 1, cols - 2, ct.admission, 2);
-        if (ct.showExtended && ct.url) placeText(grid, r2 + 8, 1, cols - 2, ct.url, 2);
-        fillCheckerboard(grid, rows - 4, 1, cols - 2, 3, S.fillChar);
+        fillCheckerboard(grid, 1, 1, cols - 2, 3, F);
+        placeText(grid, 6, 1, cols - 2, ct.gallery, 2);
+        placeText(grid, 8, 1, cols - 2, ct.artist, 2, true);
+        placeText(grid, 10, 1, cols - 2, ct.title, 2, true);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, r1 + 3 + ti, 1, cols - 2, ct.tagLines[ti], 2);
+        fillCheckerboard(grid, r1 + 8, 1, Math.round(cols * 0.4), r2 - r1 - 10, F);
+        var vern = [ct.vernL, ct.vernD].filter(Boolean).join(' ');
+        var vyst = [ct.vystL, ct.vystF, ct.vystT].filter(Boolean).join(' ');
+        if (vern) placeText(grid, r2 + 2, 1, cols - 2, vern, 2, false, ct.boldVern);
+        if (vyst) placeText(grid, r2 + 4, 1, cols - 2, vyst, 2, false, ct.boldVyst);
+        if (ct.social) placeText(grid, r2 + 6, 1, cols - 2, ct.social, 2);
+        if (ct.addr) placeText(grid, r2 + 8, 1, cols - 2, ct.addr, 2);
+        if (ct.hours) placeText(grid, r2 + 9, 1, cols - 2, ct.hours, 2);
+        fillCheckerboard(grid, rows - 4, 1, cols - 2, 3, F);
     }
 },
 
@@ -1553,41 +1671,743 @@ const PRESETS = {
 'cross': {
     name: 'Cross',
     build(grid, cols, rows, ct) {
-        var W = getW();
+        var W = getW(), F = S.fillChar;
         var cx = Math.round(cols / 2), cy = Math.round(rows / 2);
-        // Cross: vertical and horizontal bands
-        var bandW = Math.round(cols * 0.2);
-        var bandH = Math.round(rows * 0.15);
+        var bandW = Math.round(cols * 0.28), bandH = Math.round(rows * 0.17);
         var bx1 = cx - Math.round(bandW / 2), bx2 = cx + Math.round(bandW / 2);
         var by1 = cy - Math.round(bandH / 2), by2 = cy + Math.round(bandH / 2);
-        // Vertical band
-        vline(grid, 0, bx1, rows, W.v);
-        vline(grid, 0, bx2, rows, W.v);
-        // Horizontal band
-        hline(grid, by1, 0, cols, W.h);
-        hline(grid, by2, 0, cols, W.h);
-        // Intersections
+        // Full-height vertical lines
+        vline(grid, 0, bx1, rows, W.v); vline(grid, 0, bx2, rows, W.v);
+        hline(grid, by1, 0, cols, W.h); hline(grid, by2, 0, cols, W.h);
         set(grid, by1, bx1, W.cr); set(grid, by1, bx2, W.cr);
         set(grid, by2, bx1, W.cr); set(grid, by2, bx2, W.cr);
-        // Fill quadrants
-        fillCheckerboard(grid, 0, 0, bx1, by1, S.fillChar);
-        fillCheckerboard(grid, by2 + 1, bx2 + 1, cols - bx2 - 1, rows - by2 - 1, S.fillChar);
-        // Identity in vertical band top
-        placeText(grid, 2, bx1 + 1, bandW - 1, '\u2588\u2588  \u2588\u2588', 2);
-        placeText(grid, 3, bx1 + 1, bandW - 1, '\u2588\u2588  \u2588\u2588', 2);
-        placeText(grid, 5, bx1 + 1, bandW - 1, ct.gallery, 2);
-        // Name in horizontal band
+        // Fills
+        fillCheckerboard(grid, 0, 0, bx1, by1, F);
+        fillCheckerboard(grid, by2 + 1, bx2 + 1, cols - bx2 - 1, rows - by2 - 1, F);
+        // Logo + identity
+        placeText(grid, 3, bx1 + 1, bandW - 1, ct.gallery, 2);
+        // Horizontal band RIGHT: artist, title, tagline
         placeText(grid, by1 + 2, bx2 + 2, cols - bx2 - 3, ct.artist, 1, true);
         placeText(grid, by1 + 4, bx2 + 2, cols - bx2 - 3, ct.title, 1, true);
-        // Tagline in vertical band bottom
-        var tagLines = ct.tagline.split('\n');
-        for (var t = 0; t < tagLines.length; t++) placeText(grid, by2 + 3 + t, bx1 + 1, bandW - 1, tagLines[t], 2);
-        // Info left of horizontal band
-        placeText(grid, by1 + 2, 1, bx1 - 2, ct.date, 1);
-        placeText(grid, by1 + 3, 1, bx1 - 2, ct.time, 1);
-        placeText(grid, by1 + 5, 1, bx1 - 2, ct.location.split('\n')[0], 1);
-        placeText(grid, by1 + 6, 1, bx1 - 2, ct.location.split('\n')[1] || '', 1);
-        placeText(grid, by2 - 2, 1, bx1 - 2, ct.admission, 1);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, by1 + 6 + ti, bx2 + 2, cols - bx2 - 3, ct.tagLines[ti], 1);
+        // Horizontal band LEFT: logistics
+        if (ct.vernL) { placeText(grid, by1 + 2, 1, bx1 - 2, ct.vernL, 2, false, ct.boldVern); placeText(grid, by1 + 3, 1, bx1 - 2, ct.vernD, 2); }
+        if (ct.vystL) { placeText(grid, by1 + 5, 1, bx1 - 2, ct.vystL, 2, false, ct.boldVyst); placeText(grid, by1 + 6, 1, bx1 - 2, ct.vystF, 2); placeText(grid, by1 + 7, 1, bx1 - 2, ct.vystT, 2); }
+        // Bottom-left: wrapped social, address, hours
+        var blw = bx1 - 1;
+        var ty = by2 + 2;
+        if (ct.social) { ty += placeWrapped(grid, ty, 1, blw, ct.social, 2); ty++; }
+        if (ct.addr) { ty += placeWrapped(grid, ty, 1, blw, ct.addr, 2); ty++; }
+        if (ct.hours) { placeWrapped(grid, ty, 1, blw, ct.hours, 2); }
+    }
+},
+
+// --- M: Void --- Swiss-inspired: massive negative space, text anchored to edges
+'void': {
+    name: 'Void',
+    build(grid, cols, rows, ct) {
+        var ind = 3, re = cols - 1;
+        // Gallery top-left
+        placeText(grid, 1, 0, cols, ct.gallery, ind);
+        // Artist large, pushed to upper-right area
+        placeText(grid, Math.round(rows * 0.15), 0, cols, ct.artist, ind, true);
+        // Single thin rule
+        hline(grid, Math.round(rows * 0.15) + 2, ind, cols - ind * 2, '\u2500');
+        // Title below rule
+        placeText(grid, Math.round(rows * 0.15) + 4, 0, cols, ct.title, ind, true);
+        // Tagline far down, right-aligned area
+        var tagY = Math.round(rows * 0.55);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, tagY, Math.round(cols * 0.45), cols - Math.round(cols * 0.45), ct.tagLines[ti], ind); tagY++; }
+        // Logistics block bottom-left
+        var by = rows - 12;
+        if (ct.vernL) { placeText(grid, by, 0, cols, ct.vernL, ind, false, ct.boldVern); by++; placeText(grid, by, 0, cols, ct.vernD, ind); by += 2; }
+        if (ct.vystL) { placeText(grid, by, 0, cols, ct.vystL, ind, false, ct.boldVyst); by++; placeText(grid, by, 0, cols, ct.vystF, ind); by++; placeText(grid, by, 0, cols, ct.vystT, ind); by += 2; }
+        // Social + address bottom
+        if (ct.social) placeText(grid, rows - 4, 0, cols, ct.social, ind);
+        if (ct.addr) placeText(grid, rows - 3, 0, cols, ct.addr, ind);
+        if (ct.hours) placeText(grid, rows - 2, 0, cols, ct.hours, ind);
+    }
+},
+
+// --- N: Baseline Grid --- Clean horizontal registers, text sits on baselines
+'baseline': {
+    name: 'Baseline',
+    build(grid, cols, rows, ct) {
+        var ind = 4;
+        var interval = Math.max(4, Math.round(rows / 10));
+        // Draw baseline rules
+        for (var r = interval; r < rows; r += interval) {
+            hline(grid, r, 0, cols, '\u2500');
+        }
+        // Text placed AFTER rules so it overwrites rule chars where needed
+        // Gallery above first baseline
+        placeText(grid, interval - 2, 0, cols, ct.gallery, ind);
+        // Artist above second baseline
+        placeText(grid, interval * 2 - 2, 0, cols, ct.artist, ind, true);
+        // Title above third baseline
+        placeText(grid, interval * 3 - 2, 0, cols, ct.title, ind, true);
+        // Tagline above fourth
+        var tBase = interval * 4;
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, tBase - 2 + ti, 0, cols, ct.tagLines[ti], ind);
+        // Logistics: vernisaz left, vystava right — both above sixth baseline
+        var lBase = interval * 6;
+        var halfW = Math.round(cols * 0.5);
+        if (ct.vernL) { placeText(grid, lBase - 3, 0, halfW, ct.vernL, ind, false, ct.boldVern); placeText(grid, lBase - 2, 0, halfW, ct.vernD, ind); }
+        if (ct.vystL) { placeText(grid, lBase - 3, halfW, cols - halfW, ct.vystL, ind, false, ct.boldVyst); placeText(grid, lBase - 2, halfW, cols - halfW, ct.vystF, ind); placeText(grid, lBase - 1, halfW, cols - halfW, ct.vystT, ind); }
+        // Bottom register: above last rule
+        var bBase = rows - interval;
+        if (ct.social) placeText(grid, bBase + 2, 0, cols, ct.social, ind);
+        if (ct.addr) placeText(grid, bBase + 3, 0, cols, ct.addr, ind);
+        if (ct.hours) placeText(grid, bBase + 4, 0, cols, ct.hours, ind);
+    }
+},
+
+// --- O: Diagonal --- Asymmetric diagonal division, text in white space
+'diagonal': {
+    name: 'Diagonal',
+    build(grid, cols, rows, ct) {
+        var F = S.fillChar;
+        // Diagonal fill: top-right triangle
+        for (var r = 0; r < rows; r++) {
+            var startC = Math.round(cols * (1 - r / rows));
+            for (var c = startC; c < cols; c++) {
+                fillCheckerboard(grid, r, c, 1, 1, F);
+            }
+        }
+        // Text in the white triangle (top-left to bottom-right)
+        var ind = 3;
+        placeText(grid, 2, 0, Math.round(cols * 0.6), ct.gallery, ind);
+        placeText(grid, 5, 0, Math.round(cols * 0.55), ct.artist, ind, true);
+        placeText(grid, 7, 0, Math.round(cols * 0.5), ct.title, ind, true);
+        var ty = 10;
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, ty, 0, Math.round(cols * 0.45), ct.tagLines[ti], ind); ty++; }
+        // Logistics in lower-left — text cuts through diagonal fill where needed
+        var ly = Math.round(rows * 0.5);
+        var lw = Math.round(cols * 0.55);
+        if (ct.vernL) { placeText(grid, ly, 0, lw, ct.vernL, ind, false, ct.boldVern); ly++; placeText(grid, ly, 0, lw, ct.vernD, ind); ly += 2; }
+        if (ct.vystL) { placeText(grid, ly, 0, lw, ct.vystL, ind, false, ct.boldVyst); ly++; placeText(grid, ly, 0, lw, ct.vystF, ind); ly++; placeText(grid, ly, 0, lw, ct.vystT, ind); ly += 2; }
+        if (ct.social) { placeText(grid, ly, 0, lw, ct.social, ind); ly += 2; }
+        if (ct.addr) { placeText(grid, ly, 0, lw, ct.addr, ind); ly++; }
+        if (ct.hours) { placeText(grid, ly, 0, lw, ct.hours, ind); }
+    }
+},
+
+// --- P: Margin --- All content pushed to margins, vast empty center
+'margin': {
+    name: 'Margin',
+    build(grid, cols, rows, ct) {
+        var W = getW();
+        var pad = 2, fw = cols - 2;
+        // Outer frame
+        set(grid, 0, 0, W.tl); hline(grid, 0, 1, fw, W.h); set(grid, 0, cols - 1, W.tr);
+        for (var r = 1; r < rows - 1; r++) { set(grid, r, 0, W.v); set(grid, r, cols - 1, W.v); }
+        set(grid, rows - 1, 0, W.bl); hline(grid, rows - 1, 1, fw, W.h); set(grid, rows - 1, cols - 1, W.br);
+        // Top margin: gallery + artist
+        placeText(grid, 2, 1, fw, ct.gallery, pad);
+        placeText(grid, 4, 1, fw, ct.artist, pad, true);
+        // Title with 1 empty row gap after artist
+        placeText(grid, 6, 1, fw, ct.title, pad, true);
+        // Single rule separating top content
+        hline(grid, 8, 1, fw, W.h);
+        // Tagline right-aligned
+        var tw = Math.round(cols * 0.45);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, 10 + ti, cols - 1 - tw, tw, ct.tagLines[ti], pad);
+        // Bottom margin: logistics
+        var by = rows - 10;
+        hline(grid, by - 1, 1, fw, W.h);
+        if (ct.vernL) { placeText(grid, by, 1, Math.round(cols * 0.4), ct.vernL, pad, false, ct.boldVern); placeText(grid, by + 1, 1, Math.round(cols * 0.4), ct.vernD, pad); }
+        if (ct.vystL) { placeText(grid, by, Math.round(cols * 0.45), Math.round(cols * 0.4), ct.vystL, pad, false, ct.boldVyst); placeText(grid, by + 1, Math.round(cols * 0.45), Math.round(cols * 0.4), ct.vystF, pad); placeText(grid, by + 2, Math.round(cols * 0.45), Math.round(cols * 0.4), ct.vystT, pad); }
+        if (ct.social) placeText(grid, rows - 5, 1, fw, ct.social, pad);
+        if (ct.addr) placeText(grid, rows - 4, 1, fw, ct.addr, pad);
+        if (ct.hours) placeText(grid, rows - 3, 1, fw, ct.hours, pad);
+    }
+},
+
+// --- Q: Ratio --- Golden ratio proportions, asymmetric two-panel
+'ratio': {
+    name: 'Ratio',
+    build(grid, cols, rows, ct) {
+        var W = getW(), F = S.fillChar;
+        // Golden ratio split: 0.618 / 0.382
+        var splitC = Math.round(cols * 0.618);
+        var lw = splitC - 1, rw = cols - splitC - 1;
+        // Vertical divider
+        vline(grid, 0, splitC, rows, W.v);
+        // Left panel: text content
+        var ind = 3;
+        placeText(grid, 2, 0, lw, ct.gallery, ind);
+        placeText(grid, 5, 0, lw, ct.artist, ind, true);
+        hline(grid, 7, ind, lw - ind * 2, '\u2500');
+        placeText(grid, 9, 0, lw, ct.title, ind, true);
+        var ty = 12;
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, ty, 0, lw, ct.tagLines[ti], ind); ty++; }
+        // Logistics lower-left
+        var ly = Math.round(rows * 0.6);
+        if (ct.vernL) { placeText(grid, ly, 0, lw, ct.vernL, ind, false, ct.boldVern); ly++; placeText(grid, ly, 0, lw, ct.vernD, ind); ly += 2; }
+        if (ct.vystL) { placeText(grid, ly, 0, lw, ct.vystL, ind, false, ct.boldVyst); ly++; placeText(grid, ly, 0, lw, ct.vystF, ind); ly++; placeText(grid, ly, 0, lw, ct.vystT, ind); ly += 2; }
+        // Bottom-left footer
+        if (ct.social) placeText(grid, rows - 5, 0, lw, ct.social, ind);
+        if (ct.addr) placeText(grid, rows - 4, 0, lw, ct.addr, ind);
+        if (ct.hours) placeText(grid, rows - 3, 0, lw, ct.hours, ind);
+        // Right panel: fill pattern (image area)
+        var fillTop = Math.round(rows * 0.1);
+        var fillBot = Math.round(rows * 0.9);
+        fillCheckerboard(grid, fillTop, splitC + 1, rw, fillBot - fillTop, F);
+    }
+},
+
+// --- R: Verso --- Full-bleed fill top, clean typography bottom half
+'verso': {
+    name: 'Verso',
+    build(grid, cols, rows, ct) {
+        var F = S.fillChar;
+        // Top half: dense fill (image area)
+        var splitR = Math.round(rows * 0.45);
+        fillCheckerboard(grid, 0, 0, cols, splitR, F);
+        // Bottom half: clean text
+        var ind = 4, y = splitR + 2;
+        placeText(grid, y, 0, cols, ct.gallery, ind); y += 2;
+        placeText(grid, y, 0, cols, ct.artist, ind, true); y += 2;
+        placeText(grid, y, 0, cols, ct.title, ind, true); y += 2;
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, y, 0, cols, ct.tagLines[ti], ind); y++; }
+        y += 2;
+        // Two-column logistics
+        var halfW = Math.round(cols * 0.5);
+        if (ct.vernL) { placeText(grid, y, 0, halfW, ct.vernL, ind, false, ct.boldVern); placeText(grid, y, halfW, cols - halfW, ct.vystL || '', ind, false, ct.boldVyst); y++; placeText(grid, y, 0, halfW, ct.vernD, ind); placeText(grid, y, halfW, cols - halfW, ct.vystF || '', ind); y++; if (ct.vystT) { placeText(grid, y, halfW, cols - halfW, ct.vystT, ind); } y += 2; }
+        else if (ct.vystL) { placeText(grid, y, 0, halfW, ct.vystL, ind, false, ct.boldVyst); y++; placeText(grid, y, 0, halfW, ct.vystF, ind); y++; placeText(grid, y, 0, halfW, ct.vystT, ind); y += 2; }
+        // Footer
+        hline(grid, rows - 5, ind, cols - ind * 2, '\u2500');
+        if (ct.social) placeText(grid, rows - 4, 0, cols, ct.social, ind);
+        if (ct.addr) placeText(grid, rows - 3, 0, cols, ct.addr, ind);
+        if (ct.hours) placeText(grid, rows - 2, 0, cols, ct.hours, ind);
+    }
+},
+
+// --- S: Grid System --- Strict modular grid with visible gridlines, content in cells
+'grid-system': {
+    name: 'Grid',
+    build(grid, cols, rows, ct) {
+        var W = getW();
+        // 4-column, 6-row modular grid
+        var nCols = 4, nRows = 6;
+        var cellW = Math.floor((cols - nCols - 1) / nCols);
+        var cellH = Math.floor((rows - nRows - 1) / nRows);
+        // Draw gridlines
+        for (var i = 0; i <= nCols; i++) {
+            var x = i * (cellW + 1);
+            if (x < cols) vline(grid, 0, x, rows, W.v);
+        }
+        for (var i = 0; i <= nRows; i++) {
+            var y = i * (cellH + 1);
+            if (y < rows) hline(grid, y, 0, cols, W.h);
+        }
+        // Intersections
+        for (var i = 0; i <= nCols; i++) for (var j = 0; j <= nRows; j++) {
+            var x = i * (cellW + 1), y = j * (cellH + 1);
+            if (x < cols && y < rows) set(grid, y, x, W.cr);
+        }
+        // Cell helper: (col, row) in grid → pixel position
+        function cell(gc, gr) { return { c: gc * (cellW + 1) + 1, r: gr * (cellH + 1) + 1, w: cellW, h: cellH }; }
+        // Gallery: cell(0,0)
+        var c0 = cell(0, 0);
+        placeText(grid, c0.r + 1, c0.c, c0.w, ct.gallery, 2);
+        // Artist: cells(0-1, 1) spanning 2 columns
+        var c1 = cell(0, 1);
+        placeText(grid, c1.r + Math.floor(c1.h / 2), c1.c, cellW * 2 + 1, ct.artist, 2, true);
+        // Title: cells(2-3, 1) spanning 2 columns
+        var c2 = cell(2, 1);
+        placeText(grid, c2.r + Math.floor(c2.h / 2), c2.c, cellW * 2 + 1, ct.title, 2, true);
+        // Fill: cells(2-3, 0)
+        var cf = cell(2, 0);
+        fillCheckerboard(grid, cf.r, cf.c, cellW * 2 + 1, cellH, S.fillChar);
+        // Tagline: cell(0, 2)
+        var c3 = cell(0, 2);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, c3.r + 1 + ti, c3.c, cellW * 2 + 1, ct.tagLines[ti], 2);
+        // Fill: cells(2-3, 2-3)
+        var cf2 = cell(2, 2);
+        fillCheckerboard(grid, cf2.r, cf2.c, cellW * 2 + 1, cellH * 2 + 1, S.fillChar);
+        // Vernisaz: cell(0, 3)
+        var c4 = cell(0, 3);
+        if (ct.vernL) { placeText(grid, c4.r + 1, c4.c, cellW * 2 + 1, ct.vernL, 2, false, ct.boldVern); placeText(grid, c4.r + 2, c4.c, cellW * 2 + 1, ct.vernD, 2); }
+        // Vystava: cell(0, 4)
+        var c5 = cell(0, 4);
+        if (ct.vystL) { placeText(grid, c5.r + 1, c5.c, c5.w, ct.vystL, 2, false, ct.boldVyst); placeText(grid, c5.r + 2, c5.c, c5.w, ct.vystF, 2); placeText(grid, c5.r + 3, c5.c, c5.w, ct.vystT, 2); }
+        // Social: cell(1, 4)
+        var c6 = cell(1, 4);
+        if (ct.social) placeWrapped(grid, c6.r + 1, c6.c, c6.w, ct.social, 2);
+        // Fill: cells(2-3, 4)
+        var cf3 = cell(2, 4);
+        fillCheckerboard(grid, cf3.r, cf3.c, cellW * 2 + 1, cellH, S.fillChar);
+        // Address + hours: cells(0-1, 5)
+        var c7 = cell(0, 5);
+        if (ct.addr) placeText(grid, c7.r + 1, c7.c, cellW * 2 + 1, ct.addr, 2);
+        if (ct.hours) placeText(grid, c7.r + 2, c7.c, cellW * 2 + 1, ct.hours, 2);
+    }
+},
+
+// --- T: Broadsheet --- Newspaper-style columns with header and rules
+'broadsheet': {
+    name: 'Broadsheet',
+    build(grid, cols, rows, ct) {
+        var ind = 2;
+        // Masthead: full-width heavy rule, gallery name, thin rule
+        fillSolid(grid, 0, 0, cols, 1, '\u2588');
+        placeText(grid, 2, 0, cols, ct.gallery, ind);
+        fillSolid(grid, 4, 0, cols, 1, '\u2588');
+        // Headline: artist + title
+        placeText(grid, 6, 0, cols, ct.artist, ind, true);
+        hline(grid, 8, ind, cols - ind * 2, '\u2500');
+        placeText(grid, 10, 0, cols, ct.title, ind, true);
+        // Tagline as subhead
+        var y = 12;
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, y, 0, cols, ct.tagLines[ti], ind); y++; }
+        // Three-column body area with vertical rules
+        y += 2;
+        var bodyTop = y;
+        var col3w = Math.floor((cols - 4) / 3);
+        var c1x = 0, c2x = col3w + 2, c3x = col3w * 2 + 4;
+        hline(grid, bodyTop - 1, 0, cols, '\u2500');
+        vline(grid, bodyTop, col3w + 1, rows - bodyTop - 4, '\u2502');
+        vline(grid, bodyTop, col3w * 2 + 3, rows - bodyTop - 4, '\u2502');
+        // Logistics in columns
+        var ly = bodyTop + 1;
+        if (ct.vernL) { placeText(grid, ly, c1x, col3w, ct.vernL, ind, false, ct.boldVern); ly++; placeText(grid, ly, c1x, col3w, ct.vernD, ind); ly += 2; }
+        if (ct.vystL) { placeText(grid, ly, c1x, col3w, ct.vystL, ind, false, ct.boldVyst); ly++; placeText(grid, ly, c1x, col3w, ct.vystF, ind); ly++; placeText(grid, ly, c1x, col3w, ct.vystT, ind); }
+        // Fill in middle column
+        fillCheckerboard(grid, bodyTop + 1, c2x, col3w, Math.round((rows - bodyTop - 5) * 0.7), S.fillChar);
+        // Social in right column
+        if (ct.social) placeWrapped(grid, bodyTop + 1, c3x, col3w, ct.social, ind);
+        // Footer
+        hline(grid, rows - 4, 0, cols, '\u2500');
+        if (ct.addr) placeText(grid, rows - 3, 0, Math.round(cols * 0.5), ct.addr, ind);
+        if (ct.hours) placeText(grid, rows - 3, Math.round(cols * 0.5), cols - Math.round(cols * 0.5), ct.hours, ind);
+        fillSolid(grid, rows - 1, 0, cols, 1, '\u2588');
+    }
+},
+
+// --- U: Halftone --- Circular dot pattern radiating from center, text in clear zones
+'halftone': {
+    name: 'Halftone',
+    build(grid, cols, rows, ct) {
+        var F = S.fillChar;
+        var cx = cols / 2, cy = rows / 2;
+        var maxR = Math.sqrt(cx * cx + cy * cy);
+        // Concentric dot density: denser at edges, sparser at center
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var dx = (c - cx) * 0.5, dy = r - cy; // aspect-correct
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                var density = dist / maxR;
+                // Create dot pattern: rings with increasing frequency
+                var ring = (Math.sin(dist * 1.2) + 1) * 0.5;
+                if (ring * density > 0.35) set(grid, r, c, F);
+            }
+        }
+        // Clear text zones by overwriting pattern
+        var ind = 3;
+        // Gallery top-right
+        placeText(grid, 2, Math.round(cols * 0.55), Math.round(cols * 0.45), ct.gallery, ind);
+        // Artist + title in center clear zone
+        var ay = Math.round(rows * 0.3);
+        fillSolid(grid, ay - 1, 0, cols, 5, ' ');
+        placeText(grid, ay, 0, cols, ct.artist, ind, true);
+        placeText(grid, ay + 2, 0, cols, ct.title, ind, true);
+        // Tagline
+        var ty = ay + 5;
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, ty, 0, Math.round(cols * 0.6), ct.tagLines[ti], ind); ty++; }
+        // Logistics in bottom clear zone
+        var by = rows - 12;
+        fillSolid(grid, by - 1, 0, Math.round(cols * 0.5), 11, ' ');
+        if (ct.vernL) { placeText(grid, by, 0, Math.round(cols * 0.5), ct.vernL, ind, false, ct.boldVern); by++; placeText(grid, by, 0, Math.round(cols * 0.5), ct.vernD, ind); by += 2; }
+        if (ct.vystL) { placeText(grid, by, 0, Math.round(cols * 0.5), ct.vystL, ind, false, ct.boldVyst); by++; placeText(grid, by, 0, Math.round(cols * 0.5), ct.vystF, ind); by++; placeText(grid, by, 0, Math.round(cols * 0.5), ct.vystT, ind); by += 2; }
+        if (ct.social) placeText(grid, rows - 4, 0, cols, ct.social, ind);
+        if (ct.addr) placeText(grid, rows - 3, 0, cols, ct.addr, ind);
+        if (ct.hours) placeText(grid, rows - 2, 0, cols, ct.hours, ind);
+    }
+},
+
+// --- V: Zigzag --- Horizontal zigzag bands creating dynamic texture
+'zigzag': {
+    name: 'Zigzag',
+    build(grid, cols, rows, ct) {
+        var F = S.fillChar;
+        var bandH = 3, zigW = 8;
+        // Create zigzag bands across the poster
+        for (var r = 0; r < rows; r++) {
+            var band = Math.floor(r / bandH);
+            if (band % 3 === 0) continue; // every 3rd band is empty (text zone)
+            for (var c = 0; c < cols; c++) {
+                // Zigzag: triangle wave
+                var phase = (band % 2 === 0) ? 0 : Math.floor(zigW / 2);
+                var pos = (c + phase) % zigW;
+                var localR = r % bandH;
+                // Create diagonal stripes within each band
+                if ((pos + localR) % 4 < 2) set(grid, r, c, F);
+            }
+        }
+        // Text in the clear bands
+        var ind = 3;
+        placeText(grid, 1, 0, cols, ct.gallery, ind);
+        placeText(grid, bandH * 3 + 1, 0, cols, ct.artist, ind, true);
+        placeText(grid, bandH * 3 + 3 > bandH * 6 ? bandH * 3 + 2 : bandH * 6 + 1, 0, cols, ct.title, ind, true);
+        // Tagline
+        var ty = bandH * 9 + 1;
+        for (var ti = 0; ti < ct.tagLines.length && ty < rows; ti++) { placeText(grid, ty, 0, cols, ct.tagLines[ti], ind); ty++; }
+        // Logistics lower section
+        var ly = Math.round(rows * 0.6);
+        if (ct.vernL) { placeText(grid, ly, 0, Math.round(cols * 0.5), ct.vernL, ind, false, ct.boldVern); ly++; placeText(grid, ly, 0, Math.round(cols * 0.5), ct.vernD, ind); ly += 2; }
+        if (ct.vystL) { placeText(grid, ly, 0, Math.round(cols * 0.5), ct.vystL, ind, false, ct.boldVyst); ly++; placeText(grid, ly, 0, Math.round(cols * 0.5), ct.vystF, ind); ly++; placeText(grid, ly, 0, Math.round(cols * 0.5), ct.vystT, ind); ly += 2; }
+        if (ct.social) placeText(grid, rows - 4, 0, cols, ct.social, ind);
+        if (ct.addr) placeText(grid, rows - 3, 0, cols, ct.addr, ind);
+        if (ct.hours) placeText(grid, rows - 2, 0, cols, ct.hours, ind);
+    }
+},
+
+// --- W: Curtain --- Vertical bars of varying density, content cuts through
+'curtain': {
+    name: 'Curtain',
+    build(grid, cols, rows, ct) {
+        var F = S.fillChar;
+        // Vertical bars with varying widths: thick left, thin right
+        var x = 0;
+        var barWidths = [];
+        while (x < cols) {
+            var ratio = x / cols;
+            var barW = Math.max(1, Math.round(3 - ratio * 2));
+            var gapW = Math.max(1, Math.round(1 + ratio * 4));
+            barWidths.push({ x: x, w: barW });
+            x += barW + gapW;
+        }
+        for (var bi = 0; bi < barWidths.length; bi++) {
+            var bar = barWidths[bi];
+            for (var r = 0; r < rows; r++) {
+                for (var w = 0; w < bar.w && bar.x + w < cols; w++) {
+                    set(grid, r, bar.x + w, F);
+                }
+            }
+        }
+        // Text cuts through the bars
+        var ind = 3;
+        var clearW = Math.round(cols * 0.7);
+        // Gallery
+        placeText(grid, 2, 0, clearW, ct.gallery, ind);
+        // Artist + title
+        placeText(grid, 6, 0, clearW, ct.artist, ind, true);
+        placeText(grid, 8, 0, clearW, ct.title, ind, true);
+        // Tagline
+        var ty = 11;
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, ty, 0, clearW, ct.tagLines[ti], ind); ty++; }
+        // Logistics
+        var ly = Math.round(rows * 0.5);
+        if (ct.vernL) { placeText(grid, ly, 0, clearW, ct.vernL, ind, false, ct.boldVern); ly++; placeText(grid, ly, 0, clearW, ct.vernD, ind); ly += 2; }
+        if (ct.vystL) { placeText(grid, ly, 0, clearW, ct.vystL, ind, false, ct.boldVyst); ly++; placeText(grid, ly, 0, clearW, ct.vystF, ind); ly++; placeText(grid, ly, 0, clearW, ct.vystT, ind); ly += 2; }
+        if (ct.social) { placeText(grid, ly, 0, clearW, ct.social, ind); ly += 2; }
+        if (ct.addr) placeText(grid, rows - 3, 0, clearW, ct.addr, ind);
+        if (ct.hours) placeText(grid, rows - 2, 0, clearW, ct.hours, ind);
+    }
+},
+
+// --- X: Horizon --- Gradient density bands creating a horizon line effect
+'horizon': {
+    name: 'Horizon',
+    build(grid, cols, rows, ct) {
+        var densityChars = ['\u2588', '\u2593', '\u2592', '\u2591'];
+        // Sky: sparse at top, denser toward horizon
+        var horizonR = Math.round(rows * 0.55);
+        for (var r = 0; r < horizonR; r++) {
+            var density = r / horizonR;
+            for (var c = 0; c < cols; c++) {
+                var threshold = density * density; // quadratic ramp
+                var noise = ((c * 7 + r * 13) % 17) / 17; // deterministic pseudo-random
+                if (noise < threshold) {
+                    var charIdx = Math.min(3, Math.floor((1 - density) * 4));
+                    set(grid, r, c, densityChars[charIdx]);
+                }
+            }
+        }
+        // Ground: dense at horizon, fading down
+        for (var r = horizonR; r < rows; r++) {
+            var dist = (r - horizonR) / (rows - horizonR);
+            for (var c = 0; c < cols; c++) {
+                var threshold = 1 - dist * dist;
+                var noise = ((c * 11 + r * 7) % 19) / 19;
+                if (noise < threshold) {
+                    var charIdx = Math.min(3, Math.floor(dist * 3));
+                    set(grid, r, c, densityChars[charIdx]);
+                }
+            }
+        }
+        // Text in clear zones
+        var ind = 4;
+        // Gallery small, top-left
+        fillSolid(grid, 1, 0, Math.round(cols * 0.4), 1, ' ');
+        placeText(grid, 1, 0, Math.round(cols * 0.4), ct.gallery, ind);
+        // Artist + title near horizon — clear a band
+        fillSolid(grid, horizonR - 3, 0, cols, 6, ' ');
+        placeText(grid, horizonR - 2, 0, cols, ct.artist, ind, true);
+        placeText(grid, horizonR, 0, cols, ct.title, ind, true);
+        // Tagline below horizon
+        var ty = horizonR + 4;
+        for (var ti = 0; ti < ct.tagLines.length; ti++) {
+            fillSolid(grid, ty, 0, Math.round(cols * 0.6), 1, ' ');
+            placeText(grid, ty, 0, Math.round(cols * 0.6), ct.tagLines[ti], ind);
+            ty++;
+        }
+        // Logistics at bottom — clear zone
+        var by = rows - 10;
+        fillSolid(grid, by, 0, Math.round(cols * 0.55), 9, ' ');
+        if (ct.vernL) { placeText(grid, by, 0, Math.round(cols * 0.55), ct.vernL, ind, false, ct.boldVern); by++; placeText(grid, by, 0, Math.round(cols * 0.55), ct.vernD, ind); by += 2; }
+        if (ct.vystL) { placeText(grid, by, 0, Math.round(cols * 0.55), ct.vystL, ind, false, ct.boldVyst); by++; placeText(grid, by, 0, Math.round(cols * 0.55), ct.vystF, ind); by++; placeText(grid, by, 0, Math.round(cols * 0.55), ct.vystT, ind); by += 2; }
+        if (ct.social) placeText(grid, rows - 3, 0, cols, ct.social, ind);
+        if (ct.addr) placeText(grid, rows - 2, 0, Math.round(cols * 0.5), ct.addr, ind);
+        if (ct.hours) placeText(grid, rows - 2, Math.round(cols * 0.5), cols - Math.round(cols * 0.5), ct.hours, ind);
+    }
+},
+
+// --- Y: Scatter --- Sparse text scattered across mostly empty field
+'scatter': {
+    name: 'Scatter',
+    build(grid, cols, rows, ct) {
+        var F = S.fillChar;
+        var ind = 4;
+        // A few sparse fill marks scattered randomly
+        var rng = mulberry32(71);
+        for (var i = 0; i < Math.round(cols * rows * 0.015); i++) {
+            var sr = Math.floor(rng() * rows);
+            var sc = Math.floor(rng() * cols);
+            set(grid, sr, sc, F);
+        }
+        // Gallery small top-left
+        placeText(grid, 1, 0, Math.round(cols * 0.35), ct.gallery, ind);
+        // Artist at ~20% height
+        var artistY = Math.round(rows * 0.2);
+        placeText(grid, artistY, 0, cols, ct.artist, ind, true);
+        // Title at ~40% height
+        var titleY = Math.round(rows * 0.4);
+        placeText(grid, titleY, 0, cols, ct.title, ind, true);
+        // Taglines scattered mid-page
+        var ty = Math.round(rows * 0.55);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) {
+            placeText(grid, ty, 0, Math.round(cols * 0.6), ct.tagLines[ti], ind);
+            ty++;
+        }
+        // Logistics clustered bottom-right corner
+        var bx = Math.round(cols * 0.45);
+        var bw = cols - bx;
+        var by = rows - 9;
+        if (ct.vernL) { placeText(grid, by, bx, bw, ct.vernL, 2, false, ct.boldVern); by++; placeText(grid, by, bx, bw, ct.vernD, 2); by += 2; }
+        if (ct.vystL) { placeText(grid, by, bx, bw, ct.vystL, 2, false, ct.boldVyst); by++; placeText(grid, by, bx, bw, ct.vystF, 2); by++; placeText(grid, by, bx, bw, ct.vystT, 2); by += 2; }
+        if (ct.social) placeText(grid, rows - 3, bx, bw, ct.social, 2);
+        if (ct.addr) placeText(grid, rows - 2, bx, bw, ct.addr, 2);
+        if (ct.hours) placeText(grid, rows - 1, bx, bw, ct.hours, 2);
+    }
+},
+
+// --- Z: Frame --- Thick decorative border with text inside, large empty center
+'frame': {
+    name: 'Frame',
+    build(grid, cols, rows, ct) {
+        var F = S.fillChar;
+        var ind = 4;
+        var border = 8;
+        // Top border
+        fillSolid(grid, 0, 0, cols, border, F);
+        // Bottom border
+        fillSolid(grid, rows - border, 0, cols, border, F);
+        // Left border
+        fillSolid(grid, 0, 0, border, rows, F);
+        // Right border
+        fillSolid(grid, 0, cols - border, border, rows, F);
+        // Clear interior
+        fillSolid(grid, border, border, cols - border * 2, rows - border * 2, ' ');
+        // Inner margin
+        var mx = border + 3;
+        var mw = cols - mx * 2 + 3;
+        // Gallery at top of interior
+        placeText(grid, border + 2, mx, mw, ct.gallery, 0);
+        // Artist centered
+        var artistY = border + 5;
+        placeText(grid, artistY, mx, mw, ct.artist, 0, true);
+        // Title below artist
+        placeText(grid, artistY + 2, mx, mw, ct.title, 0, true);
+        // Taglines
+        var ty = artistY + 5;
+        for (var ti = 0; ti < ct.tagLines.length; ti++) {
+            placeText(grid, ty, mx, mw, ct.tagLines[ti], 0);
+            ty++;
+        }
+        // Logistics near bottom of interior
+        var by = rows - border - 10;
+        if (ct.vernL) { placeText(grid, by, mx, mw, ct.vernL, 0, false, ct.boldVern); by++; placeText(grid, by, mx, mw, ct.vernD, 0); by += 2; }
+        if (ct.vystL) { placeText(grid, by, mx, mw, ct.vystL, 0, false, ct.boldVyst); by++; placeText(grid, by, mx, mw, ct.vystF, 0); by++; placeText(grid, by, mx, mw, ct.vystT, 0); by += 2; }
+        if (ct.social) placeText(grid, rows - border - 4, mx, mw, ct.social, 0);
+        if (ct.addr) placeText(grid, rows - border - 3, mx, Math.round(mw * 0.5), ct.addr, 0);
+        if (ct.hours) placeText(grid, rows - border - 3, mx + Math.round(mw * 0.5), mw - Math.round(mw * 0.5), ct.hours, 0);
+    }
+},
+
+// --- AA: Strata --- Horizontal geological layers with density gradient
+'strata': {
+    name: 'Strata',
+    build(grid, cols, rows, ct) {
+        var F = S.fillChar;
+        var ind = 3;
+        // Create horizontal strata lines - denser at top, sparser at bottom
+        var strataPositions = [];
+        var spacing = 2;
+        for (var r = 0; r < rows; r++) {
+            var density = 1 - (r / rows);
+            var threshold = density * density * 0.6;
+            var noise = ((r * 17 + 5) % 11) / 11;
+            if (noise < threshold) {
+                strataPositions.push(r);
+                hline(grid, r, 0, cols, F);
+            }
+        }
+        // Clear zones for text
+        // Gallery top
+        fillSolid(grid, 0, 0, Math.round(cols * 0.4), 2, ' ');
+        placeText(grid, 0, 0, Math.round(cols * 0.4), ct.gallery, ind);
+        // Artist in upper quarter
+        var artistY = Math.round(rows * 0.18);
+        fillSolid(grid, artistY - 1, 0, cols, 3, ' ');
+        placeText(grid, artistY, 0, cols, ct.artist, ind, true);
+        // Title
+        var titleY = Math.round(rows * 0.26);
+        fillSolid(grid, titleY - 1, 0, cols, 3, ' ');
+        placeText(grid, titleY, 0, cols, ct.title, ind, true);
+        // Taglines mid-section
+        var ty = Math.round(rows * 0.38);
+        fillSolid(grid, ty - 1, 0, Math.round(cols * 0.6), ct.tagLines.length + 2, ' ');
+        for (var ti = 0; ti < ct.tagLines.length; ti++) {
+            placeText(grid, ty, 0, Math.round(cols * 0.6), ct.tagLines[ti], ind);
+            ty++;
+        }
+        // Logistics in lower half (sparser strata area)
+        var by = Math.round(rows * 0.65);
+        if (ct.vernL) { fillSolid(grid, by, 0, Math.round(cols * 0.5), 1, ' '); placeText(grid, by, 0, Math.round(cols * 0.5), ct.vernL, ind, false, ct.boldVern); by++; fillSolid(grid, by, 0, Math.round(cols * 0.5), 1, ' '); placeText(grid, by, 0, Math.round(cols * 0.5), ct.vernD, ind); by += 2; }
+        if (ct.vystL) { fillSolid(grid, by, 0, Math.round(cols * 0.5), 1, ' '); placeText(grid, by, 0, Math.round(cols * 0.5), ct.vystL, ind, false, ct.boldVyst); by++; fillSolid(grid, by, 0, Math.round(cols * 0.5), 1, ' '); placeText(grid, by, 0, Math.round(cols * 0.5), ct.vystF, ind); by++; fillSolid(grid, by, 0, Math.round(cols * 0.5), 1, ' '); placeText(grid, by, 0, Math.round(cols * 0.5), ct.vystT, ind); by += 2; }
+        if (ct.social) { fillSolid(grid, rows - 4, 0, cols, 1, ' '); placeText(grid, rows - 4, 0, cols, ct.social, ind); }
+        if (ct.addr) { fillSolid(grid, rows - 2, 0, Math.round(cols * 0.5), 1, ' '); placeText(grid, rows - 2, 0, Math.round(cols * 0.5), ct.addr, ind); }
+        if (ct.hours) { fillSolid(grid, rows - 2, Math.round(cols * 0.5), cols - Math.round(cols * 0.5), 1, ' '); placeText(grid, rows - 2, Math.round(cols * 0.5), cols - Math.round(cols * 0.5), ct.hours, ind); }
+    }
+},
+
+// --- AB: Specimen --- Museum label style, vast empty space with compact bottom label
+'specimen': {
+    name: 'Specimen',
+    build(grid, cols, rows, ct) {
+        var ind = 3;
+        // Gallery tiny top-right
+        placeText(grid, 0, Math.round(cols * 0.6), cols - Math.round(cols * 0.6), ct.gallery, ind);
+        // Everything else in a compact block at the very bottom, centered
+        var labelW = Math.round(cols * 0.6);
+        var labelX = Math.round((cols - labelW) / 2);
+        var by = rows - 14;
+        // Thin line separator above label
+        hline(grid, by - 1, labelX, labelW, S.fillChar);
+        // Artist and title
+        placeText(grid, by, labelX, labelW, ct.artist, 2, true);
+        by += 2;
+        placeText(grid, by, labelX, labelW, ct.title, 2, true);
+        by += 2;
+        // Taglines
+        for (var ti = 0; ti < ct.tagLines.length; ti++) {
+            placeText(grid, by, labelX, labelW, ct.tagLines[ti], 2);
+            by++;
+        }
+        by++;
+        // Logistics compact
+        if (ct.vernL) { placeText(grid, by, labelX, labelW, ct.vernL, 2, false, ct.boldVern); by++; placeText(grid, by, labelX, labelW, ct.vernD, 2); by++; }
+        if (ct.vystL) { placeText(grid, by, labelX, labelW, ct.vystL, 2, false, ct.boldVyst); by++; placeText(grid, by, labelX, labelW, ct.vystF, 2); by++; placeText(grid, by, labelX, labelW, ct.vystT, 2); by++; }
+        if (ct.social) { placeText(grid, by, labelX, labelW, ct.social, 2); by++; }
+        if (ct.addr) placeText(grid, rows - 1, labelX, Math.round(labelW * 0.5), ct.addr, 2);
+        if (ct.hours) placeText(grid, rows - 1, labelX + Math.round(labelW * 0.5), labelW - Math.round(labelW * 0.5), ct.hours, 2);
+    }
+},
+
+// --- AC: Dissolve Edge --- Dense fill at edges, dissolving toward clear center
+'dissolve-edge': {
+    name: 'Dissolve Edge',
+    build(grid, cols, rows, ct) {
+        var F = S.fillChar;
+        var ind = 4;
+        var rng = mulberry32(37);
+        var cx = cols / 2, cy = rows / 2;
+        var maxDist = Math.sqrt(cx * cx + cy * cy);
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                // Distance from center, normalized 0..1
+                var dx = (c - cx) / cx;
+                var dy = (r - cy) / cy;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                // Edge = dist close to 1, center = dist close to 0
+                var edgeness = Math.max(0, Math.min(1, dist));
+                // Probability of fill increases with distance from center
+                var threshold = edgeness * edgeness * 0.9;
+                var noise = rng();
+                if (noise < threshold) {
+                    set(grid, r, c, F);
+                }
+            }
+        }
+        // Clear center zone for text
+        var clearW = Math.round(cols * 0.55);
+        var clearH = Math.round(rows * 0.5);
+        var clearX = Math.round((cols - clearW) / 2);
+        var clearY = Math.round((rows - clearH) / 2);
+        fillSolid(grid, clearY, clearX, clearW, clearH, ' ');
+        // Text in center
+        var ty = clearY + 2;
+        placeText(grid, ty, clearX, clearW, ct.gallery, 2);
+        ty += 3;
+        placeText(grid, ty, clearX, clearW, ct.artist, 2, true);
+        ty += 2;
+        placeText(grid, ty, clearX, clearW, ct.title, 2, true);
+        ty += 3;
+        for (var ti = 0; ti < ct.tagLines.length; ti++) {
+            placeText(grid, ty, clearX, clearW, ct.tagLines[ti], 2);
+            ty++;
+        }
+        ty += 2;
+        if (ct.vernL) { placeText(grid, ty, clearX, clearW, ct.vernL, 2, false, ct.boldVern); ty++; placeText(grid, ty, clearX, clearW, ct.vernD, 2); ty += 2; }
+        if (ct.vystL) { placeText(grid, ty, clearX, clearW, ct.vystL, 2, false, ct.boldVyst); ty++; placeText(grid, ty, clearX, clearW, ct.vystF, 2); ty++; placeText(grid, ty, clearX, clearW, ct.vystT, 2); ty += 2; }
+        if (ct.social) { placeText(grid, ty, clearX, clearW, ct.social, 2); ty++; }
+        if (ct.addr) placeText(grid, ty, clearX, Math.round(clearW * 0.5), ct.addr, 2);
+        if (ct.hours) placeText(grid, ty, clearX + Math.round(clearW * 0.5), clearW - Math.round(clearW * 0.5), ct.hours, 2);
+    }
+},
+
+// --- AD: Monolith --- Tall narrow central column with text on either side
+'monolith': {
+    name: 'Monolith',
+    build(grid, cols, rows, ct) {
+        var F = S.fillChar;
+        var ind = 3;
+        // Central column: ~20% width
+        var colW = Math.round(cols * 0.2);
+        var colX = Math.round((cols - colW) / 2);
+        fillSolid(grid, 0, colX, colW, rows, F);
+        // Left side text
+        var leftW = colX - 2;
+        placeText(grid, 2, 0, leftW, ct.gallery, ind);
+        placeText(grid, 5, 0, leftW, ct.artist, ind, true);
+        placeText(grid, 7, 0, leftW, ct.title, ind, true);
+        // Taglines left side
+        var ty = 10;
+        for (var ti = 0; ti < ct.tagLines.length; ti++) {
+            placeText(grid, ty, 0, leftW, ct.tagLines[ti], ind);
+            ty++;
+        }
+        // Right side text (logistics)
+        var rightX = colX + colW + 2;
+        var rightW = cols - rightX;
+        var ry = 2;
+        if (ct.vernL) { placeText(grid, ry, rightX, rightW, ct.vernL, 0, false, ct.boldVern); ry++; placeText(grid, ry, rightX, rightW, ct.vernD, 0); ry += 2; }
+        if (ct.vystL) { placeText(grid, ry, rightX, rightW, ct.vystL, 0, false, ct.boldVyst); ry++; placeText(grid, ry, rightX, rightW, ct.vystF, 0); ry++; placeText(grid, ry, rightX, rightW, ct.vystT, 0); ry += 2; }
+        if (ct.social) { placeText(grid, rows - 5, rightX, rightW, ct.social, 0); }
+        if (ct.addr) placeText(grid, rows - 3, 0, leftW, ct.addr, ind);
+        if (ct.hours) placeText(grid, rows - 2, 0, leftW, ct.hours, ind);
     }
 },
 
@@ -1992,6 +2812,226 @@ const ANIMS = {
     }
 },
 
+// Erosion: fill/structural chars erode from edges inward
+'erosion': {
+    name: 'Erosion',
+    apply(base, frame, total, cols, rows, intensity) {
+        var out = cloneGrid(base);
+        var t = frame / Math.max(1, total - 1);
+        var erosionDepth = Math.round(t * Math.max(cols, rows) * 0.5 * intensity);
+        // Build distance-from-empty map
+        var dist = [];
+        for (var r = 0; r < rows; r++) {
+            dist[r] = [];
+            for (var c = 0; c < cols; c++) {
+                if (base[r][c] === ' ') dist[r][c] = 0;
+                else dist[r][c] = 9999;
+            }
+        }
+        // Forward pass
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                if (r > 0 && dist[r-1][c] + 1 < dist[r][c]) dist[r][c] = dist[r-1][c] + 1;
+                if (c > 0 && dist[r][c-1] + 1 < dist[r][c]) dist[r][c] = dist[r][c-1] + 1;
+            }
+        }
+        // Backward pass
+        for (var r = rows - 1; r >= 0; r--) {
+            for (var c = cols - 1; c >= 0; c--) {
+                if (r < rows - 1 && dist[r+1][c] + 1 < dist[r][c]) dist[r][c] = dist[r+1][c] + 1;
+                if (c < cols - 1 && dist[r][c+1] + 1 < dist[r][c]) dist[r][c] = dist[r][c+1] + 1;
+            }
+        }
+        // Erode: remove chars closest to empty space first
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var ch = base[r][c];
+                if (ch !== ' ' && (isFill(ch) || isStructural(ch))) {
+                    if (dist[r][c] <= erosionDepth) {
+                        out[r][c] = ' ';
+                    }
+                }
+            }
+        }
+        return out;
+    }
+},
+
+// Pulse: fill areas rhythmically expand and contract
+'pulse': {
+    name: 'Pulse',
+    apply(base, frame, total, cols, rows, intensity) {
+        var out = cloneGrid(base);
+        var t = frame / Math.max(1, total - 1);
+        var pulse = Math.sin(t * Math.PI * 4) * 0.5 + 0.5;
+        var expandRadius = Math.round(pulse * 3 * intensity);
+        var rng = mulberry32(99);
+        // Find edges of fill areas and toggle them
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var ch = base[r][c];
+                if (isFill(ch)) {
+                    // Check if this is an edge cell (adjacent to empty)
+                    var isEdge = false;
+                    for (var dr = -1; dr <= 1; dr++) {
+                        for (var dc = -1; dc <= 1; dc++) {
+                            if (dr === 0 && dc === 0) continue;
+                            var nr = r + dr, nc = c + dc;
+                            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && base[nr][nc] === ' ') {
+                                isEdge = true;
+                            }
+                        }
+                    }
+                    if (isEdge && pulse < 0.4) {
+                        out[r][c] = rng() < (0.4 - pulse) * intensity ? ' ' : ch;
+                    }
+                } else if (ch === ' ' && pulse > 0.6) {
+                    // Expand: check if adjacent to fill
+                    var adjFill = false;
+                    for (var dr = -1; dr <= 1; dr++) {
+                        for (var dc = -1; dc <= 1; dc++) {
+                            if (dr === 0 && dc === 0) continue;
+                            var nr = r + dr, nc = c + dc;
+                            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && isFill(base[nr][nc])) {
+                                adjFill = true;
+                            }
+                        }
+                    }
+                    if (adjFill && rng() < (pulse - 0.6) * intensity) {
+                        out[r][c] = S.fillChar || '\u2591';
+                    }
+                }
+            }
+        }
+        return out;
+    }
+},
+
+// Cascade: diagonal wave reveals content from top-left to bottom-right
+'cascade': {
+    name: 'Cascade',
+    apply(base, frame, total, cols, rows, intensity) {
+        var out = createGrid(cols, rows);
+        var t = frame / Math.max(1, total - 1);
+        // Diagonal front position: 0 to (cols + rows)
+        var maxDiag = cols + rows;
+        var frontPos = t * (maxDiag + 20);
+        var waveWidth = 5 + Math.round(intensity * 10);
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var diag = r + c;
+                if (diag < frontPos - waveWidth) {
+                    // Fully revealed
+                    out[r][c] = base[r][c];
+                } else if (diag < frontPos) {
+                    // In the wave front: show with possible distortion
+                    var waveFrac = (frontPos - diag) / waveWidth;
+                    if (base[r][c] !== ' ') {
+                        out[r][c] = waveFrac > 0.5 ? base[r][c] : '\u2591';
+                    }
+                }
+                // Beyond front: empty (not yet revealed)
+            }
+        }
+        return out;
+    }
+},
+
+// Flicker: random characters briefly flash to different block chars
+'flicker': {
+    name: 'Flicker',
+    apply(base, frame, total, cols, rows, intensity) {
+        var out = cloneGrid(base);
+        var flickerSeed = frame * 13 + 7;
+        var rng = mulberry32(flickerSeed);
+        var flickerRate = 0.02 + intensity * 0.06;
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var ch = base[r][c];
+                if (ch !== ' ' && rng() < flickerRate) {
+                    if (isFill(ch)) {
+                        // Swap to a different fill char
+                        var idx = FILL_CHARS.indexOf(ch);
+                        var newIdx = (idx + 1 + Math.floor(rng() * 3)) % 4;
+                        out[r][c] = FILL_CHARS[newIdx];
+                    } else if (!isWall(ch)) {
+                        // Text: occasionally show a block char then revert
+                        if (rng() < 0.3) out[r][c] = FILL_CHARS[Math.floor(rng() * 4)];
+                    }
+                }
+            }
+        }
+        return out;
+    }
+},
+
+// Gravity: non-structural characters fall downward, accumulating at bottom
+'gravity': {
+    name: 'Gravity',
+    apply(base, frame, total, cols, rows, intensity) {
+        var out = createGrid(cols, rows);
+        var t = frame / Math.max(1, total - 1);
+        var fallAmount = Math.round(t * rows * intensity);
+        // Process each column independently
+        for (var c = 0; c < cols; c++) {
+            var falling = [];
+            var anchored = [];
+            for (var r = 0; r < rows; r++) {
+                var ch = base[r][c];
+                if (ch === ' ') continue;
+                if (isWall(ch)) {
+                    anchored.push({ r: r, ch: ch });
+                } else {
+                    falling.push({ r: r, ch: ch });
+                }
+            }
+            // Place anchored chars in original positions
+            for (var i = 0; i < anchored.length; i++) {
+                set(out, anchored[i].r, c, anchored[i].ch);
+            }
+            // Drop falling chars
+            for (var i = 0; i < falling.length; i++) {
+                var newR = falling[i].r + fallAmount;
+                if (newR >= rows) newR = rows - 1 - (falling.length - 1 - i);
+                if (newR < 0) newR = 0;
+                set(out, newR, c, falling[i].ch);
+            }
+        }
+        return out;
+    }
+},
+
+// Invert: filled and empty spaces swap, progressing top to bottom
+'invert': {
+    name: 'Invert',
+    apply(base, frame, total, cols, rows, intensity) {
+        var out = cloneGrid(base);
+        var t = frame / Math.max(1, total - 1);
+        var frontRow = Math.round(t * (rows + 10)) - 5;
+        var transitionH = 5 + Math.round(intensity * 8);
+        for (var r = 0; r < rows; r++) {
+            var progress;
+            if (r < frontRow - transitionH) progress = 1;
+            else if (r > frontRow) progress = 0;
+            else progress = (frontRow - r) / transitionH;
+            progress = Math.max(0, Math.min(1, progress));
+            for (var c = 0; c < cols; c++) {
+                var ch = base[r][c];
+                if (progress > 0.5) {
+                    // Inverted zone
+                    if (isFill(ch)) {
+                        out[r][c] = ' ';
+                    } else if (ch === ' ') {
+                        out[r][c] = S.fillChar || '\u2591';
+                    }
+                    // Text and walls stay
+                }
+            }
+        }
+        return out;
+    }
+},
+
 }; // end ANIMS
 
 // === RENDERER =========================================================
@@ -2215,7 +3255,7 @@ function drawImageLayer(targetCtx, logicalW, logicalH, marginPx) {
     targetCtx.globalAlpha = prevAlpha;
 }
 
-function renderToContext(targetCtx, grid, cols, rows, fontSize, leading, headingsArr) {
+function renderToContext(targetCtx, grid, cols, rows, fontSize, leading, headingsArr, boldsArr) {
     var font = getFont();
     targetCtx.font = fontSize + 'px ' + font;
     var charW = targetCtx.measureText('M').width;
@@ -2232,9 +3272,11 @@ function renderToContext(targetCtx, grid, cols, rows, fontSize, leading, heading
     targetCtx.fillStyle = S.bgColor;
     targetCtx.fillRect(0, 0, logicalW, logicalH);
 
-    // Layer 2: Image (between background and text, normal compositing)
-    targetCtx.globalCompositeOperation = 'source-over';
-    drawImageLayer(targetCtx, logicalW, logicalH, marginPx);
+    // Layer 2: Image (between background and text, unless imageOnTop)
+    if (!S.imageOnTop) {
+        targetCtx.globalCompositeOperation = 'source-over';
+        drawImageLayer(targetCtx, logicalW, logicalH, marginPx);
+    }
 
     // Layer 3: Foreground (Type) with blend mode, offset by margin
     targetCtx.globalCompositeOperation = S.blendMode;
@@ -2255,27 +3297,70 @@ function renderToContext(targetCtx, grid, cols, rows, fontSize, leading, heading
     }
 
     // Heading overlay at scaled size with optional different font weight
+    // Vertically center enlarged heading text within its grid row
     if (S.headingScale > 1 && headingsArr && headingsArr.length) {
         var hFontSize = fontSize * S.headingScale;
         var hFontStr = getHeadingFont().replace('{SIZE}', hFontSize);
         targetCtx.font = hFontStr;
         var isProportional = S.headingFont.indexOf('display-') === 0;
         var hCharW = targetCtx.measureText('M').width;
+        // Offset: move heading up so it's vertically centered on its grid row
+        var hYOffset = -(hFontSize - fontSize) * 0.5;
 
         for (var hi = 0; hi < headingsArr.length; hi++) {
             var h = headingsArr[hi];
             var startX = ox + h.c * charW;
-            var startY = oy + h.r * charH + yOff;
+            var startY = oy + h.r * charH + yOff + hYOffset;
+            // Optional background rectangle behind heading
+            if (S.headingBg) {
+                targetCtx.save();
+                targetCtx.globalCompositeOperation = 'source-over';
+                targetCtx.fillStyle = S.bgColor;
+                var textW = isProportional ? targetCtx.measureText(h.text).width : h.text.length * hCharW;
+                var bgPadX = charW * 0.5;
+                var bgPadTop, bgPadBot;
+                if (S.headingScale >= 3) {
+                    // 3x: artist (first heading) gets generous top, title stays tight
+                    bgPadTop = hi === 0 ? hFontSize * 0.15 : hFontSize * 0.05;
+                    bgPadBot = hFontSize * -0.15;
+                } else {
+                    // 1.5x, 2x: moderate top, same tight bottom
+                    bgPadTop = hFontSize * 0.1;
+                    bgPadBot = hFontSize * -0.15;
+                }
+                targetCtx.fillRect(startX - bgPadX, startY - bgPadTop, textW + bgPadX * 2, hFontSize + bgPadTop + bgPadBot);
+                targetCtx.restore();
+                targetCtx.globalCompositeOperation = S.blendMode;
+                targetCtx.fillStyle = S.fgColor;
+                targetCtx.font = hFontStr;
+            }
             if (isProportional) {
-                // Proportional font: render whole string at once for proper kerning
                 targetCtx.fillText(h.text, startX, startY);
             } else {
-                // Monospace: render char by char at grid positions
                 for (var i = 0; i < h.text.length; i++) {
                     targetCtx.fillText(h.text[i], startX + i * hCharW, startY);
                 }
             }
         }
+    }
+
+    // Bold text overlay: same size, bold weight
+    if (boldsArr && boldsArr.length) {
+        targetCtx.font = 'bold ' + fontSize + 'px ' + font;
+        for (var bi = 0; bi < boldsArr.length; bi++) {
+            var b = boldsArr[bi];
+            var bx = ox + b.c * charW;
+            var by = oy + b.r * charH + yOff;
+            for (var i = 0; i < b.text.length; i++) {
+                targetCtx.fillText(b.text[i], bx + i * charW, by);
+            }
+        }
+    }
+
+    // Layer 4: Image on top (optional)
+    if (S.imageOnTop) {
+        targetCtx.globalCompositeOperation = S.blendMode;
+        drawImageLayer(targetCtx, logicalW, logicalH, marginPx);
     }
 
     targetCtx.globalCompositeOperation = 'source-over';
@@ -2290,16 +3375,18 @@ function buildBaseGrid() {
     currentRows = rows;
 
     headings = [];
+    boldTexts = [];
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
-    if (preset) preset.build(grid, cols, rows, S.content);
+    if (preset) preset.build(grid, cols, rows, getActiveContent());
     baseGrid = grid;
-    return { grid: grid, headings: headings.slice() };
+    return { grid: grid, headings: headings.slice(), bolds: boldTexts.slice() };
 }
 
 function render(frameOverride) {
     var baseResult = buildBaseGrid();
     var savedHeadings = baseResult.headings;
+    var savedBolds = baseResult.bolds;
 
     var cols = currentCols;
     var rows = currentRows;
@@ -2342,7 +3429,7 @@ function render(frameOverride) {
 
     // Render at DPR scale
     ctx.scale(dpr, dpr);
-    var dims = renderToContext(ctx, grid, cols, rows, fontSize, leading, savedHeadings);
+    var dims = renderToContext(ctx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds);
 
     // Update status
     document.getElementById('statusDims').textContent = cols + ' x ' + rows;
@@ -2435,10 +3522,12 @@ function exportPNG() {
     var rows = currentRows;
 
     headings = [];
+    boldTexts = [];
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
-    if (preset) preset.build(grid, cols, rows, S.content);
+    if (preset) preset.build(grid, cols, rows, getActiveContent());
     var savedHeadings = headings.slice();
+    var savedBolds = boldTexts.slice();
 
     // Apply animation
     var animFn = ANIMS[S.anim.effect];
@@ -2457,7 +3546,7 @@ function exportPNG() {
     tmpCanvas.width = Math.ceil(cols * charW) + marginPx * 2;
     tmpCanvas.height = rows * leading + marginPx * 2;
 
-    renderToContext(tmpCtx, grid, cols, rows, fontSize, leading, savedHeadings);
+    renderToContext(tmpCtx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds);
 
     tmpCanvas.toBlob(function(blob) {
         var url = URL.createObjectURL(blob);
@@ -2488,10 +3577,12 @@ function renderExportFrame(frameNum) {
     var rows = currentRows;
 
     headings = [];
+    boldTexts = [];
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
-    if (preset) preset.build(grid, cols, rows, S.content);
+    if (preset) preset.build(grid, cols, rows, getActiveContent());
     var savedHeadings = headings.slice();
+    var savedBolds = boldTexts.slice();
 
     var animFn = ANIMS[S.anim.effect];
     if (animFn && S.anim.effect !== 'none') {
@@ -2509,7 +3600,7 @@ function renderExportFrame(frameNum) {
     tmpCanvas.width = Math.ceil(cols * charW) + marginPx * 2;
     tmpCanvas.height = rows * leading + marginPx * 2;
 
-    renderToContext(tmpCtx, grid, cols, rows, fontSize, leading, savedHeadings);
+    renderToContext(tmpCtx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds);
     return tmpCanvas;
 }
 
@@ -2583,6 +3674,338 @@ async function exportWebM() {
     showProgress(-1);
 }
 
+// -- Minimal MP4/MOV Muxer (H.264 / AVC in ISO BMFF) ---------------
+
+function mp4Box(type) {
+    var payloads = [];
+    var contentSize = 0;
+    for (var i = 1; i < arguments.length; i++) {
+        payloads.push(arguments[i]);
+        contentSize += arguments[i].byteLength;
+    }
+    var buf = new Uint8Array(8 + contentSize);
+    var view = new DataView(buf.buffer);
+    view.setUint32(0, 8 + contentSize);
+    buf[4] = type.charCodeAt(0);
+    buf[5] = type.charCodeAt(1);
+    buf[6] = type.charCodeAt(2);
+    buf[7] = type.charCodeAt(3);
+    var off = 8;
+    for (var i = 0; i < payloads.length; i++) {
+        buf.set(payloads[i], off);
+        off += payloads[i].byteLength;
+    }
+    return buf;
+}
+
+function mp4U32(v) { var b = new Uint8Array(4); new DataView(b.buffer).setUint32(0, v); return b; }
+function mp4U16(v) { var b = new Uint8Array(2); new DataView(b.buffer).setUint16(0, v); return b; }
+function mp4S4(s) { return new Uint8Array([s.charCodeAt(0), s.charCodeAt(1), s.charCodeAt(2), s.charCodeAt(3)]); }
+function mp4Zeros(n) { return new Uint8Array(n); }
+function mp4Cat() {
+    var total = 0;
+    for (var i = 0; i < arguments.length; i++) total += arguments[i].byteLength;
+    var r = new Uint8Array(total);
+    var o = 0;
+    for (var i = 0; i < arguments.length; i++) { r.set(arguments[i], o); o += arguments[i].byteLength; }
+    return r;
+}
+
+function muxToMP4(encodedSamples, avcCData, width, height, fps, isMov) {
+    var totalSamples = encodedSamples.length;
+    var timescale = fps;
+    var sampleDuration = 1;
+    var trackDuration = totalSamples;
+    var movieTimescale = 1000;
+    var movieDuration = Math.round(totalSamples * movieTimescale / fps);
+
+    var mdatContentSize = 0;
+    var sampleSizes = [];
+    var keyFrames = [];
+    for (var i = 0; i < totalSamples; i++) {
+        var sz = encodedSamples[i].data.byteLength;
+        sampleSizes.push(sz);
+        mdatContentSize += sz;
+        if (encodedSamples[i].isKey) keyFrames.push(i + 1);
+    }
+
+    // ftyp
+    var ftyp;
+    if (isMov) {
+        ftyp = mp4Box('ftyp', mp4S4('qt  '), mp4U32(0x20070900), mp4S4('qt  '));
+    } else {
+        ftyp = mp4Box('ftyp', mp4S4('isom'), mp4U32(0x200), mp4S4('isom'), mp4S4('iso2'), mp4S4('avc1'), mp4S4('mp41'));
+    }
+
+    var mdatHeaderSize = 8;
+    var chunkOffset = ftyp.byteLength + mdatHeaderSize;
+
+    // mvhd
+    var mvhdData = mp4Cat(
+        mp4Zeros(4),
+        mp4U32(0), mp4U32(0),
+        mp4U32(movieTimescale), mp4U32(movieDuration),
+        mp4U32(0x00010000), mp4U16(0x0100),
+        mp4Zeros(10),
+        mp4U32(0x00010000), mp4Zeros(4), mp4Zeros(4),
+        mp4Zeros(4), mp4U32(0x00010000), mp4Zeros(4),
+        mp4Zeros(4), mp4Zeros(4), mp4U32(0x40000000),
+        mp4Zeros(24),
+        mp4U32(2)
+    );
+    var mvhd = mp4Box('mvhd', mvhdData);
+
+    // tkhd
+    var tkhdData = mp4Cat(
+        new Uint8Array([0, 0, 0, 3]),
+        mp4U32(0), mp4U32(0),
+        mp4U32(1),
+        mp4Zeros(4),
+        mp4U32(movieDuration),
+        mp4Zeros(8),
+        mp4U16(0), mp4U16(0),
+        mp4U16(0), mp4Zeros(2),
+        mp4U32(0x00010000), mp4Zeros(4), mp4Zeros(4),
+        mp4Zeros(4), mp4U32(0x00010000), mp4Zeros(4),
+        mp4Zeros(4), mp4Zeros(4), mp4U32(0x40000000),
+        mp4U32(width << 16),
+        mp4U32(height << 16)
+    );
+    var tkhd = mp4Box('tkhd', tkhdData);
+
+    // mdhd
+    var mdhdData = mp4Cat(
+        mp4Zeros(4),
+        mp4U32(0), mp4U32(0),
+        mp4U32(timescale), mp4U32(trackDuration),
+        mp4U16(0x55C4),
+        mp4Zeros(2)
+    );
+    var mdhd = mp4Box('mdhd', mdhdData);
+
+    // hdlr
+    var handlerName = new TextEncoder().encode('VideoHandler\0');
+    var hdlrData = mp4Cat(
+        mp4Zeros(4),
+        mp4Zeros(4),
+        mp4S4('vide'),
+        mp4Zeros(12),
+        handlerName
+    );
+    var hdlr = mp4Box('hdlr', hdlrData);
+
+    // vmhd
+    var vmhd = mp4Box('vmhd', mp4Cat(
+        new Uint8Array([0, 0, 0, 1]),
+        mp4U16(0), mp4Zeros(6)
+    ));
+
+    // dinf > dref > url
+    var urlBox = mp4Box('url ', new Uint8Array([0, 0, 0, 1]));
+    var dref = mp4Box('dref', mp4Cat(mp4Zeros(4), mp4U32(1)), urlBox);
+    var dinf = mp4Box('dinf', dref);
+
+    // stsd > avc1 > avcC
+    var avcC = mp4Box('avcC', avcCData);
+    var compressorName = new Uint8Array(32);
+    var avc1Content = mp4Cat(
+        mp4Zeros(6),
+        mp4U16(1),
+        mp4U16(0), mp4U16(0),
+        mp4Zeros(12),
+        mp4U16(width), mp4U16(height),
+        mp4U32(0x00480000), mp4U32(0x00480000),
+        mp4Zeros(4),
+        mp4U16(1),
+        compressorName,
+        mp4U16(0x0018),
+        new Uint8Array([0xFF, 0xFF])
+    );
+    var avc1 = mp4Box('avc1', avc1Content, avcC);
+    var stsd = mp4Box('stsd', mp4Cat(mp4Zeros(4), mp4U32(1)), avc1);
+
+    // stts
+    var stts = mp4Box('stts', mp4Cat(
+        mp4Zeros(4), mp4U32(1),
+        mp4U32(totalSamples), mp4U32(sampleDuration)
+    ));
+
+    // stsc
+    var stsc = mp4Box('stsc', mp4Cat(
+        mp4Zeros(4), mp4U32(1),
+        mp4U32(1), mp4U32(totalSamples), mp4U32(1)
+    ));
+
+    // stsz
+    var stszBuf = new Uint8Array(12 + totalSamples * 4);
+    var stszV = new DataView(stszBuf.buffer);
+    stszV.setUint32(4, 0);
+    stszV.setUint32(8, totalSamples);
+    for (var i = 0; i < totalSamples; i++) stszV.setUint32(12 + i * 4, sampleSizes[i]);
+    var stsz = mp4Box('stsz', stszBuf);
+
+    // stco
+    var stco = mp4Box('stco', mp4Cat(
+        mp4Zeros(4), mp4U32(1), mp4U32(chunkOffset)
+    ));
+
+    // stss (sync samples / keyframes)
+    var stssBuf = new Uint8Array(8 + keyFrames.length * 4);
+    var stssV = new DataView(stssBuf.buffer);
+    stssV.setUint32(4, keyFrames.length);
+    for (var i = 0; i < keyFrames.length; i++) stssV.setUint32(8 + i * 4, keyFrames[i]);
+    var stss = mp4Box('stss', stssBuf);
+
+    // Assemble
+    var stbl = mp4Box('stbl', stsd, stts, stsc, stsz, stco, stss);
+    var minf = mp4Box('minf', vmhd, dinf, stbl);
+    var mdia = mp4Box('mdia', mdhd, hdlr, minf);
+    var trak = mp4Box('trak', tkhd, mdia);
+    var moov = mp4Box('moov', mvhd, trak);
+
+    // mdat header
+    var mdatHeader = new Uint8Array(8);
+    var mhv = new DataView(mdatHeader.buffer);
+    mhv.setUint32(0, mdatHeaderSize + mdatContentSize);
+    mdatHeader[4] = 0x6D; mdatHeader[5] = 0x64; mdatHeader[6] = 0x61; mdatHeader[7] = 0x74;
+
+    // mdat content
+    var mdatContent = new Uint8Array(mdatContentSize);
+    var mOff = 0;
+    for (var i = 0; i < totalSamples; i++) {
+        mdatContent.set(encodedSamples[i].data, mOff);
+        mOff += encodedSamples[i].data.byteLength;
+    }
+
+    // Final file: ftyp + mdat + moov
+    return mp4Cat(ftyp, mdatHeader, mdatContent, moov);
+}
+
+// -- WebCodecs-based Video Export (H.264 MP4/MOV) -----------
+
+async function exportVideoH264(format) {
+    if (typeof VideoEncoder === 'undefined' || typeof VideoFrame === 'undefined') {
+        alert('Your browser does not support WebCodecs API (required for ' + format.toUpperCase() + ').\n'
+            + 'Please use Chrome/Edge 94+ or Safari 16.4+.\n'
+            + 'Use WebM or PNG sequence as fallback.');
+        return;
+    }
+
+    var total = totalFrames();
+    var fps = S.anim.fps;
+    var formatLabel = format.toUpperCase();
+    var btnId = format === 'mov' ? 'exportMov' : 'exportMp4';
+    var btn = document.getElementById(btnId);
+    btn.textContent = 'Encoding...';
+    showProgress(0);
+
+    var firstCanvas = renderExportFrame(0);
+    var w = firstCanvas.width;
+    var h = firstCanvas.height;
+    // H.264 requires even dimensions
+    if (w % 2 !== 0) w++;
+    if (h % 2 !== 0) h++;
+
+    var encodedSamples = [];
+    var avcCData = null;
+    var encodeError = null;
+
+    var encoder = new VideoEncoder({
+        output: function(chunk, metadata) {
+            var data = new Uint8Array(chunk.byteLength);
+            chunk.copyTo(data);
+            encodedSamples.push({ data: data, isKey: chunk.type === 'key' });
+            if (!avcCData && metadata && metadata.decoderConfig && metadata.decoderConfig.description) {
+                avcCData = new Uint8Array(metadata.decoderConfig.description);
+            }
+        },
+        error: function(e) {
+            console.error('VideoEncoder error:', e);
+            encodeError = e;
+        }
+    });
+
+    // Choose codec profile based on resolution
+    var codecString = 'avc1.42001f'; // Baseline Level 3.1
+    if (w > 1280 || h > 720) codecString = 'avc1.640028'; // High Level 4.0
+    if (w > 1920 || h > 1080) codecString = 'avc1.640032'; // High Level 5.0
+
+    try {
+        encoder.configure({
+            codec: codecString,
+            width: w,
+            height: h,
+            bitrate: 8000000,
+            framerate: fps,
+            avc: { format: 'avc' }  // NAL units with length prefix (MP4-compatible)
+        });
+    } catch (e) {
+        btn.textContent = formatLabel + ' Video';
+        showProgress(-1);
+        alert('Failed to configure H.264 encoder: ' + e.message + '\nTry WebM or PNG sequence export.');
+        return;
+    }
+
+    var gopSize = Math.max(1, Math.round(fps)); // Keyframe every ~1 second
+
+    for (var f = 0; f < total; f++) {
+        if (encodeError) break;
+
+        var frameCanvas = renderExportFrame(f);
+        // Pad to even dimensions
+        var padCanvas = document.createElement('canvas');
+        padCanvas.width = w; padCanvas.height = h;
+        var padCtx = padCanvas.getContext('2d');
+        padCtx.fillStyle = S.bgColor;
+        padCtx.fillRect(0, 0, w, h);
+        padCtx.drawImage(frameCanvas, 0, 0);
+
+        var vf = new VideoFrame(padCanvas, {
+            timestamp: Math.round(f * (1000000 / fps)),
+            duration: Math.round(1000000 / fps)
+        });
+
+        encoder.encode(vf, { keyFrame: (f % gopSize === 0) });
+        vf.close();
+
+        showProgress(Math.round((f / total) * 70));
+        if (f % 4 === 0) await new Promise(function(r) { requestAnimationFrame(r); });
+    }
+
+    await encoder.flush();
+    encoder.close();
+
+    if (encodeError || !avcCData || encodedSamples.length === 0) {
+        btn.textContent = formatLabel + ' Video';
+        showProgress(-1);
+        alert('Failed to encode video. Try WebM or PNG sequence export.');
+        return;
+    }
+
+    showProgress(85);
+    await new Promise(function(r) { setTimeout(r, 50); });
+
+    var isMov = format === 'mov';
+    var fileData = muxToMP4(encodedSamples, avcCData, w, h, fps, isMov);
+
+    var blobType = isMov ? 'video/quicktime' : 'video/mp4';
+    var blob = new Blob([fileData], { type: blobType });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'poster_' + S.preset + '_' + S.anim.effect + '_' + total + 'f.' + format;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    btn.textContent = formatLabel + ' Video';
+    showProgress(-1);
+}
+
+function exportMP4() { return exportVideoH264('mp4'); }
+function exportMOV() { return exportVideoH264('mov'); }
+
 async function exportSequence(format) {
     var total = totalFrames();
     var btn = format === 'png' ? document.getElementById('exportPngSeq') : document.getElementById('exportJpgSeq');
@@ -2636,13 +4059,18 @@ function updateFrameScrub() {
 }
 
 function bindControls() {
-    // Aspect ratio presets
+    // Aspect ratio presets — auto-adjust columns to keep content visible
     document.querySelectorAll('.aspect-preset').forEach(function(btn) {
         btn.addEventListener('click', function() {
             document.querySelectorAll('.aspect-preset').forEach(function(b) { b.classList.remove('active'); });
             btn.classList.add('active');
             var parts = btn.dataset.ratio.split(':').map(Number);
             S.aspectRatio = parts;
+            var newCols = autoColumns(parts);
+            S.cols = newCols;
+            var slider = document.getElementById('cols');
+            slider.value = newCols;
+            document.getElementById('colsVal').textContent = newCols;
             scheduleRender();
         });
     });
@@ -2670,6 +4098,18 @@ function bindControls() {
     // Heading font
     document.getElementById('headingFont').addEventListener('change', function(e) {
         S.headingFont = e.target.value;
+        scheduleRender();
+    });
+
+    // Heading background
+    document.getElementById('headingBg').addEventListener('change', function(e) {
+        S.headingBg = e.target.checked;
+        scheduleRender();
+    });
+
+    // Image on top
+    document.getElementById('imageOnTop').addEventListener('change', function(e) {
+        S.imageOnTop = e.target.checked;
         scheduleRender();
     });
 
@@ -2800,23 +4240,50 @@ function bindControls() {
 
     // Content fields
     var contentFields = {
-        cGallery: 'gallery', cArtist: 'artist', cTitle: 'title', cTagline: 'tagline',
-        cDate: 'date', cTime: 'time', cLocation: 'location', cAdmission: 'admission',
-        cUrl: 'url', cTags: 'tags', cExtra: 'extra',
+        cGallery: 'gallery', cArtist: 'artist', cTitle: 'title',
+        cVernL: 'vernL', cVernD: 'vernD',
+        cVystL: 'vystL', cVystF: 'vystF', cVystT: 'vystT',
+        cSocial: 'social', cAddr: 'addr', cHours: 'hours',
     };
     for (var id in contentFields) {
         (function(fieldId, key) {
             var el = document.getElementById(fieldId);
-            el.addEventListener('input', function() { S.content[key] = el.value; scheduleRender(); });
+            if (el) el.addEventListener('input', function() { S.content[key] = el.value; scheduleRender(); });
         })(id, contentFields[id]);
     }
-
-    // Extended fields toggle
-    document.getElementById('showExtended').addEventListener('change', function(e) {
-        S.content.showExtended = e.target.checked;
-        document.getElementById('extendedFields').classList.toggle('hidden', !e.target.checked);
+    // Tagline textarea
+    document.getElementById('cTagline').addEventListener('input', function(e) {
+        S.content.tagline = e.target.value;
         scheduleRender();
     });
+    // Bold toggles
+    document.getElementById('boldVernisaz').addEventListener('change', function(e) {
+        S.content.boldVernisaz = e.target.checked; scheduleRender();
+    });
+    document.getElementById('boldVystava').addEventListener('change', function(e) {
+        S.content.boldVystava = e.target.checked; scheduleRender();
+    });
+
+    // Optional field toggles
+    var toggleFields = {
+        showTagline: { key: 'showTagline', container: 'taglineFields' },
+        showVernisaz: { key: 'showVernisaz', container: 'vernisazFields' },
+        showVystava: { key: 'showVystava', container: 'vystavaFields' },
+        showSocial: { key: 'showSocial', container: 'socialFields' },
+        showAddr: { key: 'showAddr', container: 'addrFields' },
+        showHours: { key: 'showHours', container: 'hoursFields' },
+    };
+    for (var tid in toggleFields) {
+        (function(toggleId, cfg) {
+            var el = document.getElementById(toggleId);
+            if (el) el.addEventListener('change', function(e) {
+                S.content[cfg.key] = e.target.checked;
+                var container = document.getElementById(cfg.container);
+                if (container) container.style.display = e.target.checked ? '' : 'none';
+                scheduleRender();
+            });
+        })(tid, toggleFields[tid]);
+    }
 
     // Animation controls
     document.getElementById('btnPlay').addEventListener('click', togglePlay);
@@ -2863,6 +4330,8 @@ function bindControls() {
     document.getElementById('exportPng').addEventListener('click', exportPNG);
     document.getElementById('exportTxt').addEventListener('click', copyText);
     document.getElementById('exportWebm').addEventListener('click', exportWebM);
+    document.getElementById('exportMp4').addEventListener('click', exportMP4);
+    document.getElementById('exportMov').addEventListener('click', exportMOV);
     document.getElementById('exportPngSeq').addEventListener('click', function() { exportSequence('png'); });
     document.getElementById('exportJpgSeq').addEventListener('click', function() { exportSequence('jpg'); });
 
@@ -2879,9 +4348,153 @@ function bindControls() {
     });
 }
 
+// === RESET & SHUFFLE ==================================================
+
+function resetAll() {
+    S.cols = 80;
+    S.aspectRatio = [3, 4];
+    S.fontSize = 20;
+    S.leading = 24;
+    S.preset = 'floor-plan';
+    S.bgColor = '#000000';
+    S.fgColor = '#ffffff';
+    S.blendMode = 'difference';
+    S.fillChar = '\u2592';
+    S.wallStyle = 'single';
+    S.headingScale = 1;
+    S.headingFont = 'display-semibold';
+    S.headingBg = false;
+    S.imageOnTop = false;
+    S.margin = 10;
+    S.exportScale = 2;
+    S.anim.effect = 'none';
+    S.anim.playing = false;
+    S.anim.frame = 0;
+    S.anim.duration = 4.0;
+    S.anim.fps = 30;
+    S.anim.loop = true;
+    S.anim.intensity = 0.5;
+    // Reset content to defaults
+    S.content.gallery = 'PRO_STORY';
+    S.content.artist = 'JM\u00c9NO P\u0158\u00cdJMEN\u00cd';
+    S.content.title = 'N\u00c1ZEV V\u00ddSTAVY';
+    S.content.tagline = 'Spolupr\u00e1ce obor\u016f SUP\u0160 UH,\nMultim\u00e9dia, Obuv, Design';
+    S.content.showTagline = true;
+    S.content.vernL = 'VERNIS\u00c1\u017d';
+    S.content.vernD = '10_05_2026 | 16_00';
+    S.content.showVernisaz = true;
+    S.content.boldVernisaz = false;
+    S.content.vystL = 'V\u00ddSTAVA';
+    S.content.vystF = 'OD 10_05_2026';
+    S.content.vystT = 'DO 10_07_2026';
+    S.content.showVystava = true;
+    S.content.boldVystava = false;
+    S.content.social = '@PRO_STORY_UH | PROSTORY.GALLERY';
+    S.content.showSocial = true;
+    S.content.addr = 'V\u0161ehrdova 267, Uhersk\u00e9 Hradi\u0161t\u011b';
+    S.content.showAddr = true;
+    S.content.hours = 'Otev\u0159eno ka\u017edou st\u0159edu od 12\u201317';
+    S.content.showHours = true;
+    // Sync content inputs
+    document.getElementById('cGallery').value = S.content.gallery;
+    document.getElementById('cArtist').value = S.content.artist;
+    document.getElementById('cTitle').value = S.content.title;
+    document.getElementById('cTagline').value = S.content.tagline;
+    document.getElementById('showTagline').checked = S.content.showTagline;
+    document.getElementById('cVernL').value = S.content.vernL;
+    document.getElementById('cVernD').value = S.content.vernD;
+    document.getElementById('showVernisaz').checked = S.content.showVernisaz;
+    document.getElementById('boldVernisaz').checked = S.content.boldVernisaz;
+    document.getElementById('cVystL').value = S.content.vystL;
+    document.getElementById('cVystF').value = S.content.vystF;
+    document.getElementById('cVystT').value = S.content.vystT;
+    document.getElementById('showVystava').checked = S.content.showVystava;
+    document.getElementById('boldVystava').checked = S.content.boldVystava;
+    document.getElementById('cSocial').value = S.content.social;
+    document.getElementById('showSocial').checked = S.content.showSocial;
+    document.getElementById('cAddr').value = S.content.addr;
+    document.getElementById('showAddr').checked = S.content.showAddr;
+    document.getElementById('cHours').value = S.content.hours;
+    document.getElementById('showHours').checked = S.content.showHours;
+    stopAnimation();
+    syncUI();
+    updateFrameScrub();
+    render();
+}
+
+function shufflePreset() {
+    var presetKeys = Object.keys(PRESETS);
+    var animKeys = Object.keys(ANIMS);
+    S.preset = presetKeys[Math.floor(Math.random() * presetKeys.length)];
+    S.anim.effect = animKeys[Math.floor(Math.random() * animKeys.length)];
+    S.anim.frame = 0;
+    syncUI();
+    updateFrameScrub();
+    render();
+    // Auto-play
+    if (S.anim.effect !== 'none') {
+        S.anim.playing = true;
+        animStartTime = performance.now();
+        document.getElementById('btnPlay').textContent = '\u23F8';
+        animFrameId = requestAnimationFrame(animationLoop);
+    }
+}
+
+function syncUI() {
+    // Sync all UI controls to current S state
+    document.getElementById('cols').value = S.cols;
+    document.getElementById('colsVal').textContent = S.cols;
+    document.getElementById('fontSize').value = S.fontSize;
+    document.getElementById('fontSizeVal').textContent = S.fontSize;
+    document.getElementById('margin').value = S.margin;
+    document.getElementById('marginVal').textContent = S.margin;
+    document.getElementById('bgColor').value = S.bgColor;
+    document.getElementById('fgColor').value = S.fgColor;
+    document.getElementById('blendMode').value = S.blendMode;
+    document.getElementById('fillChar').value = S.fillChar;
+    document.getElementById('wallStyle').value = S.wallStyle;
+    document.getElementById('headingFont').value = S.headingFont;
+    document.getElementById('headingBg').checked = S.headingBg;
+    document.getElementById('imageOnTop').checked = S.imageOnTop;
+    document.getElementById('intensity').value = S.anim.intensity;
+    document.getElementById('intensityVal').textContent = S.anim.intensity.toFixed(2);
+    document.getElementById('duration').value = S.anim.duration;
+    document.getElementById('durationVal').textContent = S.anim.duration.toFixed(1);
+    document.getElementById('fps').value = S.anim.fps;
+    document.getElementById('fpsVal').textContent = S.anim.fps;
+    document.getElementById('animLoop').checked = S.anim.loop;
+    // Leading
+    var leadingEl = document.getElementById('leading');
+    if (leadingEl) { leadingEl.value = S.leading; }
+    var leadingVal = document.getElementById('leadingVal');
+    if (leadingVal) { leadingVal.textContent = S.leading; }
+    // Aspect ratio buttons
+    document.querySelectorAll('.aspect-preset').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.ratio === S.aspectRatio[0] + ':' + S.aspectRatio[1]);
+    });
+    // Preset buttons
+    document.querySelectorAll('.preset-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.preset === S.preset);
+    });
+    // Heading scale buttons
+    document.querySelectorAll('.heading-preset').forEach(function(b) {
+        b.classList.toggle('active', Number(b.dataset.scale) === S.headingScale);
+    });
+    // Animation buttons
+    document.querySelectorAll('.anim-preset').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.anim === S.anim.effect);
+    });
+    // Scale presets
+    document.querySelectorAll('.res-preset').forEach(function(b) {
+        b.classList.toggle('active', Number(b.dataset.scale) === S.exportScale);
+    });
+}
+
 // === INIT =============================================================
 
 bindControls();
+document.getElementById('btnReset').addEventListener('click', resetAll);
+document.getElementById('btnShuffle').addEventListener('click', shufflePreset);
 updateFrameScrub();
 render();
 
