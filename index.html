@@ -4692,8 +4692,10 @@ bindControls();
 document.getElementById('btnReset').addEventListener('click', resetAll);
 document.getElementById('btnShuffle').addEventListener('click', shufflePreset);
 updateFrameScrub();
-render();
 updateCanvasCursor();
+
+// Wait for fonts before first render to avoid fallback font flash
+document.fonts.ready.then(function() { render(); });
 
 </script>
 </body>
