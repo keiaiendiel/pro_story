@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POSTER_ v6 — PRO_STORY Animated Generator</title>
+<title>POSTER_ v7 — PRO_STORY Animated Generator</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -60,7 +60,7 @@ html, body {
     background: var(--bg);
     color: var(--text);
     font-family: var(--font);
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
 }
@@ -105,7 +105,7 @@ html, body {
     display: flex;
     align-items: center;
     padding: 10px 20px;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -128,11 +128,11 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text2);
     margin-bottom: 5px;
 }
-.cr > label .val { font-family: var(--mono); font-size: 10px; color: var(--text3); font-variant-numeric: tabular-nums; }
+.cr > label .val { font-family: var(--mono); font-size: 11px; color: var(--text3); font-variant-numeric: tabular-nums; }
 
 .cr input[type="range"] {
     -webkit-appearance: none;
@@ -165,7 +165,7 @@ html, body {
     border: 1px solid var(--border);
     color: var(--text);
     font-family: var(--font);
-    font-size: 11px;
+    font-size: 12px;
     padding: 6px 10px;
     border-radius: var(--r);
     outline: none;
@@ -189,7 +189,7 @@ html, body {
     gap: 8px;
     margin-bottom: 10px;
 }
-.chk label { font-size: 11px; color: var(--text2); cursor: pointer; }
+.chk label { font-size: 12px; color: var(--text2); cursor: pointer; }
 .chk input[type="checkbox"] { accent-color: var(--text); cursor: pointer; }
 
 .input-row {
@@ -229,7 +229,7 @@ html, body {
     justify-content: center;
     padding: 7px 14px;
     font-family: var(--font);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
     border: 1px solid var(--border);
     border-radius: var(--r);
@@ -434,11 +434,15 @@ html, body {
 <div class="app">
     <aside class="sidebar">
         <header class="app-header">
-            <h1>POSTER_ v6</h1>
+            <h1>POSTER_ v7</h1>
             <p class="subtitle">PRO_STORY Animated Generator</p>
             <div class="btn-row" style="margin-top: 8px;">
-                <button class="btn" id="btnShuffle" style="flex:1;">Shuffle</button>
-                <button class="btn" id="btnReset" style="flex:1;">Reset</button>
+                <button class="btn" id="btnShuffleLayout" style="flex:1;">Shuffle Layout</button>
+                <button class="btn" id="btnShuffleAll" style="flex:1;">Shuffle All</button>
+            </div>
+            <div class="btn-row" style="margin-top: 4px;">
+                <button class="btn" id="btnResetFormat" style="flex:1;">Reset Format</button>
+                <button class="btn" id="btnResetAll" style="flex:1;">Reset All</button>
             </div>
         </header>
 
@@ -451,8 +455,8 @@ html, body {
                     <div class="cr">
                         <label>Aspect Ratio</label>
                         <div class="aspect-presets" id="aspectPresets">
-                            <button class="aspect-preset active" data-ratio="3:4">3:4</button>
-                            <button class="aspect-preset" data-ratio="4:5">4:5</button>
+                            <button class="aspect-preset active" data-ratio="70:99">Poster</button>
+                            <button class="aspect-preset" data-ratio="3:4">3:4</button>
                             <button class="aspect-preset" data-ratio="9:16">9:16</button>
                             <button class="aspect-preset" data-ratio="1:1">1:1</button>
                             <button class="aspect-preset" data-ratio="16:9">16:9</button>
@@ -487,6 +491,41 @@ html, body {
                 </div>
             </details>
 
+            <!-- STYLE (moved before Layout) -->
+            <details class="section">
+                <summary>Style</summary>
+                <div class="section-body">
+                    <div class="cr">
+                        <label>Background</label>
+                        <div class="res-presets" id="bgToggle">
+                            <button class="res-preset active" data-bg="#000000">Black</button>
+                            <button class="res-preset" data-bg="#ffffff">White</button>
+                        </div>
+                    </div>
+                    <div class="cr">
+                        <label>Foreground</label>
+                        <input type="color" id="fgColor" value="#ffffff">
+                    </div>
+                    <div class="cr">
+                        <label>Blend Mode</label>
+                        <select id="blendMode">
+                            <option value="source-over" selected>Normal</option>
+                            <option value="difference">Difference</option>
+                            <option value="color-dodge">Color Dodge</option>
+                        </select>
+                    </div>
+                    <div class="cr">
+                        <label>Fill Character</label>
+                        <select id="fillChar">
+                            <option value="&#x2592;">Medium</option>
+                            <option value="&#x2588;">Solid</option>
+                            <option value="&#x2591;">Light</option>
+                            <option value="&#x2593;">Dark</option>
+                        </select>
+                    </div>
+                </div>
+            </details>
+
             <!-- LAYOUT -->
             <details class="section" open>
                 <summary>Layout</summary>
@@ -517,11 +556,9 @@ html, body {
                         <button class="preset-btn" data-preset="curtain">W<br>Curt</button>
                         <button class="preset-btn" data-preset="horizon">X<br>Horiz</button>
                         <button class="preset-btn" data-preset="scatter">Y<br>Scat</button>
-                        <button class="preset-btn" data-preset="frame">Z<br>Frame</button>
-                        <button class="preset-btn" data-preset="strata">AA<br>Strat</button>
-                        <button class="preset-btn" data-preset="specimen">AB<br>Spec</button>
-                        <button class="preset-btn" data-preset="dissolve-edge">AC<br>Diss</button>
-                        <button class="preset-btn" data-preset="monolith">AD<br>Mono</button>
+                        <button class="preset-btn" data-preset="strata">Z<br>Strat</button>
+                        <button class="preset-btn" data-preset="dissolve-edge">AA<br>Diss</button>
+                        <button class="preset-btn" data-preset="monolith">AB<br>Mono</button>
                     </div>
                 </div>
             </details>
@@ -538,10 +575,15 @@ html, body {
                             <button class="btn" id="imageRemove" disabled>Remove</button>
                         </div>
                     </div>
+                    <div class="chk">
+                        <input type="checkbox" id="imageOnTop">
+                        <label for="imageOnTop">Image On Top (covers text)</label>
+                    </div>
                     <div class="info-row">
                         <span>Status</span>
                         <span class="info-val" id="imageStatus">No image</span>
                     </div>
+                    <p style="font-size:10px;color:var(--text3);margin-top:4px;">Kolečko myši = zoom, tažení = posun obrázku</p>
                     <div id="imageControls" class="hidden">
                         <div class="info-row">
                             <span>Zone</span>
@@ -607,9 +649,8 @@ html, body {
                             <label>Dither Size <span class="val" id="imgDitherResVal">100</span>%</label>
                             <input type="range" id="imgDitherRes" min="5" max="150" step="5" value="100">
                         </div>
-                        <div class="chk">
-                            <input type="checkbox" id="imageOnTop">
-                            <label for="imageOnTop">Image On Top (covers text)</label>
+                        <div class="btn-row" style="margin-top:6px;">
+                            <button class="btn btn-small" id="imageResetBtn">Reset Image</button>
                         </div>
                     </div>
                 </div>
@@ -655,22 +696,24 @@ html, body {
                         <label for="headingBg">Heading Background</label>
                     </div>
                     <hr style="border-color: var(--border); margin: 8px 0;">
-                    <div class="chk">
+                    <div class="chk" style="display:flex;align-items:center;gap:8px;">
                         <input type="checkbox" id="showTagline" checked>
-                        <label for="showTagline">Tagline</label>
+                        <label for="showTagline" style="flex:1;">Tagline</label>
+                        <input type="checkbox" id="boldTagline" title="Bold">
+                        <label for="boldTagline" style="font-weight:bold;font-size:12px;cursor:pointer;">B</label>
                     </div>
                     <div id="taglineFields">
                         <div class="cr">
                             <label>Text</label>
-                            <textarea id="cTagline" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:11px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:6px;">Spolupráce oborů SUPŠ UH,
+                            <textarea id="cTagline" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:6px;">Spolupráce oborů SUPŠ UH,
 Multimédia, Obuv, Design</textarea>
                         </div>
                     </div>
                     <div class="chk" style="display:flex;align-items:center;gap:8px;">
                         <input type="checkbox" id="showVernisaz" checked>
                         <label for="showVernisaz" style="flex:1;">Vernisáž</label>
-                        <input type="checkbox" id="boldVernisaz" title="Bold">
-                        <label for="boldVernisaz" style="font-weight:bold;font-size:11px;cursor:pointer;">B</label>
+                        <input type="checkbox" id="boldVernisaz" checked title="Bold">
+                        <label for="boldVernisaz" style="font-weight:bold;font-size:12px;cursor:pointer;">B</label>
                     </div>
                     <div id="vernisazFields">
                         <div class="cr">
@@ -685,8 +728,8 @@ Multimédia, Obuv, Design</textarea>
                     <div class="chk" style="display:flex;align-items:center;gap:8px;">
                         <input type="checkbox" id="showVystava" checked>
                         <label for="showVystava" style="flex:1;">Výstava</label>
-                        <input type="checkbox" id="boldVystava" title="Bold">
-                        <label for="boldVystava" style="font-weight:bold;font-size:11px;cursor:pointer;">B</label>
+                        <input type="checkbox" id="boldVystava" checked title="Bold">
+                        <label for="boldVystava" style="font-weight:bold;font-size:12px;cursor:pointer;">B</label>
                     </div>
                     <div id="vystavaFields">
                         <div class="cr">
@@ -773,8 +816,8 @@ Multimédia, Obuv, Design</textarea>
                         <input type="range" id="frameScrub" min="0" max="119" step="1" value="0">
                     </div>
                     <div class="cr">
-                        <label>Duration (s) <span class="val" id="durationVal">4.0</span></label>
-                        <input type="range" id="duration" min="1" max="30" step="0.5" value="4">
+                        <label>Duration (s) <span class="val" id="durationVal">8.0</span></label>
+                        <input type="range" id="duration" min="1" max="30" step="0.5" value="8">
                     </div>
                     <div class="cr">
                         <label>FPS <span class="val" id="fpsVal">30</span></label>
@@ -791,56 +834,6 @@ Multimédia, Obuv, Design</textarea>
                     <div class="info-row">
                         <span>Total frames</span>
                         <span class="info-val" id="totalFramesInfo">120</span>
-                    </div>
-                </div>
-            </details>
-
-            <!-- STYLE -->
-            <details class="section">
-                <summary>Style</summary>
-                <div class="section-body">
-                    <div class="color-row">
-                        <div class="cr">
-                            <label>Background</label>
-                            <input type="color" id="bgColor" value="#000000">
-                        </div>
-                        <div class="cr">
-                            <label>Foreground</label>
-                            <input type="color" id="fgColor" value="#ffffff">
-                        </div>
-                    </div>
-                    <div class="cr">
-                        <label>Blend Mode</label>
-                        <select id="blendMode">
-                            <option value="difference" selected>Difference</option>
-                            <option value="exclusion">Exclusion</option>
-                            <option value="multiply">Multiply</option>
-                            <option value="screen">Screen</option>
-                            <option value="overlay">Overlay</option>
-                            <option value="hard-light">Hard Light</option>
-                            <option value="soft-light">Soft Light</option>
-                            <option value="color-dodge">Color Dodge</option>
-                            <option value="color-burn">Color Burn</option>
-                            <option value="source-over">Normal</option>
-                        </select>
-                    </div>
-                    <div class="cr">
-                        <label>Fill Character</label>
-                        <select id="fillChar">
-                            <option value="&#x2592;">Medium</option>
-                            <option value="&#x2588;">Solid</option>
-                            <option value="&#x2591;">Light</option>
-                            <option value="&#x2593;">Dark</option>
-                        </select>
-                    </div>
-                    <div class="cr">
-                        <label>Wall Style</label>
-                        <select id="wallStyle">
-                            <option value="single">Single</option>
-                            <option value="thin">Thin</option>
-                            <option value="double">Double</option>
-                            <option value="heavy">Heavy</option>
-                        </select>
                     </div>
                 </div>
             </details>
@@ -864,14 +857,38 @@ Multimédia, Obuv, Design</textarea>
                         <button class="btn" id="exportTxt">Copy Text</button>
                     </div>
                     <div class="btn-row" style="margin-top: 6px;">
-                        <button class="btn" id="exportWebm">WebM Video</button>
+                        <button class="btn btn-primary" id="exportPdf">PDF 300 DPI</button>
+                        <select id="pdfPaper" style="flex:1;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:4px 6px;font-size:11px;">
+                            <option value="A4" selected>A4 (210×297)</option>
+                            <option value="A3">A3 (297×420)</option>
+                            <option value="A2">A2 (420×594)</option>
+                        </select>
+                    </div>
+                    <div class="cr" style="margin-top: 6px;">
+                        <label>Video Max <span class="val" id="videoMaxVal">2560</span>px</label>
+                        <div class="res-presets" id="videoResPresets">
+                            <button class="res-preset" data-vmax="720">720</button>
+                            <button class="res-preset" data-vmax="1920">1080</button>
+                            <button class="res-preset active" data-vmax="2560">1440</button>
+                            <button class="res-preset" data-vmax="3840">4K</button>
+                        </div>
+                    </div>
+                    <div class="btn-row" style="margin-top: 6px;">
                         <button class="btn" id="exportMp4">MP4 Video</button>
                         <button class="btn" id="exportMov">MOV Video</button>
                     </div>
-                    <div class="btn-row" style="margin-top: 6px;">
-                        <button class="btn" id="exportPngSeq">PNG Seq</button>
-                        <button class="btn" id="exportJpgSeq">JPG Seq</button>
-                    </div>
+                    <details style="margin-top: 8px;">
+                        <summary style="font-size:10px;color:var(--text3);cursor:pointer;user-select:none;list-style:none;letter-spacing:0.05em;">Extra</summary>
+                        <div style="padding-top: 6px;">
+                            <div class="btn-row">
+                                <button class="btn" id="exportWebm">WebM Video</button>
+                            </div>
+                            <div class="btn-row" style="margin-top: 6px;">
+                                <button class="btn" id="exportPngSeq">PNG Seq</button>
+                                <button class="btn" id="exportJpgSeq">JPG Seq</button>
+                            </div>
+                        </div>
+                    </details>
                 </div>
             </details>
         </div>
@@ -905,21 +922,21 @@ Multimédia, Obuv, Design</textarea>
 
 <script>
 /* ===================================================================
-   POSTER_ v6 — PRO_STORY Animated Generator
-   Per-layout image zones, cover-fit with scale/pan, zone-aware clipping
+   POSTER_ v7 — PRO_STORY Animated Generator
+   POSTER ratio, BW toggle, bold tagline, layout fixes, streamlined UI
    =================================================================== */
 
 // === STATE ============================================================
 
 const S = {
     cols: 90,
-    aspectRatio: [3, 4],
+    aspectRatio: [70, 99],
     fontSize: 20,
     leading: 24,
     preset: 'floor-plan',
     bgColor: '#000000',
     fgColor: '#ffffff',
-    blendMode: 'difference',
+    blendMode: 'source-over',
     fillChar: '\u2592',
     wallStyle: 'single',
     headingScale: 3,
@@ -928,6 +945,7 @@ const S = {
     imageOnTop: false,
     margin: 10,
     exportScale: 2,
+    videoMaxPx: 2560,
     image: {
         scale: 1.0,
         offsetX: 0,
@@ -950,15 +968,16 @@ const S = {
         title: 'NÁZEV VÝSTAVY',
         tagline: 'Spolupráce oborů SUPŠ UH,\nMultimédia, Obuv, Design',
         showTagline: true,
+        boldTagline: false,
         vernL: 'VERNISÁŽ',
         vernD: '10_05_2026 | 16_00',
         showVernisaz: true,
-        boldVernisaz: false,
+        boldVernisaz: true,
         vystL: 'VÝSTAVA',
         vystF: 'OD 10_05_2026',
         vystT: 'DO 10_07_2026',
         showVystava: true,
-        boldVystava: false,
+        boldVystava: true,
         social: '@PRO_STORY_UH | PROSTORY.GALLERY',
         showSocial: true,
         addr: 'Všehrdova 267, Uherské Hradiště',
@@ -970,7 +989,7 @@ const S = {
         effect: 'none',
         playing: false,
         frame: 0,
-        duration: 4.0,
+        duration: 8.0,
         fps: 30,
         loop: true,
         intensity: 0.5,
@@ -1055,8 +1074,12 @@ function placeText(grid, r, c, maxW, text, pad, isHeading, isBold) {
         if (isHeading && S.headingScale > 1) {
             headings.push({ text: line.substring(0, maxW - pad), r: r + row, c: c + pad });
         } else if (isBold) {
-            // Bold text: only collect for overlay, skip grid placement to avoid double rendering
-            boldTexts.push({ text: line.substring(0, maxW - pad), r: r + row, c: c + pad });
+            // Bold text: place on grid (so animations see it) AND collect for bold overlay
+            var btext = line.substring(0, maxW - pad);
+            boldTexts.push({ text: btext, r: r + row, c: c + pad });
+            for (var i = 0; i < btext.length; i++) {
+                set(grid, r + row, c + pad + i, btext[i]);
+            }
         } else {
             for (var i = 0; i < Math.min(line.length, maxW - pad); i++) {
                 set(grid, r + row, c + pad + i, line[i]);
@@ -1127,6 +1150,7 @@ function getActiveContent() {
         artist: ct.artist,
         title: ct.title,
         tagLines: tagLines,
+        boldTag: ct.showTagline && ct.boldTagline,
         vernL: ct.showVernisaz ? ct.vernL : '',
         vernD: ct.showVernisaz ? ct.vernD : '',
         boldVern: ct.showVernisaz && ct.boldVernisaz,
@@ -1148,7 +1172,7 @@ const WALLS = {
     heavy:  { h: '\u2501', v: '\u2503', tl: '\u250F', tr: '\u2513', bl: '\u2517', br: '\u251B', lt: '\u2523', rt: '\u252B', tt: '\u2533', bt: '\u253B', cr: '\u254B' },
 };
 
-function getW() { return WALLS[S.wallStyle]; }
+function getW() { return WALLS.single; }
 
 function drawBox(grid, r, c, w, h) {
     var W = getW();
@@ -1167,11 +1191,11 @@ function computeRows(cols, ar) {
 
 function autoColumns(ar) {
     // Scale columns to keep text content visible at any aspect ratio.
-    // Reference: 80 cols at 3:4. Wider ratios need more columns;
-    // taller ratios need fewer. Linear interpolation validated by testing:
-    // 9:16→68, 3:4→80, 4:5→83, 1:1→96, 4:3→117, 16:9→145
+    // Reference: 90 cols at 3:4 (0.75). Wider ratios need more columns;
+    // taller ratios need fewer. Linear interpolation:
+    // 70:99→87, 9:16→78, 3:4→90, 1:1→106, 4:3→127, 16:9→155
     var ratio = ar[0] / ar[1];
-    var cols = Math.round(80 + (ratio - 0.75) * 63);
+    var cols = Math.round(90 + (ratio - 0.75) * 63);
     return Math.max(40, Math.min(200, cols));
 }
 
@@ -1202,7 +1226,7 @@ const PRESETS = {
         for (var i = 0; i < 5; i++, y++) { set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v); if (i === 1) placeText(grid, y, rc, rw, ct.artist, 2, true); if (i === 3) placeText(grid, y, rc, rw, ct.title, 2, true); }
         // Left fill + right tagline
         set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.rt); set(grid, y, re, W.v); y++;
-        for (var i = 0; i < 10; i++, y++) { set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v); fillCheckerboard(grid, y, lc, lw, 1, F); for (var ti = 0; ti < ct.tagLines.length; ti++) { if (i === 4 + ti) placeText(grid, y, rc, rw, ct.tagLines[ti], 2); } }
+        for (var i = 0; i < 10; i++, y++) { set(grid, y, 0, W.v); set(grid, y, mc, W.v); set(grid, y, re, W.v); fillCheckerboard(grid, y, lc, lw, 1, F); for (var ti = 0; ti < ct.tagLines.length; ti++) { if (i === 4 + ti) placeText(grid, y, rc, rw, ct.tagLines[ti], 2, false, ct.boldTag); } }
         // Logistics left
         set(grid, y, 0, W.lt); hline(grid, y, 1, lw, W.h); set(grid, y, mc, W.rt); set(grid, y, re, W.v); y++;
         var ll = [], llB = [];
@@ -1241,7 +1265,7 @@ const PRESETS = {
         y += 2;
         placeText(grid, y, 0, cols, ct.artist, ind, true); y += 2;
         placeText(grid, y, 0, cols, ct.title, ind, true); y += 2;
-        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, y, 0, cols, ct.tagLines[ti], ind); y++; }
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, y, 0, cols, ct.tagLines[ti], ind, false, ct.boldTag); y++; }
         y++;
         placeText(grid, y, 0, cols, ct.gallery, ind); y += 3;
         if (ct.vernL) { placeText(grid, y, 0, cols, ct.vernL, ind, false, ct.boldVern); y++; placeText(grid, y, 0, cols, ct.vernD, ind); y += 2; }
@@ -1267,15 +1291,14 @@ const PRESETS = {
         // Gallery left + logo, artist+title right
         for (var i = 0; i < secH + 2; i++, y++) {
             colRow(y);
-            if (i === 2) placeText(grid, y, 1, c1, ct.gallery.substring(0, 4) + '_', 2);
-            if (i === 3) placeText(grid, y, 1, c1, '   ' + ct.gallery.substring(4), 2);
+            if (i === 2) placeText(grid, y, 1, c1, ct.gallery, 2);
             if (i === 5) placeText(grid, y, w2 + 1, c3, ct.artist, 2, true);
             if (i === 7) placeText(grid, y, w2 + 1, c3, ct.title, 2, true);
         }
         bar(y); y++;
         for (var i = 0; i < secH; i++, y++) {
             colRow(y);
-            for (var ti = 0; ti < ct.tagLines.length; ti++) { if (i === 2 + ti) placeText(grid, y, w2 + 1, c3, ct.tagLines[ti], 2); }
+            for (var ti = 0; ti < ct.tagLines.length; ti++) { if (i === 2 + ti) placeText(grid, y, w2 + 1, c3, ct.tagLines[ti], 2, false, ct.boldTag); }
         }
         bar(y); y++;
         var sec4H = secH + 4;
@@ -1331,7 +1354,7 @@ const PRESETS = {
         for (var i = 0; i < 6; i++, y++) {
             set(grid, y, 0, W.v); set(grid, y, mw + 1, W.v); set(grid, y, cols - 1, W.v);
             if (i === 1) placeText(grid, y, 1, mw, ct.gallery, 2);
-            for (var ti = 0; ti < ct.tagLines.length; ti++) { if (i === 3 + ti) placeText(grid, y, bc, bw, ct.tagLines[ti], 2); }
+            for (var ti = 0; ti < ct.tagLines.length; ti++) { if (i === 3 + ti) placeText(grid, y, bc, bw, ct.tagLines[ti], 2, false, ct.boldTag); }
         }
         set(grid, y, 0, W.v); set(grid, y, mw + 1, W.lt); hline(grid, y, bc, bw, W.h); set(grid, y, cols - 1, W.rt); y++;
         var ll = [], llB = [];
@@ -1388,7 +1411,7 @@ const PRESETS = {
         // Tagline - center indent
         var ty = Math.round(rows * 0.34);
         for (var ti = 0; ti < ct.tagLines.length; ti++) {
-            placeText(grid, ty + ti, ci, cw, ct.tagLines[ti], 0);
+            placeText(grid, ty + ti, ci, cw, ct.tagLines[ti], 0, false, ct.boldTag);
         }
 
         // Left accent block
@@ -1508,8 +1531,8 @@ const PRESETS = {
             set(grid, y, 0, W.v); for (var j = 0; j < 4; j++) set(grid, y, cc[j] + cw[j], W.v);
             if (i > 0 && i < 6) { fillCheckerboard(grid, y, cc[0], cw[0], 1, F); fillCheckerboard(grid, y, cc[1], cw[1], 1, F); }
             if (i === 2) placeText(grid, y, cc[2], cw[2], ct.gallery, 2);
-            if (i === 4) placeText(grid, y, cc[3], cw[3], ct.artist, 2, true);
-            if (i === 6) placeText(grid, y, cc[3], cw[3], ct.title, 2, true);
+            if (i === 2) placeText(grid, y, cc[3], cw[3], ct.artist, 2, true);
+            if (i === 4) placeText(grid, y, cc[3], cw[3], ct.title, 2, true);
             set(grid, y, cols - 1, W.v);
         }
         set(grid, y, 0, W.lt);
@@ -1519,7 +1542,7 @@ const PRESETS = {
         for (; y < rows - 1; y++) {
             set(grid, y, 0, W.v); set(grid, y, cols - 1, W.v);
             var ry = y - (8 + 1);
-            for (var ti = 0; ti < ct.tagLines.length; ti++) { if (ry === 1 + ti) placeText(grid, y, 1, fw, ct.tagLines[ti], 2); }
+            for (var ti = 0; ti < ct.tagLines.length; ti++) { if (ry === 1 + ti) placeText(grid, y, 1, fw, ct.tagLines[ti], 2, false, ct.boldTag); }
             var infoY = rows - 8;
             var vern = [ct.vernL, ct.vernD].filter(Boolean).join(' ');
             var vyst = [ct.vystL, ct.vystF, ct.vystT].filter(Boolean).join(' ');
@@ -1604,7 +1627,7 @@ const PRESETS = {
         placeText(grid, 3, cq1 + 2, cq3 - cq1 - 3, ct.gallery, 1);
         placeText(grid, rh + 2, cq1 + 2, cq3 - cq1 - 3, ct.artist, 1, true);
         placeText(grid, rh + 4, cq1 + 2, cq3 - cq1 - 3, ct.title, 1, true);
-        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, rh + 7 + ti, cq1 + 2, cq3 - cq1 - 3, ct.tagLines[ti], 1);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, rh + 7 + ti, cq1 + 2, cq3 - cq1 - 3, ct.tagLines[ti], 1, false, ct.boldTag);
         if (ct.vernL) { placeText(grid, rm + 2, 2, cq2 - 3, ct.vernL, 2, false, ct.boldVern); placeText(grid, rm + 3, 2, cq2 - 3, ct.vernD, 2); }
         if (ct.vystL) { placeText(grid, rm + 5, 2, cq2 - 3, ct.vystL, 2, false, ct.boldVyst); placeText(grid, rm + 6, 2, cq2 - 3, ct.vystF, 2); placeText(grid, rm + 7, 2, cq2 - 3, ct.vystT, 2); }
         if (ct.social) placeText(grid, rm + 9, 2, cq2 - 3, ct.social, 2);
@@ -1633,7 +1656,7 @@ const PRESETS = {
         var ny = s1 + 6;
         placeText(grid, ny, 1, lw, ct.artist, 2, true);
         placeText(grid, ny + 2, 1, lw, ct.title, 2, true);
-        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, ny + 5 + ti, 1, lw, ct.tagLines[ti], 2);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, ny + 5 + ti, 1, lw, ct.tagLines[ti], 2, false, ct.boldTag);
         var iy = Math.round(rows * 0.6);
         set(grid, iy, 0, W.lt); hline(grid, iy, 1, lw, W.h); set(grid, iy, mid, W.rt);
         if (ct.vernL) { placeText(grid, iy + 2, 1, lw, ct.vernL, 2, false, ct.boldVern); placeText(grid, iy + 3, 1, lw, ct.vernD, 2); }
@@ -1662,7 +1685,7 @@ const PRESETS = {
         placeText(grid, 6, 1, cols - 2, ct.gallery, 2);
         placeText(grid, 8, 1, cols - 2, ct.artist, 2, true);
         placeText(grid, 10, 1, cols - 2, ct.title, 2, true);
-        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, r1 + 3 + ti, 1, cols - 2, ct.tagLines[ti], 2);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, r1 + 3 + ti, 1, cols - 2, ct.tagLines[ti], 2, false, ct.boldTag);
         fillCheckerboard(grid, r1 + 8, 1, Math.round(cols * 0.4), r2 - r1 - 10, F);
         var vern = [ct.vernL, ct.vernD].filter(Boolean).join(' ');
         var vyst = [ct.vystL, ct.vystF, ct.vystT].filter(Boolean).join(' ');
@@ -1675,14 +1698,14 @@ const PRESETS = {
     }
 },
 
-// --- L: Cross ---
+// --- L: Cross --- Thinner middle column (just fits PRO_STORY), swapped sides
 'cross': {
     name: 'Cross',
-    imageZone(cols, rows) { var bw = Math.round(cols * 0.14), bh = Math.round(rows * 0.085); return {r: 0, c: 0, w: Math.round(cols / 2) - bw, h: Math.round(rows / 2) - bh}; },
+    imageZone(cols, rows) { var bw = Math.round(cols * 0.09), bh = Math.round(rows * 0.085); return {r: 0, c: 0, w: Math.round(cols / 2) - bw, h: Math.round(rows / 2) - bh}; },
     build(grid, cols, rows, ct) {
         var W = getW(), F = S.fillChar;
         var cx = Math.round(cols / 2), cy = Math.round(rows / 2);
-        var bandW = Math.round(cols * 0.28), bandH = Math.round(rows * 0.17);
+        var bandW = Math.max(16, Math.round(cols * 0.17)), bandH = Math.round(rows * 0.17);
         var bx1 = cx - Math.round(bandW / 2), bx2 = cx + Math.round(bandW / 2);
         var by1 = cy - Math.round(bandH / 2), by2 = cy + Math.round(bandH / 2);
         // Full-height vertical lines
@@ -1691,23 +1714,23 @@ const PRESETS = {
         set(grid, by1, bx1, W.cr); set(grid, by1, bx2, W.cr);
         set(grid, by2, bx1, W.cr); set(grid, by2, bx2, W.cr);
         // Fills
-        fillCheckerboard(grid, 0, 0, bx1, by1, F);
-        fillCheckerboard(grid, by2 + 1, bx2 + 1, cols - bx2 - 1, rows - by2 - 1, F);
-        // Logo + identity
+        fillCheckerboard(grid, by2 + 1, 0, bx1, rows - by2 - 1, F);
+        fillCheckerboard(grid, 0, bx2 + 1, cols - bx2 - 1, by1, F);
+        // Gallery in vertical band
         placeText(grid, 3, bx1 + 1, bandW - 1, ct.gallery, 2);
-        // Horizontal band RIGHT: artist, title, tagline
-        placeText(grid, by1 + 2, bx2 + 2, cols - bx2 - 3, ct.artist, 1, true);
-        placeText(grid, by1 + 4, bx2 + 2, cols - bx2 - 3, ct.title, 1, true);
-        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, by1 + 6 + ti, bx2 + 2, cols - bx2 - 3, ct.tagLines[ti], 1);
-        // Horizontal band LEFT: logistics
-        if (ct.vernL) { placeText(grid, by1 + 2, 1, bx1 - 2, ct.vernL, 2, false, ct.boldVern); placeText(grid, by1 + 3, 1, bx1 - 2, ct.vernD, 2); }
-        if (ct.vystL) { placeText(grid, by1 + 5, 1, bx1 - 2, ct.vystL, 2, false, ct.boldVyst); placeText(grid, by1 + 6, 1, bx1 - 2, ct.vystF, 2); placeText(grid, by1 + 7, 1, bx1 - 2, ct.vystT, 2); }
-        // Bottom-left: wrapped social, address, hours
-        var blw = bx1 - 1;
+        // Horizontal band LEFT: artist, title, tagline (swapped)
+        placeText(grid, by1 + 2, 1, bx1 - 2, ct.artist, 2, true);
+        placeText(grid, by1 + 4, 1, bx1 - 2, ct.title, 2, true);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, by1 + 6 + ti, 1, bx1 - 2, ct.tagLines[ti], 2, false, ct.boldTag);
+        // Horizontal band RIGHT: logistics (swapped)
+        if (ct.vernL) { placeText(grid, by1 + 2, bx2 + 2, cols - bx2 - 3, ct.vernL, 1, false, ct.boldVern); placeText(grid, by1 + 3, bx2 + 2, cols - bx2 - 3, ct.vernD, 1); }
+        if (ct.vystL) { placeText(grid, by1 + 5, bx2 + 2, cols - bx2 - 3, ct.vystL, 1, false, ct.boldVyst); placeText(grid, by1 + 6, bx2 + 2, cols - bx2 - 3, ct.vystF, 1); placeText(grid, by1 + 7, bx2 + 2, cols - bx2 - 3, ct.vystT, 1); }
+        // Bottom-right: social, address, hours (swapped)
+        var brw = cols - bx2 - 2;
         var ty = by2 + 2;
-        if (ct.social) { ty += placeWrapped(grid, ty, 1, blw, ct.social, 2); ty++; }
-        if (ct.addr) { ty += placeWrapped(grid, ty, 1, blw, ct.addr, 2); ty++; }
-        if (ct.hours) { placeWrapped(grid, ty, 1, blw, ct.hours, 2); }
+        if (ct.social) { ty += placeWrapped(grid, ty, bx2 + 1, brw, ct.social, 2); ty++; }
+        if (ct.addr) { ty += placeWrapped(grid, ty, bx2 + 1, brw, ct.addr, 2); ty++; }
+        if (ct.hours) { placeWrapped(grid, ty, bx2 + 1, brw, ct.hours, 2); }
     }
 },
 
@@ -1727,7 +1750,7 @@ const PRESETS = {
         placeText(grid, Math.round(rows * 0.15) + 4, 0, cols, ct.title, ind, true);
         // Tagline far down, right-aligned area
         var tagY = Math.round(rows * 0.55);
-        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, tagY, Math.round(cols * 0.45), cols - Math.round(cols * 0.45), ct.tagLines[ti], ind); tagY++; }
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, tagY, Math.round(cols * 0.45), cols - Math.round(cols * 0.45), ct.tagLines[ti], ind, false, ct.boldTag); tagY++; }
         // Logistics block bottom-left
         var by = rows - 12;
         if (ct.vernL) { placeText(grid, by, 0, cols, ct.vernL, ind, false, ct.boldVern); by++; placeText(grid, by, 0, cols, ct.vernD, ind); by += 2; }
@@ -1759,7 +1782,7 @@ const PRESETS = {
         placeText(grid, interval * 3 - 2, 0, cols, ct.title, ind, true);
         // Tagline above fourth
         var tBase = interval * 4;
-        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, tBase - 2 + ti, 0, cols, ct.tagLines[ti], ind);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, tBase - 2 + ti, 0, cols, ct.tagLines[ti], ind, false, ct.boldTag);
         // Logistics: vernisaz left, vystava right — both above sixth baseline
         var lBase = interval * 6;
         var halfW = Math.round(cols * 0.5);
@@ -1792,7 +1815,7 @@ const PRESETS = {
         placeText(grid, 5, 0, Math.round(cols * 0.55), ct.artist, ind, true);
         placeText(grid, 7, 0, Math.round(cols * 0.5), ct.title, ind, true);
         var ty = 10;
-        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, ty, 0, Math.round(cols * 0.45), ct.tagLines[ti], ind); ty++; }
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, ty, 0, Math.round(cols * 0.45), ct.tagLines[ti], ind, false, ct.boldTag); ty++; }
         // Logistics in lower-left — text cuts through diagonal fill where needed
         var ly = Math.round(rows * 0.6);
         var lw = Math.round(cols * 0.4);
@@ -1824,7 +1847,7 @@ const PRESETS = {
         hline(grid, 8, 1, fw, W.h);
         // Tagline right-aligned
         var tw = Math.round(cols * 0.45);
-        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, 10 + ti, cols - 1 - tw, tw, ct.tagLines[ti], pad);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, 10 + ti, cols - 1 - tw, tw, ct.tagLines[ti], pad, false, ct.boldTag);
         // Bottom margin: logistics
         var by = rows - 10;
         hline(grid, by - 1, 1, fw, W.h);
@@ -1854,7 +1877,7 @@ const PRESETS = {
         hline(grid, 7, ind, lw - ind * 2, '\u2500');
         placeText(grid, 9, 0, lw, ct.title, ind, true);
         var ty = 12;
-        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, ty, 0, lw, ct.tagLines[ti], ind); ty++; }
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, ty, 0, lw, ct.tagLines[ti], ind, false, ct.boldTag); ty++; }
         // Logistics lower-left
         var ly = Math.round(rows * 0.6);
         if (ct.vernL) { placeText(grid, ly, 0, lw, ct.vernL, ind, false, ct.boldVern); ly++; placeText(grid, ly, 0, lw, ct.vernD, ind); ly += 2; }
@@ -1884,7 +1907,7 @@ const PRESETS = {
         placeText(grid, y, 0, cols, ct.gallery, ind); y += 2;
         placeText(grid, y, 0, cols, ct.artist, ind, true); y += 2;
         placeText(grid, y, 0, cols, ct.title, ind, true); y += 2;
-        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, y, 0, cols, ct.tagLines[ti], ind); y++; }
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, y, 0, cols, ct.tagLines[ti], ind, false, ct.boldTag); y++; }
         y += 2;
         // Two-column logistics
         var halfW = Math.round(cols * 0.5);
@@ -1938,7 +1961,7 @@ const PRESETS = {
         fillCheckerboard(grid, cf.r, cf.c, cellW * 2 + 1, cellH, S.fillChar);
         // Tagline: cell(0, 2)
         var c3 = cell(0, 2);
-        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, c3.r + 1 + ti, c3.c, cellW * 2 + 1, ct.tagLines[ti], 2);
+        for (var ti = 0; ti < ct.tagLines.length; ti++) placeText(grid, c3.r + 1 + ti, c3.c, cellW * 2 + 1, ct.tagLines[ti], 2, false, ct.boldTag);
         // Fill: cells(2-3, 2-3)
         var cf2 = cell(2, 2);
         fillCheckerboard(grid, cf2.r, cf2.c, cellW * 2 + 1, cellH * 2 + 1, S.fillChar);
@@ -1977,7 +2000,7 @@ const PRESETS = {
         placeText(grid, 10, 0, cols, ct.title, ind, true);
         // Tagline as subhead
         var y = 12;
-        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, y, 0, cols, ct.tagLines[ti], ind); y++; }
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, y, 0, cols, ct.tagLines[ti], ind, false, ct.boldTag); y++; }
         // Three-column body area with vertical rules
         y += 2;
         var bodyTop = y;
@@ -2032,7 +2055,7 @@ const PRESETS = {
         placeText(grid, ay + 2, 0, cols, ct.title, ind, true);
         // Tagline
         var ty = ay + 5;
-        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, ty, 0, Math.round(cols * 0.6), ct.tagLines[ti], ind); ty++; }
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, ty, 0, Math.round(cols * 0.6), ct.tagLines[ti], ind, false, ct.boldTag); ty++; }
         // Logistics in bottom clear zone
         var by = rows - 12;
         fillSolid(grid, by - 1, 0, Math.round(cols * 0.5), 11, ' ');
@@ -2071,7 +2094,7 @@ const PRESETS = {
         placeText(grid, bandH * 3 + 3 > bandH * 6 ? bandH * 3 + 2 : bandH * 6 + 1, 0, cols, ct.title, ind, true);
         // Tagline
         var ty = bandH * 9 + 1;
-        for (var ti = 0; ti < ct.tagLines.length && ty < rows; ti++) { placeText(grid, ty, 0, cols, ct.tagLines[ti], ind); ty++; }
+        for (var ti = 0; ti < ct.tagLines.length && ty < rows; ti++) { placeText(grid, ty, 0, cols, ct.tagLines[ti], ind, false, ct.boldTag); ty++; }
         // Logistics lower section
         var ly = Math.round(rows * 0.6);
         if (ct.vernL) { placeText(grid, ly, 0, Math.round(cols * 0.5), ct.vernL, ind, false, ct.boldVern); ly++; placeText(grid, ly, 0, Math.round(cols * 0.5), ct.vernD, ind); ly += 2; }
@@ -2116,7 +2139,7 @@ const PRESETS = {
         placeText(grid, 8, 0, clearW, ct.title, ind, true);
         // Tagline
         var ty = 11;
-        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, ty, 0, clearW, ct.tagLines[ti], ind); ty++; }
+        for (var ti = 0; ti < ct.tagLines.length; ti++) { placeText(grid, ty, 0, clearW, ct.tagLines[ti], ind, false, ct.boldTag); ty++; }
         // Logistics
         var ly = Math.round(rows * 0.5);
         if (ct.vernL) { placeText(grid, ly, 0, clearW, ct.vernL, ind, false, ct.boldVern); ly++; placeText(grid, ly, 0, clearW, ct.vernD, ind); ly += 2; }
@@ -2163,15 +2186,15 @@ const PRESETS = {
         // Gallery small, top-left
         fillSolid(grid, 1, 0, Math.round(cols * 0.4), 1, ' ');
         placeText(grid, 1, 0, Math.round(cols * 0.4), ct.gallery, ind);
-        // Artist + title near horizon — clear a band
-        fillSolid(grid, horizonR - 3, 0, cols, 6, ' ');
-        placeText(grid, horizonR - 2, 0, cols, ct.artist, ind, true);
-        placeText(grid, horizonR, 0, cols, ct.title, ind, true);
+        // Artist + title near horizon — clear a band (1 line lower)
+        fillSolid(grid, horizonR - 2, 0, cols, 6, ' ');
+        placeText(grid, horizonR - 1, 0, cols, ct.artist, ind, true);
+        placeText(grid, horizonR + 1, 0, cols, ct.title, ind, true);
         // Tagline below horizon
         var ty = horizonR + 4;
         for (var ti = 0; ti < ct.tagLines.length; ti++) {
             fillSolid(grid, ty, 0, Math.round(cols * 0.6), 1, ' ');
-            placeText(grid, ty, 0, Math.round(cols * 0.6), ct.tagLines[ti], ind);
+            placeText(grid, ty, 0, Math.round(cols * 0.6), ct.tagLines[ti], ind, false, ct.boldTag);
             ty++;
         }
         // Logistics at bottom — clear zone
@@ -2210,7 +2233,7 @@ const PRESETS = {
         // Taglines scattered mid-page
         var ty = Math.round(rows * 0.55);
         for (var ti = 0; ti < ct.tagLines.length; ti++) {
-            placeText(grid, ty, 0, Math.round(cols * 0.6), ct.tagLines[ti], ind);
+            placeText(grid, ty, 0, Math.round(cols * 0.6), ct.tagLines[ti], ind, false, ct.boldTag);
             ty++;
         }
         // Logistics clustered bottom-right corner
@@ -2225,51 +2248,7 @@ const PRESETS = {
     }
 },
 
-// --- Z: Frame --- Thick decorative border with text inside, large empty center
-'frame': {
-    name: 'Frame',
-    imageZone(cols, rows) { var bw = 10; return {r: bw, c: bw, w: cols - bw * 2, h: rows - bw * 2}; },
-    build(grid, cols, rows, ct) {
-        var F = S.fillChar;
-        var ind = 4;
-        var border = 8;
-        // Top border
-        fillSolid(grid, 0, 0, cols, border, F);
-        // Bottom border
-        fillSolid(grid, rows - border, 0, cols, border, F);
-        // Left border
-        fillSolid(grid, 0, 0, border, rows, F);
-        // Right border
-        fillSolid(grid, 0, cols - border, border, rows, F);
-        // Clear interior
-        fillSolid(grid, border, border, cols - border * 2, rows - border * 2, ' ');
-        // Inner margin
-        var mx = border + 3;
-        var mw = cols - mx * 2 + 3;
-        // Gallery at top of interior
-        placeText(grid, border + 2, mx, mw, ct.gallery, 0);
-        // Artist centered
-        var artistY = border + 5;
-        placeText(grid, artistY, mx, mw, ct.artist, 0, true);
-        // Title below artist
-        placeText(grid, artistY + 2, mx, mw, ct.title, 0, true);
-        // Taglines
-        var ty = artistY + 5;
-        for (var ti = 0; ti < ct.tagLines.length; ti++) {
-            placeText(grid, ty, mx, mw, ct.tagLines[ti], 0);
-            ty++;
-        }
-        // Logistics near bottom of interior
-        var by = rows - border - 10;
-        if (ct.vernL) { placeText(grid, by, mx, mw, ct.vernL, 0, false, ct.boldVern); by++; placeText(grid, by, mx, mw, ct.vernD, 0); by += 2; }
-        if (ct.vystL) { placeText(grid, by, mx, mw, ct.vystL, 0, false, ct.boldVyst); by++; placeText(grid, by, mx, mw, ct.vystF, 0); by++; placeText(grid, by, mx, mw, ct.vystT, 0); by += 2; }
-        if (ct.social) placeText(grid, rows - border - 4, mx, mw, ct.social, 0);
-        if (ct.addr) placeText(grid, rows - border - 3, mx, Math.round(mw * 0.5), ct.addr, 0);
-        if (ct.hours) placeText(grid, rows - border - 3, mx + Math.round(mw * 0.5), mw - Math.round(mw * 0.5), ct.hours, 0);
-    }
-},
-
-// --- AA: Strata --- Horizontal geological layers with density gradient
+// --- Z: Strata --- (was AA) Horizontal geological layers with density gradient
 'strata': {
     name: 'Strata',
     imageZone(cols, rows) { return {r: 0, c: 0, w: cols, h: rows}; },
@@ -2304,7 +2283,7 @@ const PRESETS = {
         var ty = Math.round(rows * 0.38);
         fillSolid(grid, ty - 1, 0, Math.round(cols * 0.6), ct.tagLines.length + 2, ' ');
         for (var ti = 0; ti < ct.tagLines.length; ti++) {
-            placeText(grid, ty, 0, Math.round(cols * 0.6), ct.tagLines[ti], ind);
+            placeText(grid, ty, 0, Math.round(cols * 0.6), ct.tagLines[ti], ind, false, ct.boldTag);
             ty++;
         }
         // Logistics in lower half (sparser strata area)
@@ -2317,41 +2296,7 @@ const PRESETS = {
     }
 },
 
-// --- AB: Specimen --- Museum label style, vast empty space with compact bottom label
-'specimen': {
-    name: 'Specimen',
-    imageZone(cols, rows) { return {r: 2, c: 2, w: cols - 4, h: rows - 20}; },
-    build(grid, cols, rows, ct) {
-        var ind = 3;
-        // Gallery tiny top-right
-        placeText(grid, 0, Math.round(cols * 0.6), cols - Math.round(cols * 0.6), ct.gallery, ind);
-        // Everything else in a compact block at the very bottom, centered
-        var labelW = Math.round(cols * 0.6);
-        var labelX = Math.round((cols - labelW) / 2);
-        var by = rows - 14;
-        // Thin line separator above label
-        hline(grid, by - 1, labelX, labelW, S.fillChar);
-        // Artist and title
-        placeText(grid, by, labelX, labelW, ct.artist, 2, true);
-        by += 2;
-        placeText(grid, by, labelX, labelW, ct.title, 2, true);
-        by += 2;
-        // Taglines
-        for (var ti = 0; ti < ct.tagLines.length; ti++) {
-            placeText(grid, by, labelX, labelW, ct.tagLines[ti], 2);
-            by++;
-        }
-        by++;
-        // Logistics compact
-        if (ct.vernL) { placeText(grid, by, labelX, labelW, ct.vernL, 2, false, ct.boldVern); by++; placeText(grid, by, labelX, labelW, ct.vernD, 2); by++; }
-        if (ct.vystL) { placeText(grid, by, labelX, labelW, ct.vystL, 2, false, ct.boldVyst); by++; placeText(grid, by, labelX, labelW, ct.vystF, 2); by++; placeText(grid, by, labelX, labelW, ct.vystT, 2); by++; }
-        if (ct.social) { placeText(grid, by, labelX, labelW, ct.social, 2); by++; }
-        if (ct.addr) placeText(grid, rows - 1, labelX, Math.round(labelW * 0.5), ct.addr, 2);
-        if (ct.hours) placeText(grid, rows - 1, labelX + Math.round(labelW * 0.5), labelW - Math.round(labelW * 0.5), ct.hours, 2);
-    }
-},
-
-// --- AC: Dissolve Edge --- Dense fill at edges, dissolving toward clear center
+// --- AA: Dissolve Edge --- (was AC) Dense fill at edges, dissolving toward clear center
 'dissolve-edge': {
     name: 'Dissolve Edge',
     imageZone(cols, rows) { var cw = Math.round(cols * 0.55), ch = Math.round(rows * 0.5); return {r: Math.round((rows - ch) / 2), c: Math.round((cols - cw) / 2), w: cw, h: ch}; },
@@ -2392,7 +2337,7 @@ const PRESETS = {
         placeText(grid, ty, clearX, clearW, ct.title, 2, true);
         ty += 3;
         for (var ti = 0; ti < ct.tagLines.length; ti++) {
-            placeText(grid, ty, clearX, clearW, ct.tagLines[ti], 2);
+            placeText(grid, ty, clearX, clearW, ct.tagLines[ti], 2, false, ct.boldTag);
             ty++;
         }
         ty += 2;
@@ -2404,7 +2349,7 @@ const PRESETS = {
     }
 },
 
-// --- AD: Monolith --- Tall narrow central column with text on either side
+// --- AB: Monolith --- (was AD) Tall narrow central column with text on either side
 'monolith': {
     name: 'Monolith',
     imageZone(cols, rows) { return {r: 0, c: 0, w: cols, h: rows}; },
@@ -2423,7 +2368,7 @@ const PRESETS = {
         // Taglines left side
         var ty = 10;
         for (var ti = 0; ti < ct.tagLines.length; ti++) {
-            placeText(grid, ty, 0, leftW, ct.tagLines[ti], ind);
+            placeText(grid, ty, 0, leftW, ct.tagLines[ti], ind, false, ct.boldTag);
             ty++;
         }
         // Right side text (logistics)
@@ -3326,11 +3271,23 @@ function renderToContext(targetCtx, grid, cols, rows, fontSize, leading, heading
 
     var ox = marginPx, oy = marginPx;
 
-    // Draw grid characters
+    // Build set of bold positions to skip in grid loop (bold overlay draws these)
+    var boldSet = null;
+    if (boldsArr && boldsArr.length) {
+        boldSet = {};
+        for (var bi = 0; bi < boldsArr.length; bi++) {
+            var b = boldsArr[bi];
+            for (var i = 0; i < b.text.length; i++) {
+                boldSet[b.r + ',' + (b.c + i)] = true;
+            }
+        }
+    }
+
+    // Draw grid characters (skip positions handled by bold overlay)
     for (var r = 0; r < rows; r++) {
         for (var c = 0; c < cols; c++) {
             var ch = grid[r][c];
-            if (ch !== ' ') {
+            if (ch !== ' ' && !(boldSet && boldSet[r + ',' + c])) {
                 targetCtx.fillText(ch, ox + c * charW, oy + r * charH + yOff);
             }
         }
@@ -3686,12 +3643,19 @@ async function exportWebM() {
     btn.textContent = 'Recording...';
     showProgress(0);
 
-    // Render first frame to get dimensions
+    // Render first frame to get dimensions, scale to video max
     var firstCanvas = renderExportFrame(0);
-    var w = firstCanvas.width;
-    var h = firstCanvas.height;
+    var srcW = firstCanvas.width;
+    var srcH = firstCanvas.height;
+    var maxPx = S.videoMaxPx || 1920;
+    var videoScale = 1;
+    if (srcW > maxPx || srcH > maxPx) {
+        videoScale = maxPx / Math.max(srcW, srcH);
+    }
+    var w = Math.round(srcW * videoScale);
+    var h = Math.round(srcH * videoScale);
 
-    // Create recording canvas
+    // Create recording canvas at target resolution
     var recCanvas = document.createElement('canvas');
     recCanvas.width = w;
     recCanvas.height = h;
@@ -3717,7 +3681,7 @@ async function exportWebM() {
     for (var f = 0; f < total; f++) {
         var frameCanvas = renderExportFrame(f);
         recCtx.clearRect(0, 0, w, h);
-        recCtx.drawImage(frameCanvas, 0, 0);
+        recCtx.drawImage(frameCanvas, 0, 0, frameCanvas.width, frameCanvas.height, 0, 0, w, h);
         if (videoTrack.requestFrame) videoTrack.requestFrame();
         showProgress(Math.round((f / total) * 100));
         // Wait for frame interval
@@ -3967,107 +3931,146 @@ async function exportVideoH264(format) {
     showProgress(0);
 
     var firstCanvas = renderExportFrame(0);
-    var w = firstCanvas.width;
-    var h = firstCanvas.height;
+    var srcW = firstCanvas.width;
+    var srcH = firstCanvas.height;
+
+    // Scale down to fit within videoMaxPx on the longest side
+    var maxPx = S.videoMaxPx || 1920;
+    var videoScale = 1;
+    if (srcW > maxPx || srcH > maxPx) {
+        videoScale = maxPx / Math.max(srcW, srcH);
+    }
+    var w = Math.round(srcW * videoScale);
+    var h = Math.round(srcH * videoScale);
     // H.264 requires even dimensions
     if (w % 2 !== 0) w++;
     if (h % 2 !== 0) h++;
-
-    var encodedSamples = [];
-    var avcCData = null;
-    var encodeError = null;
-
-    var encoder = new VideoEncoder({
-        output: function(chunk, metadata) {
-            var data = new Uint8Array(chunk.byteLength);
-            chunk.copyTo(data);
-            encodedSamples.push({ data: data, isKey: chunk.type === 'key' });
-            if (!avcCData && metadata && metadata.decoderConfig && metadata.decoderConfig.description) {
-                avcCData = new Uint8Array(metadata.decoderConfig.description);
-            }
-        },
-        error: function(e) {
-            console.error('VideoEncoder error:', e);
-            encodeError = e;
-        }
-    });
 
     // Choose codec profile based on resolution
     var codecString = 'avc1.42001f'; // Baseline Level 3.1
     if (w > 1280 || h > 720) codecString = 'avc1.640028'; // High Level 4.0
     if (w > 1920 || h > 1080) codecString = 'avc1.640032'; // High Level 5.0
 
+    var encConfig = {
+        codec: codecString,
+        width: w,
+        height: h,
+        bitrate: 8000000,
+        framerate: fps,
+        avc: { format: 'avc' }
+    };
+
+    // Pre-flight: check if this H.264 config is actually supported
     try {
-        encoder.configure({
-            codec: codecString,
-            width: w,
-            height: h,
-            bitrate: 8000000,
-            framerate: fps,
-            avc: { format: 'avc' }  // NAL units with length prefix (MP4-compatible)
-        });
+        var support = await VideoEncoder.isConfigSupported(encConfig);
+        if (!support.supported) {
+            btn.textContent = formatLabel + ' Video';
+            showProgress(-1);
+            alert('H.264 encoder not supported for ' + w + 'x' + h + ' (' + codecString + ').\n'
+                + 'Try a lower export scale, or use WebM export.');
+            return;
+        }
+        console.log(formatLabel + ' export: ' + total + 'f @' + fps + 'fps, render ' + srcW + 'x' + srcH + ' → encode ' + w + 'x' + h + 'px (max ' + maxPx + '), codec ' + codecString);
     } catch (e) {
-        btn.textContent = formatLabel + ' Video';
-        showProgress(-1);
-        alert('Failed to configure H.264 encoder: ' + e.message + '\nTry WebM or PNG sequence export.');
-        return;
+        console.warn('isConfigSupported failed, trying anyway:', e);
     }
 
-    var gopSize = Math.max(1, Math.round(fps)); // Keyframe every ~1 second
+    var encodedSamples = [];
+    var avcCData = null;
+    var encodeError = null;
+    var encoder = null;
 
-    for (var f = 0; f < total; f++) {
-        if (encodeError) break;
-
-        var frameCanvas = renderExportFrame(f);
-        // Pad to even dimensions
-        var padCanvas = document.createElement('canvas');
-        padCanvas.width = w; padCanvas.height = h;
-        var padCtx = padCanvas.getContext('2d');
-        padCtx.fillStyle = S.bgColor;
-        padCtx.fillRect(0, 0, w, h);
-        padCtx.drawImage(frameCanvas, 0, 0);
-
-        var vf = new VideoFrame(padCanvas, {
-            timestamp: Math.round(f * (1000000 / fps)),
-            duration: Math.round(1000000 / fps)
+    try {
+        encoder = new VideoEncoder({
+            output: function(chunk, metadata) {
+                var data = new Uint8Array(chunk.byteLength);
+                chunk.copyTo(data);
+                encodedSamples.push({ data: data, isKey: chunk.type === 'key' });
+                if (!avcCData && metadata && metadata.decoderConfig && metadata.decoderConfig.description) {
+                    avcCData = new Uint8Array(metadata.decoderConfig.description);
+                }
+            },
+            error: function(e) {
+                console.error('VideoEncoder error callback:', e);
+                encodeError = e;
+            }
         });
 
-        encoder.encode(vf, { keyFrame: (f % gopSize === 0) });
-        vf.close();
+        encoder.configure(encConfig);
 
-        showProgress(Math.round((f / total) * 70));
-        if (f % 4 === 0) await new Promise(function(r) { requestAnimationFrame(r); });
-    }
+        // Let the async configure settle before encoding
+        await new Promise(function(r) { setTimeout(r, 50); });
+        if (encodeError) throw encodeError;
 
-    await encoder.flush();
-    encoder.close();
+        var gopSize = Math.max(1, Math.round(fps));
+        // Reusable encode canvas (avoids creating 120+ canvases)
+        var encCanvas = document.createElement('canvas');
+        encCanvas.width = w; encCanvas.height = h;
+        var encCtx = encCanvas.getContext('2d');
 
-    if (encodeError || !avcCData || encodedSamples.length === 0) {
+        for (var f = 0; f < total; f++) {
+            if (encodeError) break;
+
+            var frameCanvas = renderExportFrame(f);
+            // Draw onto fixed-size encode canvas (downscales if needed)
+            encCtx.fillStyle = S.bgColor;
+            encCtx.fillRect(0, 0, w, h);
+            encCtx.drawImage(frameCanvas, 0, 0, frameCanvas.width, frameCanvas.height, 0, 0, w, h);
+
+            var vf = new VideoFrame(encCanvas, {
+                timestamp: Math.round(f * (1000000 / fps)),
+                duration: Math.round(1000000 / fps)
+            });
+
+            encoder.encode(vf, { keyFrame: (f % gopSize === 0) });
+            vf.close();
+
+            showProgress(Math.round((f / total) * 70));
+            if (f % 4 === 0) await new Promise(function(r) { setTimeout(r, 0); });
+        }
+
+        // Flush with timeout — if encoder is stuck, bail after 15s
+        var flushDone = false;
+        var flushTimeout = new Promise(function(_, reject) {
+            setTimeout(function() { if (!flushDone) reject(new Error('encoder.flush() timed out after 15s')); }, 15000);
+        });
+        await Promise.race([
+            encoder.flush().then(function() { flushDone = true; }),
+            flushTimeout
+        ]);
+        encoder.close();
+        encoder = null;
+
+        if (encodeError) throw encodeError;
+        if (!avcCData || encodedSamples.length === 0) {
+            throw new Error(!avcCData ? 'No decoder config (avcC) produced — H.264 encoder may be unavailable' : 'No encoded samples');
+        }
+
+        showProgress(85);
+        await new Promise(function(r) { setTimeout(r, 50); });
+
+        var isMov = format === 'mov';
+        var fileData = muxToMP4(encodedSamples, avcCData, w, h, fps, isMov);
+
+        var blobType = isMov ? 'video/quicktime' : 'video/mp4';
+        var blob = new Blob([fileData], { type: blobType });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'poster_' + S.preset + '_' + S.anim.effect + '_' + total + 'f.' + format;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+    } catch (e) {
+        console.error(formatLabel + ' export failed:', e);
+        alert(formatLabel + ' export failed: ' + e.message + '\nUse WebM export as fallback.');
+    } finally {
+        if (encoder && encoder.state !== 'closed') { try { encoder.close(); } catch(_) {} }
         btn.textContent = formatLabel + ' Video';
         showProgress(-1);
-        alert('Failed to encode video. Try WebM or PNG sequence export.');
-        return;
     }
-
-    showProgress(85);
-    await new Promise(function(r) { setTimeout(r, 50); });
-
-    var isMov = format === 'mov';
-    var fileData = muxToMP4(encodedSamples, avcCData, w, h, fps, isMov);
-
-    var blobType = isMov ? 'video/quicktime' : 'video/mp4';
-    var blob = new Blob([fileData], { type: blobType });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'poster_' + S.preset + '_' + S.anim.effect + '_' + total + 'f.' + format;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    btn.textContent = formatLabel + ' Video';
-    showProgress(-1);
 }
 
 function exportMP4() { return exportVideoH264('mp4'); }
@@ -4110,6 +4113,176 @@ async function exportSequence(format) {
     }
 
     btn.textContent = origText;
+    showProgress(-1);
+}
+
+// -- PDF Export (300 DPI, single page) ----------------------------------
+
+var PDF_PAPERS = {
+    A4: { mm: [210, 297] },
+    A3: { mm: [297, 420] },
+    A2: { mm: [420, 594] }
+};
+
+function exportPDF() {
+    var paper = document.getElementById('pdfPaper').value;
+    var dims = PDF_PAPERS[paper];
+    if (!dims) return;
+
+    var btn = document.getElementById('exportPdf');
+    btn.textContent = 'Rendering...';
+    showProgress(0);
+
+    // 300 DPI: mm -> pixels = mm / 25.4 * 300
+    var dpi = 300;
+    var pxW = Math.round(dims.mm[0] / 25.4 * dpi);
+    var pxH = Math.round(dims.mm[1] / 25.4 * dpi);
+
+    // Render grid at scale to fill paper, preserving aspect ratio
+    var cols = currentCols;
+    var rows = currentRows;
+
+    headings = [];
+    boldTexts = [];
+    var grid = createGrid(cols, rows);
+    var preset = PRESETS[S.preset];
+    if (preset) preset.build(grid, cols, rows, getActiveContent());
+    var savedHeadings = headings.slice();
+    var savedBolds = boldTexts.slice();
+
+    var animFn = ANIMS[S.anim.effect];
+    if (animFn && S.anim.effect !== 'none') {
+        grid = animFn.apply(grid, S.anim.frame, totalFrames(), cols, rows, S.anim.intensity);
+    }
+
+    // Compute scale factor: how big must fontSize be so the grid fills the paper?
+    var tmpC = document.createElement('canvas').getContext('2d');
+    var testSize = 100; // test at 100px to measure char width ratio
+    tmpC.font = testSize + 'px ' + getFont();
+    var charRatio = tmpC.measureText('M').width / testSize; // ~0.6 for monospace
+    var leadRatio = S.leading / S.fontSize;
+
+    // marginPx = S.margin * (fontSize / 10), so total width = cols * charW + 2 * margin * (fontSize/10)
+    // charW = fontSize * charRatio
+    // totalW = fontSize * (cols * charRatio + 2 * S.margin / 10)
+    // fontSize = pxW / (cols * charRatio + 2 * S.margin / 10)
+    var fsFromW = pxW / (cols * charRatio + 2 * S.margin / 10);
+    var fsFromH = pxH / (rows * leadRatio + 2 * S.margin / 10 * leadRatio);
+    var fontSize = Math.min(fsFromW, fsFromH);
+    var leading = fontSize * leadRatio;
+    var marginPx = S.margin * (fontSize / 10);
+
+    var renderCanvas = document.createElement('canvas');
+    var renderCtx = renderCanvas.getContext('2d');
+    renderCtx.font = fontSize + 'px ' + getFont();
+    var charW = renderCtx.measureText('M').width;
+    renderCanvas.width = Math.ceil(cols * charW) + marginPx * 2;
+    renderCanvas.height = Math.ceil(rows * leading) + marginPx * 2;
+
+    renderToContext(renderCtx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds);
+
+    showProgress(40);
+
+    // Composite onto exact paper-size canvas, centered
+    var pageCanvas = document.createElement('canvas');
+    pageCanvas.width = pxW;
+    pageCanvas.height = pxH;
+    var pageCtx = pageCanvas.getContext('2d');
+    pageCtx.fillStyle = S.bgColor;
+    pageCtx.fillRect(0, 0, pxW, pxH);
+    var ox = Math.round((pxW - renderCanvas.width) / 2);
+    var oy = Math.round((pxH - renderCanvas.height) / 2);
+    pageCtx.drawImage(renderCanvas, ox, oy);
+
+    showProgress(60);
+
+    // Get image data as JPEG (smaller PDF, still 300 DPI)
+    var jpegDataUrl = pageCanvas.toDataURL('image/jpeg', 0.95);
+    var jpegBase64 = jpegDataUrl.split(',')[1];
+    var jpegBytes = Uint8Array.from(atob(jpegBase64), function(c) { return c.charCodeAt(0); });
+
+    showProgress(80);
+
+    // Build minimal PDF with binary-safe assembly
+    var ptW = dims.mm[0] / 25.4 * 72; // mm to points
+    var ptH = dims.mm[1] / 25.4 * 72;
+    var enc = new TextEncoder();
+
+    // Accumulate chunks and track byte offsets for xref
+    var chunks = [];
+    var bytePos = 0;
+    var objOffsets = []; // offset of each object (1-based, index 0 = obj 1)
+
+    function addText(s) {
+        var b = enc.encode(s);
+        chunks.push(b);
+        bytePos += b.length;
+    }
+    function addBinary(b) {
+        chunks.push(b);
+        bytePos += b.length;
+    }
+    function markObj() {
+        objOffsets.push(bytePos);
+    }
+
+    // Header
+    addText('%PDF-1.4\n');
+    addBinary(new Uint8Array([0x25, 0xE2, 0xE3, 0xCF, 0xD3, 0x0A])); // binary comment
+
+    // Object 1: Catalog
+    markObj();
+    addText('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+
+    // Object 2: Pages
+    markObj();
+    addText('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n');
+
+    // Object 3: Page
+    markObj();
+    addText('3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' +
+        ptW.toFixed(2) + ' ' + ptH.toFixed(2) +
+        '] /Contents 4 0 R /Resources << /XObject << /Img 5 0 R >> >> >>\nendobj\n');
+
+    // Object 4: Content stream (draw image full-page)
+    var stream4 = 'q\n' + ptW.toFixed(2) + ' 0 0 ' + ptH.toFixed(2) + ' 0 0 cm\n/Img Do\nQ\n';
+    markObj();
+    addText('4 0 obj\n<< /Length ' + stream4.length + ' >>\nstream\n' + stream4 + 'endstream\nendobj\n');
+
+    // Object 5: Image XObject (JPEG) — binary stream
+    markObj();
+    addText('5 0 obj\n<< /Type /XObject /Subtype /Image /Width ' + pxW +
+        ' /Height ' + pxH + ' /ColorSpace /DeviceRGB /BitsPerComponent 8' +
+        ' /Filter /DCTDecode /Length ' + jpegBytes.length + ' >>\nstream\n');
+    addBinary(jpegBytes);
+    addText('\nendstream\nendobj\n');
+
+    // XRef table
+    var xrefStart = bytePos;
+    var numObjs = objOffsets.length + 1; // +1 for free object 0
+    addText('xref\n0 ' + numObjs + '\n');
+    addText('0000000000 65535 f \r\n');
+    for (var i = 0; i < objOffsets.length; i++) {
+        addText(String(objOffsets[i]).padStart(10, '0') + ' 00000 n \r\n');
+    }
+
+    // Trailer
+    addText('trailer\n<< /Size ' + numObjs + ' /Root 1 0 R >>\n');
+    addText('startxref\n' + xrefStart + '\n%%EOF\n');
+
+    showProgress(95);
+
+    var blob = new Blob(chunks, { type: 'application/pdf' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'poster_' + S.preset + '_' + paper + '_300dpi.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    btn.textContent = 'PDF 300 DPI';
     showProgress(-1);
 }
 
@@ -4190,12 +4363,22 @@ function bindControls() {
         });
     });
 
-    // Scale presets
-    document.querySelectorAll('.res-preset').forEach(function(btn) {
+    // Scale presets (PNG/image export)
+    document.querySelectorAll('#scalePresets .res-preset').forEach(function(btn) {
         btn.addEventListener('click', function() {
-            document.querySelectorAll('.res-preset').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('#scalePresets .res-preset').forEach(function(b) { b.classList.remove('active'); });
             btn.classList.add('active');
             S.exportScale = Number(btn.dataset.scale);
+        });
+    });
+
+    // Video resolution presets
+    document.querySelectorAll('#videoResPresets .res-preset').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#videoResPresets .res-preset').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            S.videoMaxPx = Number(btn.dataset.vmax);
+            document.getElementById('videoMaxVal').textContent = btn.dataset.vmax;
         });
     });
 
@@ -4220,14 +4403,25 @@ function bindControls() {
     }, 'fontSizeVal');
     bindSlider('margin', function(v) { S.margin = v; }, 'marginVal');
 
+    // BG toggle (Black/White)
+    document.querySelectorAll('#bgToggle .res-preset').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#bgToggle .res-preset').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            S.bgColor = btn.dataset.bg;
+            // Auto-swap foreground for contrast
+            S.fgColor = S.bgColor === '#ffffff' ? '#000000' : '#ffffff';
+            document.getElementById('fgColor').value = S.fgColor;
+            scheduleRender();
+        });
+    });
+
     // Layer colors
-    document.getElementById('bgColor').addEventListener('input', function(e) { S.bgColor = e.target.value; scheduleRender(); });
     document.getElementById('fgColor').addEventListener('input', function(e) { S.fgColor = e.target.value; scheduleRender(); });
     document.getElementById('blendMode').addEventListener('change', function(e) { S.blendMode = e.target.value; scheduleRender(); });
 
     // Style selects
     document.getElementById('fillChar').addEventListener('change', function(e) { S.fillChar = e.target.value; scheduleRender(); });
-    document.getElementById('wallStyle').addEventListener('change', function(e) { S.wallStyle = e.target.value; scheduleRender(); });
 
     // Image import
     document.getElementById('imageInput').addEventListener('change', function(e) {
@@ -4307,11 +4501,21 @@ function bindControls() {
         scheduleRender();
     });
     // Bold toggles
+    document.getElementById('boldTagline').addEventListener('change', function(e) {
+        S.content.boldTagline = e.target.checked; scheduleRender();
+    });
     document.getElementById('boldVernisaz').addEventListener('change', function(e) {
         S.content.boldVernisaz = e.target.checked; scheduleRender();
     });
     document.getElementById('boldVystava').addEventListener('change', function(e) {
         S.content.boldVystava = e.target.checked; scheduleRender();
+    });
+
+    // Image reset button
+    document.getElementById('imageResetBtn').addEventListener('click', function() {
+        resetImageSettings();
+        syncUI();
+        scheduleRender();
     });
 
     // Optional field toggles
@@ -4378,6 +4582,7 @@ function bindControls() {
 
     // Export
     document.getElementById('exportPng').addEventListener('click', exportPNG);
+    document.getElementById('exportPdf').addEventListener('click', exportPDF);
     document.getElementById('exportTxt').addEventListener('click', copyText);
     document.getElementById('exportWebm').addEventListener('click', exportWebM);
     document.getElementById('exportMp4').addEventListener('click', exportMP4);
@@ -4400,21 +4605,41 @@ function bindControls() {
 
 // === RESET & SHUFFLE ==================================================
 
-function resetAll() {
+// Reset format only (keeps text content)
+function resetFormat() {
     S.cols = 90;
-    S.aspectRatio = [3, 4];
+    S.aspectRatio = [70, 99];
     S.fontSize = 20;
     S.leading = 24;
     S.preset = 'floor-plan';
     S.bgColor = '#000000';
     S.fgColor = '#ffffff';
-    S.blendMode = 'difference';
+    S.blendMode = 'source-over';
     S.fillChar = '\u2592';
     S.wallStyle = 'single';
     S.headingScale = 3;
     S.headingFont = 'display-semibold';
     S.headingBg = false;
     S.imageOnTop = false;
+    resetImageSettings();
+    S.margin = 10;
+    S.exportScale = 2;
+    S.videoMaxPx = 2560;
+    S.anim.effect = 'none';
+    S.anim.playing = false;
+    S.anim.frame = 0;
+    S.anim.duration = 8.0;
+    S.anim.fps = 30;
+    S.anim.loop = true;
+    S.anim.intensity = 0.5;
+    stopAnimation();
+    syncUI();
+    updateFrameScrub();
+    render();
+}
+
+// Reset image formatting/cropping/position
+function resetImageSettings() {
     S.image.scale = 1.0;
     S.image.offsetX = 0;
     S.image.offsetY = 0;
@@ -4430,30 +4655,26 @@ function resetAll() {
     S.image.filter = 'none';
     S.image.ditherRes = 100;
     ditherCache = null;
-    S.margin = 10;
-    S.exportScale = 2;
-    S.anim.effect = 'none';
-    S.anim.playing = false;
-    S.anim.frame = 0;
-    S.anim.duration = 4.0;
-    S.anim.fps = 30;
-    S.anim.loop = true;
-    S.anim.intensity = 0.5;
+}
+
+function resetAll() {
+    resetFormat();
     // Reset content to defaults
     S.content.gallery = 'PRO_STORY';
     S.content.artist = 'JM\u00c9NO P\u0158\u00cdJMEN\u00cd';
     S.content.title = 'N\u00c1ZEV V\u00ddSTAVY';
     S.content.tagline = 'Spolupr\u00e1ce obor\u016f SUP\u0160 UH,\nMultim\u00e9dia, Obuv, Design';
     S.content.showTagline = true;
+    S.content.boldTagline = false;
     S.content.vernL = 'VERNIS\u00c1\u017d';
     S.content.vernD = '10_05_2026 | 16_00';
     S.content.showVernisaz = true;
-    S.content.boldVernisaz = false;
+    S.content.boldVernisaz = true;
     S.content.vystL = 'V\u00ddSTAVA';
     S.content.vystF = 'OD 10_05_2026';
     S.content.vystT = 'DO 10_07_2026';
     S.content.showVystava = true;
-    S.content.boldVystava = false;
+    S.content.boldVystava = true;
     S.content.social = '@PRO_STORY_UH | PROSTORY.GALLERY';
     S.content.showSocial = true;
     S.content.addr = 'V\u0161ehrdova 267, Uhersk\u00e9 Hradi\u0161t\u011b';
@@ -4466,6 +4687,7 @@ function resetAll() {
     document.getElementById('cTitle').value = S.content.title;
     document.getElementById('cTagline').value = S.content.tagline;
     document.getElementById('showTagline').checked = S.content.showTagline;
+    document.getElementById('boldTagline').checked = S.content.boldTagline;
     document.getElementById('cVernL').value = S.content.vernL;
     document.getElementById('cVernD').value = S.content.vernD;
     document.getElementById('showVernisaz').checked = S.content.showVernisaz;
@@ -4481,13 +4703,27 @@ function resetAll() {
     document.getElementById('showAddr').checked = S.content.showAddr;
     document.getElementById('cHours').value = S.content.hours;
     document.getElementById('showHours').checked = S.content.showHours;
-    stopAnimation();
+    // Show all toggle containers
+    ['taglineFields','vernisazFields','vystavaFields','socialFields','addrFields','hoursFields'].forEach(function(id) {
+        var el = document.getElementById(id); if (el) el.style.display = '';
+    });
     syncUI();
     updateFrameScrub();
     render();
 }
 
-function shufflePreset() {
+// Shuffle layout only (no animation change)
+function shuffleLayout() {
+    var presetKeys = Object.keys(PRESETS);
+    S.preset = presetKeys[Math.floor(Math.random() * presetKeys.length)];
+    S.anim.frame = 0;
+    syncUI();
+    updateFrameScrub();
+    render();
+}
+
+// Shuffle layout + animation, auto-play
+function shuffleAll() {
     var presetKeys = Object.keys(PRESETS);
     var animKeys = Object.keys(ANIMS);
     S.preset = presetKeys[Math.floor(Math.random() * presetKeys.length)];
@@ -4513,11 +4749,9 @@ function syncUI() {
     document.getElementById('fontSizeVal').textContent = S.fontSize;
     document.getElementById('margin').value = S.margin;
     document.getElementById('marginVal').textContent = S.margin;
-    document.getElementById('bgColor').value = S.bgColor;
     document.getElementById('fgColor').value = S.fgColor;
     document.getElementById('blendMode').value = S.blendMode;
     document.getElementById('fillChar').value = S.fillChar;
-    document.getElementById('wallStyle').value = S.wallStyle;
     document.getElementById('headingFont').value = S.headingFont;
     document.getElementById('headingBg').checked = S.headingBg;
     document.getElementById('imageOnTop').checked = S.imageOnTop;
@@ -4528,6 +4762,13 @@ function syncUI() {
     document.getElementById('fps').value = S.anim.fps;
     document.getElementById('fpsVal').textContent = S.anim.fps;
     document.getElementById('animLoop').checked = S.anim.loop;
+    // BG toggle
+    document.querySelectorAll('#bgToggle .res-preset').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.bg === S.bgColor);
+    });
+    // Bold tagline
+    var btEl = document.getElementById('boldTagline');
+    if (btEl) btEl.checked = S.content.boldTagline;
     // Leading
     var leadingEl = document.getElementById('leading');
     if (leadingEl) { leadingEl.value = S.leading; }
@@ -4550,8 +4791,11 @@ function syncUI() {
         b.classList.toggle('active', b.dataset.anim === S.anim.effect);
     });
     // Scale presets
-    document.querySelectorAll('.res-preset').forEach(function(b) {
+    document.querySelectorAll('#scalePresets .res-preset').forEach(function(b) {
         b.classList.toggle('active', Number(b.dataset.scale) === S.exportScale);
+    });
+    document.querySelectorAll('#videoResPresets .res-preset').forEach(function(b) {
+        b.classList.toggle('active', Number(b.dataset.vmax) === S.videoMaxPx);
     });
     // Image controls
     var imgScaleEl = document.getElementById('imgScale');
@@ -4575,6 +4819,23 @@ function syncUI() {
     var zlv = document.getElementById('zoneLeftVal'); if (zlv) zlv.textContent = S.image.zoneLeft;
     var zr = document.getElementById('zoneRight'); if (zr) zr.value = S.image.zoneRight;
     var zrv = document.getElementById('zoneRightVal'); if (zrv) zrv.textContent = S.image.zoneRight;
+    // Image processing sliders
+    var io = document.getElementById('imgOpacity'); if (io) io.value = S.image.opacity;
+    var iov = document.getElementById('imgOpacityVal'); if (iov) iov.textContent = S.image.opacity.toFixed(2);
+    var ib = document.getElementById('imgBrightness'); if (ib) ib.value = S.image.brightness;
+    var ibv = document.getElementById('imgBrightnessVal'); if (ibv) ibv.textContent = S.image.brightness;
+    var ic = document.getElementById('imgContrast'); if (ic) ic.value = S.image.contrast;
+    var icv = document.getElementById('imgContrastVal'); if (icv) icv.textContent = S.image.contrast;
+    var ig = document.getElementById('imgGamma'); if (ig) ig.value = S.image.gamma;
+    var igv = document.getElementById('imgGammaVal'); if (igv) igv.textContent = S.image.gamma.toFixed(2);
+    var ibl = document.getElementById('imgBlur'); if (ibl) ibl.value = S.image.blur;
+    var iblv = document.getElementById('imgBlurVal'); if (iblv) iblv.textContent = S.image.blur;
+    var idr = document.getElementById('imgDitherRes'); if (idr) idr.value = S.image.ditherRes;
+    var idrv = document.getElementById('imgDitherResVal'); if (idrv) idrv.textContent = S.image.ditherRes;
+    // Image filter presets
+    document.querySelectorAll('.img-pos-preset[data-filter]').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.filter === S.image.filter);
+    });
     document.getElementById('imageOnTop').checked = S.imageOnTop;
 }
 
@@ -4689,8 +4950,10 @@ canvasContainer.addEventListener('drop', function(e) {
 // === INIT =============================================================
 
 bindControls();
-document.getElementById('btnReset').addEventListener('click', resetAll);
-document.getElementById('btnShuffle').addEventListener('click', shufflePreset);
+document.getElementById('btnResetAll').addEventListener('click', resetAll);
+document.getElementById('btnResetFormat').addEventListener('click', resetFormat);
+document.getElementById('btnShuffleLayout').addEventListener('click', shuffleLayout);
+document.getElementById('btnShuffleAll').addEventListener('click', shuffleAll);
 updateFrameScrub();
 updateCanvasCursor();
 
