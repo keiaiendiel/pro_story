@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POSTER_ v7 — PRO_STORY Animated Generator</title>
+<title>POSTER_ v9 — PRO_STORY Generator</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -11,23 +11,24 @@
     --bg: #0a0a0a;
     --bg2: #111111;
     --bg3: #1a1a1a;
-    --text: #e8e8e8;
-    --text2: #aaa;
-    --text3: #777;
-    --border: #2a2a2a;
-    --border2: #363636;
-    --accent: #e8e8e8;
-    --accent-dim: #3a3a3a;
-    --font: 'Inter', -apple-system, system-ui, sans-serif;
+    --text: #e0e0e0;
+    --text2: #999;
+    --text3: #666;
+    --text4: #444;
+    --border: #1e1e1e;
+    --border2: #2a2a2a;
+    --accent: #e0e0e0;
+    --accent-dim: #333;
+    --font: -apple-system, 'Segoe UI', system-ui, sans-serif;
     --mono: 'Degular Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace;
-    --sidebar: 320px;
-    --r: 4px;
+    --sidebar: 340px;
+    --r: 5px;
 }
 
 @font-face {
     font-family: 'Degular Mono';
-    src: url('OTF/DegularMono-Regular.otf') format('opentype'),
-         local('Degular Mono'), local('DegularMono-Regular'), local('Degular Mono Regular');
+    src: url('OTF/DegularMono-Medium.otf') format('opentype'),
+         local('Degular Mono'), local('DegularMono-Medium'), local('Degular Mono Medium');
     font-weight: 400;
 }
 @font-face {
@@ -43,14 +44,28 @@
     font-weight: 600;
 }
 @font-face {
-    font-family: 'Degular Mono';
-    src: url('OTF/DegularMono-Black.otf') format('opentype'),
-         local('Degular Mono Black'), local('DegularMono-Black');
-    font-weight: 900;
+    font-family: 'Degular Display';
+    src: url('OTF/DegularDisplay-Semibold.otf') format('opentype');
+    font-weight: 600;
 }
 @font-face {
     font-family: 'Degular Display';
-    src: url('OTF/DegularDisplay-Semibold.otf') format('opentype');
+    src: url('OTF/DegularDisplay-Bold.otf') format('opentype');
+    font-weight: 700;
+}
+@font-face {
+    font-family: 'Degular';
+    src: url('OTF/Degular-Medium.otf') format('opentype');
+    font-weight: 500;
+}
+@font-face {
+    font-family: 'Degular';
+    src: url('OTF/Degular-Bold.otf') format('opentype');
+    font-weight: 700;
+}
+@font-face {
+    font-family: 'Degular';
+    src: url('OTF/Degular-Semibold.otf') format('opentype');
     font-weight: 600;
 }
 
@@ -64,6 +79,8 @@ html, body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
 }
+
+/* === APP LAYOUT === */
 
 .app {
     display: grid;
@@ -79,14 +96,81 @@ html, body {
     overflow: hidden;
 }
 
+/* === APP HEADER === */
+
 .app-header {
-    padding: 20px 20px 16px;
+    padding: 16px 20px 14px;
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
 }
 
-.app-header h1 { font-size: 14px; font-weight: 600; letter-spacing: 0.02em; }
-.app-header .subtitle { font-size: 10px; color: var(--text3); margin-top: 2px; letter-spacing: 0.04em; text-transform: uppercase; }
+.app-header h1 {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--text);
+}
+
+.app-header .subtitle {
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 1px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* Mode tabs - primary navigation */
+.mode-tabs {
+    display: flex;
+    gap: 2px;
+    margin-top: 12px;
+    background: var(--bg);
+    border-radius: var(--r);
+    padding: 2px;
+}
+
+.mode-tab {
+    flex: 1;
+    padding: 7px 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    background: transparent;
+    border: none;
+    color: var(--text3);
+    border-radius: calc(var(--r) - 1px);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+}
+
+.mode-tab:hover { color: var(--text2); }
+.mode-tab.active {
+    background: var(--text);
+    color: var(--bg);
+    font-weight: 600;
+}
+
+/* Action buttons row */
+.action-row {
+    display: flex;
+    gap: 4px;
+    margin-top: 10px;
+}
+
+.action-row .btn { flex: 1; }
+
+.action-row-secondary {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.action-row-secondary .btn { flex: 1; font-size: 10px; padding: 5px 8px; color: var(--text3); }
+
+/* === SCROLLABLE CONTROLS === */
 
 .controls {
     flex: 1;
@@ -95,18 +179,22 @@ html, body {
     padding-bottom: 20px;
 }
 
-.controls::-webkit-scrollbar { width: 4px; }
+.controls::-webkit-scrollbar { width: 3px; }
 .controls::-webkit-scrollbar-track { background: transparent; }
-.controls::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.controls::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.controls::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* === SECTION PANELS === */
 
 .section { border-bottom: 1px solid var(--border); }
 
 .section > summary {
     display: flex;
-    align-items: center;
+    align-items: baseline;
+    gap: 8px;
     padding: 10px 20px;
     font-size: 10px;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text3);
@@ -117,13 +205,42 @@ html, body {
 }
 
 .section > summary::-webkit-details-marker { display: none; }
-.section > summary::before { content: '+'; display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; margin-right: 8px; font-size: 11px; font-weight: 300; color: var(--text3); }
-.section[open] > summary::before { content: '\2013'; }
+
+.section > summary::before {
+    content: '+';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+    font-size: 11px;
+    font-weight: 400;
+    font-family: var(--mono);
+    color: var(--text4);
+    flex-shrink: 0;
+    transition: color 0.15s;
+}
+
+.section[open] > summary::before { content: '\2013'; color: var(--text3); }
 .section > summary:hover { color: var(--text2); }
-.section-body { padding: 6px 20px 16px; }
+.section > summary:hover::before { color: var(--text3); }
+
+.section-desc {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--text4);
+    margin-left: auto;
+}
+
+.section-body { padding: 4px 20px 16px; }
+
+/* === CONTROL ROWS === */
 
 .cr { margin-bottom: 10px; }
 .cr:last-child { margin-bottom: 0; }
+
 .cr > label {
     display: flex;
     justify-content: space-between;
@@ -132,7 +249,15 @@ html, body {
     color: var(--text2);
     margin-bottom: 5px;
 }
-.cr > label .val { font-family: var(--mono); font-size: 11px; color: var(--text3); font-variant-numeric: tabular-nums; }
+
+.cr > label .val {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    font-variant-numeric: tabular-nums;
+}
+
+/* === INPUT STYLES === */
 
 .cr input[type="range"] {
     -webkit-appearance: none;
@@ -147,12 +272,22 @@ html, body {
 
 .cr input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 10px; height: 10px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background: var(--text);
     cursor: pointer;
     border: none;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    transition: transform 0.1s;
+}
+
+.cr input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.cr input[type="range"]:active::-webkit-slider-thumb {
+    transform: scale(0.95);
 }
 
 .cr select,
@@ -166,7 +301,7 @@ html, body {
     color: var(--text);
     font-family: var(--font);
     font-size: 12px;
-    padding: 6px 10px;
+    padding: 7px 10px;
     border-radius: var(--r);
     outline: none;
     transition: border-color 0.15s;
@@ -177,11 +312,19 @@ html, body {
 .cr textarea:focus { border-color: var(--text3); }
 .cr select { cursor: pointer; }
 .cr select option { background: var(--bg); }
-.cr input[type="color"] { padding: 2px; height: 28px; cursor: pointer; }
-.cr textarea { resize: vertical; min-height: 40px; font-family: var(--mono); font-size: 10px; line-height: 1.4; }
+.cr input[type="color"] { padding: 3px; height: 30px; cursor: pointer; }
+.cr textarea {
+    resize: vertical;
+    min-height: 40px;
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1.5;
+}
 
 .color-row { display: flex; gap: 8px; }
 .color-row .cr { flex: 1; }
+
+/* === CHECKBOXES === */
 
 .chk {
     display: flex;
@@ -189,6 +332,7 @@ html, body {
     gap: 8px;
     margin-bottom: 10px;
 }
+
 .chk label { font-size: 12px; color: var(--text2); cursor: pointer; }
 .chk input[type="checkbox"] { accent-color: var(--text); cursor: pointer; }
 
@@ -197,16 +341,19 @@ html, body {
     gap: 6px;
     align-items: center;
 }
+
 .input-row input[type="number"] { flex: 1; font-family: var(--mono); }
+
+/* === PRESET GRIDS === */
 
 .preset-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
+    gap: 3px;
 }
 
 .preset-btn {
-    padding: 8px 4px;
+    padding: 7px 4px;
     font-family: var(--mono);
     font-size: 9px;
     font-weight: 500;
@@ -217,11 +364,13 @@ html, body {
     cursor: pointer;
     text-align: center;
     transition: all 0.12s;
-    line-height: 1.2;
+    line-height: 1.3;
 }
 
-.preset-btn:hover { color: var(--text); border-color: var(--text3); }
+.preset-btn:hover { color: var(--text2); border-color: var(--border2); background: var(--bg3); }
 .preset-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+/* === BUTTONS === */
 
 .btn {
     display: inline-flex;
@@ -229,29 +378,39 @@ html, body {
     justify-content: center;
     padding: 7px 14px;
     font-family: var(--font);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     border: 1px solid var(--border);
     border-radius: var(--r);
     cursor: pointer;
     transition: all 0.12s;
     background: var(--bg);
-    color: var(--text);
+    color: var(--text2);
 }
 
-.btn:hover { border-color: var(--text3); background: var(--bg3); }
+.btn:hover { border-color: var(--border2); background: var(--bg3); color: var(--text); }
 .btn:active { transform: scale(0.98); }
-.btn-primary { background: var(--text); border-color: transparent; color: var(--bg); }
+
+.btn-primary {
+    background: var(--text);
+    border-color: transparent;
+    color: var(--bg);
+    font-weight: 600;
+}
+
 .btn-primary:hover { background: #ccc; border-color: transparent; }
 .btn-small { padding: 4px 10px; font-size: 10px; }
 
-.btn-row { display: flex; gap: 6px; }
+.btn-row { display: flex; gap: 4px; }
 .btn-row .btn { flex: 1; }
 
-.res-presets { display: flex; gap: 3px; }
+/* === TOGGLE PRESETS (mode, bg, scale, etc.) === */
+
+.res-presets { display: flex; gap: 2px; }
+
 .res-preset {
     flex: 1;
-    padding: 5px 4px;
+    padding: 6px 4px;
     font-family: var(--mono);
     font-size: 10px;
     font-weight: 500;
@@ -263,10 +422,13 @@ html, body {
     text-align: center;
     transition: all 0.12s;
 }
-.res-preset:hover { color: var(--text); border-color: var(--text3); }
+
+.res-preset:hover { color: var(--text2); border-color: var(--border2); }
 .res-preset.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
-.aspect-presets { display: flex; gap: 3px; flex-wrap: wrap; }
+/* Aspect ratio presets */
+.aspect-presets { display: flex; gap: 2px; flex-wrap: wrap; }
+
 .aspect-preset {
     padding: 5px 8px;
     font-family: var(--mono);
@@ -279,10 +441,13 @@ html, body {
     text-align: center;
     transition: all 0.12s;
 }
-.aspect-preset:hover { color: var(--text); border-color: var(--text3); }
+
+.aspect-preset:hover { color: var(--text2); border-color: var(--border2); }
 .aspect-preset.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
-.heading-presets { display: flex; gap: 3px; }
+/* Heading presets */
+.heading-presets { display: flex; gap: 2px; }
+
 .heading-preset {
     flex: 1;
     padding: 5px 4px;
@@ -297,14 +462,17 @@ html, body {
     text-align: center;
     transition: all 0.12s;
 }
-.heading-preset:hover { color: var(--text); border-color: var(--text3); }
+
+.heading-preset:hover { color: var(--text2); border-color: var(--border2); }
 .heading-preset.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
+/* Animation presets */
 .anim-presets {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
+    gap: 3px;
 }
+
 .anim-preset {
     padding: 6px 4px;
     font-family: var(--mono);
@@ -319,25 +487,82 @@ html, body {
     transition: all 0.12s;
     line-height: 1.2;
 }
-.anim-preset:hover { color: var(--text); border-color: var(--text3); }
+
+.anim-preset:hover { color: var(--text2); border-color: var(--border2); }
 .anim-preset.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+/* === SWATCHES === */
+
+.swatch-btn {
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--border);
+    border-radius: var(--r);
+    cursor: pointer;
+    transition: border-color 0.12s, transform 0.12s;
+    padding: 0;
+    background: none;
+}
+
+.swatch-btn:hover { border-color: var(--text2); transform: scale(1.1); }
+.swatch-btn.active { border-color: var(--text); box-shadow: 0 0 0 1px var(--text); }
+
+/* === TRANSPORT CONTROLS === */
 
 .transport {
     display: flex;
-    gap: 4px;
+    gap: 3px;
     margin-bottom: 10px;
 }
-.transport .btn { flex: 1; font-family: var(--mono); font-size: 12px; padding: 8px; }
+
+.transport .btn {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 8px;
+}
+
 .transport .btn.playing { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+/* === INFO ROWS === */
 
 .info-row {
     display: flex;
     justify-content: space-between;
     font-size: 10px;
     color: var(--text3);
-    padding: 4px 0;
+    padding: 3px 0;
 }
-.info-row .info-val { font-family: var(--mono); color: var(--text2); font-variant-numeric: tabular-nums; }
+
+.info-row .info-val {
+    font-family: var(--mono);
+    color: var(--text2);
+    font-variant-numeric: tabular-nums;
+}
+
+/* === IMAGE POSITION PRESETS === */
+
+.img-pos-presets {
+    display: flex;
+    gap: 3px;
+}
+
+.img-pos-preset {
+    flex: 1;
+    padding: 4px 6px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    color: var(--text2);
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.img-pos-preset:hover { border-color: var(--border2); color: var(--text); }
+.img-pos-preset.active { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
+
+/* === VIEWPORT === */
 
 .viewport {
     display: flex;
@@ -353,14 +578,16 @@ html, body {
     justify-content: center;
     overflow: hidden;
     position: relative;
-    padding: 20px;
+    padding: 24px;
 }
 
 .canvas-container canvas {
     background: #000;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
     image-rendering: auto;
 }
+
+/* === STATUS BAR === */
 
 .status-bar {
     display: flex;
@@ -377,37 +604,58 @@ html, body {
 
 .status-bar .status-sep { color: var(--border2); font-size: 6px; }
 
+/* === FOOTER === */
+
 .site-footer {
     padding: 10px 20px;
     font-size: 10px;
-    color: var(--text3);
+    color: var(--text4);
     text-align: center;
     border-top: 1px solid var(--border);
     flex-shrink: 0;
 }
 
-.site-footer a { color: var(--text2); text-decoration: none; }
+.site-footer a { color: var(--text3); text-decoration: none; }
 .site-footer a:hover { color: var(--text); }
 
-.img-pos-presets {
-    display: flex;
-    gap: 4px;
+/* === ADVANCED SUB-SECTIONS === */
+
+.sub-advanced {
+    margin-top: 8px;
 }
-.img-pos-preset {
-    flex: 1;
-    padding: 4px 6px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    color: var(--text2);
+
+.sub-advanced > summary {
     font-size: 10px;
+    color: var(--text4);
     cursor: pointer;
-    transition: all 0.15s;
+    user-select: none;
+    list-style: none;
+    letter-spacing: 0.04em;
+    padding: 4px 0;
+    transition: color 0.15s;
+    font-family: var(--mono);
 }
-.img-pos-preset:hover { border-color: var(--text3); color: var(--text); }
-.img-pos-preset.active { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
+
+.sub-advanced > summary::-webkit-details-marker { display: none; }
+.sub-advanced > summary::before { content: '+ '; font-weight: 400; }
+.sub-advanced[open] > summary::before { content: '\2013 '; }
+.sub-advanced > summary:hover { color: var(--text3); }
+.sub-advanced-body { padding-top: 8px; }
+
+/* === UTILITIES === */
 
 .hidden { display: none !important; }
+
+.hint {
+    font-size: 10px;
+    color: var(--text4);
+    margin-top: 3px;
+    line-height: 1.3;
+}
+
+.sep { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+
+/* === EXPORT PROGRESS === */
 
 .export-progress {
     position: fixed;
@@ -416,12 +664,15 @@ html, body {
     background: var(--border);
     z-index: 1000;
 }
+
 .export-progress-bar {
     height: 100%;
     background: var(--text);
     transition: width 0.1s;
     width: 0%;
 }
+
+/* === RESPONSIVE === */
 
 @media (max-width: 900px) {
     .app { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
@@ -434,15 +685,20 @@ html, body {
 <div class="app">
     <aside class="sidebar">
         <header class="app-header">
-            <h1>POSTER_ v7</h1>
-            <p class="subtitle">PRO_STORY Animated Generator</p>
-            <div class="btn-row" style="margin-top: 8px;">
-                <button class="btn" id="btnShuffleLayout" style="flex:1;">Shuffle Layout</button>
-                <button class="btn" id="btnShuffleAll" style="flex:1;">Shuffle All</button>
+            <h1>POSTER_ v9</h1>
+            <p class="subtitle">PRO_STORY Generator</p>
+            <div class="mode-tabs" id="modeToggle">
+                <button class="mode-tab res-preset active" data-mode="poster">Poster</button>
+                <button class="mode-tab res-preset" data-mode="post">Post</button>
+                <button class="mode-tab res-preset" data-mode="paper">Paper</button>
             </div>
-            <div class="btn-row" style="margin-top: 4px;">
-                <button class="btn" id="btnResetFormat" style="flex:1;">Reset Format</button>
-                <button class="btn" id="btnResetAll" style="flex:1;">Reset All</button>
+            <div class="action-row">
+                <button class="btn" id="btnShuffleLayout">Shuffle Layout</button>
+                <button class="btn btn-primary" id="btnShuffleAll">Shuffle All</button>
+            </div>
+            <div class="action-row-secondary">
+                <button class="btn" id="btnResetFormat">Reset Format</button>
+                <button class="btn" id="btnResetAll">Reset All</button>
             </div>
         </header>
 
@@ -450,7 +706,7 @@ html, body {
 
             <!-- FORMAT -->
             <details class="section" open>
-                <summary>Format</summary>
+                <summary>Format <span class="section-desc">Size and background</span></summary>
                 <div class="section-body">
                     <div class="cr">
                         <label>Aspect Ratio</label>
@@ -463,6 +719,13 @@ html, body {
                             <button class="aspect-preset" data-ratio="4:3">4:3</button>
                         </div>
                     </div>
+                    <div class="cr">
+                        <label>Background</label>
+                        <div class="res-presets" id="bgToggle">
+                            <button class="res-preset active" data-bg="#000000">Black</button>
+                            <button class="res-preset" data-bg="#ffffff">White</button>
+                        </div>
+                    </div>
                     <div class="info-row">
                         <span>Grid</span>
                         <span class="info-val" id="infoDims">90 x 60</span>
@@ -471,64 +734,29 @@ html, body {
                         <span>Output</span>
                         <span class="info-val" id="infoOutput">&mdash;</span>
                     </div>
-                    <details style="margin-top: 8px;">
-                        <summary style="font-size:10px;color:var(--text3);cursor:pointer;user-select:none;list-style:none;letter-spacing:0.05em;">Advanced</summary>
-                        <div style="padding-top: 8px;">
-                    <div class="cr">
-                        <label>Columns <span class="val" id="colsVal">90</span></label>
-                        <input type="range" id="cols" min="40" max="200" step="1" value="90">
-                    </div>
-                    <div class="cr">
-                        <label>Font Size <span class="val" id="fontSizeVal">20</span></label>
-                        <input type="range" id="fontSize" min="6" max="48" step="1" value="20">
-                    </div>
-                    <div class="cr">
-                        <label>Margin <span class="val" id="marginVal">10</span></label>
-                        <input type="range" id="margin" min="0" max="80" step="1" value="10">
-                    </div>
+                    <details class="sub-advanced">
+                        <summary>Grid settings</summary>
+                        <div class="sub-advanced-body">
+                            <div class="cr">
+                                <label>Columns <span class="val" id="colsVal">90</span></label>
+                                <input type="range" id="cols" min="40" max="200" step="1" value="90">
+                            </div>
+                            <div class="cr">
+                                <label>Character Size <span class="val" id="fontSizeVal">20</span></label>
+                                <input type="range" id="fontSize" min="6" max="48" step="1" value="20">
+                            </div>
+                            <div class="cr">
+                                <label>Page Margin <span class="val" id="marginVal">10</span></label>
+                                <input type="range" id="margin" min="0" max="80" step="1" value="10">
+                            </div>
                         </div>
                     </details>
                 </div>
             </details>
 
-            <!-- STYLE (moved before Layout) -->
-            <details class="section">
-                <summary>Style</summary>
-                <div class="section-body">
-                    <div class="cr">
-                        <label>Background</label>
-                        <div class="res-presets" id="bgToggle">
-                            <button class="res-preset active" data-bg="#000000">Black</button>
-                            <button class="res-preset" data-bg="#ffffff">White</button>
-                        </div>
-                    </div>
-                    <div class="cr">
-                        <label>Foreground</label>
-                        <input type="color" id="fgColor" value="#ffffff">
-                    </div>
-                    <div class="cr">
-                        <label>Blend Mode</label>
-                        <select id="blendMode">
-                            <option value="source-over" selected>Normal</option>
-                            <option value="difference">Difference</option>
-                            <option value="color-dodge">Color Dodge</option>
-                        </select>
-                    </div>
-                    <div class="cr">
-                        <label>Fill Character</label>
-                        <select id="fillChar">
-                            <option value="&#x2592;">Medium</option>
-                            <option value="&#x2588;">Solid</option>
-                            <option value="&#x2591;">Light</option>
-                            <option value="&#x2593;">Dark</option>
-                        </select>
-                    </div>
-                </div>
-            </details>
-
             <!-- LAYOUT -->
             <details class="section" open>
-                <summary>Layout</summary>
+                <summary>Layout <span class="section-desc">Composition template</span></summary>
                 <div class="section-body">
                     <div class="preset-grid" id="presetGrid">
                         <button class="preset-btn active" data-preset="floor-plan">A<br>Floor</button>
@@ -559,33 +787,38 @@ html, body {
                         <button class="preset-btn" data-preset="strata">Z<br>Strat</button>
                         <button class="preset-btn" data-preset="dissolve-edge">AA<br>Diss</button>
                         <button class="preset-btn" data-preset="monolith">AB<br>Mono</button>
+                        <button class="preset-btn" data-preset="paper-split" style="display:none;">AC<br>PSplt</button>
+                        <button class="preset-btn" data-preset="paper-header" style="display:none;">AD<br>PHdr</button>
                     </div>
                 </div>
             </details>
 
             <!-- IMAGE -->
             <details class="section" id="imageSection" open>
-                <summary>Image</summary>
+                <summary>Image <span class="section-desc">Photo overlay</span></summary>
                 <div class="section-body">
                     <div class="cr">
-                        <label>Import Photo</label>
                         <div class="btn-row">
                             <label class="btn btn-primary" for="imageInput" style="cursor:pointer; text-align:center; flex:1;">Choose File</label>
                             <input type="file" id="imageInput" accept="image/*" style="display:none;">
                             <button class="btn" id="imageRemove" disabled>Remove</button>
                         </div>
                     </div>
+                    <div id="swatchRow" class="cr" style="display:none;">
+                        <label>Swatches</label>
+                        <div id="swatchContainer" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+                    </div>
                     <div class="chk">
                         <input type="checkbox" id="imageOnTop">
-                        <label for="imageOnTop">Image On Top (covers text)</label>
+                        <label for="imageOnTop">Image on top of text</label>
                     </div>
                     <div class="info-row">
                         <span>Status</span>
                         <span class="info-val" id="imageStatus">No image</span>
                     </div>
-                    <p style="font-size:10px;color:var(--text3);margin-top:4px;">Kolečko myši = zoom, tažení = posun obrázku</p>
+                    <p class="hint">Scroll wheel to zoom, drag to pan</p>
                     <div id="imageControls" class="hidden">
-                        <div class="info-row">
+                        <div class="info-row" style="margin-top:6px;">
                             <span>Zone</span>
                             <span class="info-val" id="imageZoneInfo">—</span>
                         </div>
@@ -601,79 +834,114 @@ html, body {
                             <label>Offset Y <span class="val" id="imgOffsetYVal">0</span>%</label>
                             <input type="range" id="imgOffsetY" min="-100" max="100" step="0.5" value="0">
                         </div>
-                        <div class="cr">
-                            <label>Zone Top <span class="val" id="zoneTopVal">0</span></label>
-                            <input type="range" id="zoneTop" min="-20" max="20" step="0.5" value="0">
-                        </div>
-                        <div class="cr">
-                            <label>Zone Bottom <span class="val" id="zoneBotVal">0</span></label>
-                            <input type="range" id="zoneBot" min="-20" max="20" step="0.5" value="0">
-                        </div>
-                        <div class="cr">
-                            <label>Zone Left <span class="val" id="zoneLeftVal">0</span></label>
-                            <input type="range" id="zoneLeft" min="-20" max="20" step="0.5" value="0">
-                        </div>
-                        <div class="cr">
-                            <label>Zone Right <span class="val" id="zoneRightVal">0</span></label>
-                            <input type="range" id="zoneRight" min="-20" max="20" step="0.5" value="0">
-                        </div>
-                        <div class="cr">
-                            <label>Opacity <span class="val" id="imgOpacityVal">1.00</span></label>
-                            <input type="range" id="imgOpacity" min="0" max="1" step="0.01" value="1">
-                        </div>
-                        <div class="cr">
-                            <label>Brightness <span class="val" id="imgBrightnessVal">0</span></label>
-                            <input type="range" id="imgBrightness" min="-100" max="100" step="1" value="0">
-                        </div>
-                        <div class="cr">
-                            <label>Contrast <span class="val" id="imgContrastVal">0</span></label>
-                            <input type="range" id="imgContrast" min="-100" max="100" step="1" value="0">
-                        </div>
-                        <div class="cr">
-                            <label>Gamma <span class="val" id="imgGammaVal">1.00</span></label>
-                            <input type="range" id="imgGamma" min="0.2" max="3.0" step="0.05" value="1">
-                        </div>
-                        <div class="cr">
-                            <label>Blur <span class="val" id="imgBlurVal">0</span>px</label>
-                            <input type="range" id="imgBlur" min="0" max="20" step="1" value="0">
-                        </div>
-                        <div class="cr">
-                            <label>Filter</label>
-                            <div class="img-pos-presets" id="imgFilterPresets">
-                                <button class="img-pos-preset active" data-filter="none">None</button>
-                                <button class="img-pos-preset" data-filter="dither">Dither</button>
-                                <button class="img-pos-preset" data-filter="bayer">Bayer</button>
+                        <details class="sub-advanced">
+                            <summary>Zone and filters</summary>
+                            <div class="sub-advanced-body">
+                                <div class="cr">
+                                    <label>Zone Top <span class="val" id="zoneTopVal">0</span></label>
+                                    <input type="range" id="zoneTop" min="-20" max="20" step="0.5" value="0">
+                                </div>
+                                <div class="cr">
+                                    <label>Zone Bottom <span class="val" id="zoneBotVal">0</span></label>
+                                    <input type="range" id="zoneBot" min="-20" max="20" step="0.5" value="0">
+                                </div>
+                                <div class="cr">
+                                    <label>Zone Left <span class="val" id="zoneLeftVal">0</span></label>
+                                    <input type="range" id="zoneLeft" min="-20" max="20" step="0.5" value="0">
+                                </div>
+                                <div class="cr">
+                                    <label>Zone Right <span class="val" id="zoneRightVal">0</span></label>
+                                    <input type="range" id="zoneRight" min="-20" max="20" step="0.5" value="0">
+                                </div>
+                                <div class="cr">
+                                    <label>Opacity <span class="val" id="imgOpacityVal">1.00</span></label>
+                                    <input type="range" id="imgOpacity" min="0" max="1" step="0.01" value="1">
+                                </div>
+                                <div class="cr">
+                                    <label>Brightness <span class="val" id="imgBrightnessVal">0</span></label>
+                                    <input type="range" id="imgBrightness" min="-100" max="100" step="1" value="0">
+                                </div>
+                                <div class="cr">
+                                    <label>Contrast <span class="val" id="imgContrastVal">0</span></label>
+                                    <input type="range" id="imgContrast" min="-100" max="100" step="1" value="0">
+                                </div>
+                                <div class="cr">
+                                    <label>Gamma <span class="val" id="imgGammaVal">1.00</span></label>
+                                    <input type="range" id="imgGamma" min="0.2" max="3.0" step="0.05" value="1">
+                                </div>
+                                <div class="cr">
+                                    <label>Blur <span class="val" id="imgBlurVal">0</span>px</label>
+                                    <input type="range" id="imgBlur" min="0" max="20" step="1" value="0">
+                                </div>
+                                <div class="cr">
+                                    <label>Filter</label>
+                                    <div class="img-pos-presets" id="imgFilterPresets">
+                                        <button class="img-pos-preset active" data-filter="none">None</button>
+                                        <button class="img-pos-preset" data-filter="dither">Dither</button>
+                                        <button class="img-pos-preset" data-filter="bayer">Bayer</button>
+                                    </div>
+                                </div>
+                                <div class="cr">
+                                    <label>Dither Size <span class="val" id="imgDitherResVal">100</span>%</label>
+                                    <input type="range" id="imgDitherRes" min="5" max="150" step="5" value="100">
+                                </div>
                             </div>
-                        </div>
-                        <div class="cr">
-                            <label>Dither Size <span class="val" id="imgDitherResVal">100</span>%</label>
-                            <input type="range" id="imgDitherRes" min="5" max="150" step="5" value="100">
-                        </div>
-                        <div class="btn-row" style="margin-top:6px;">
+                        </details>
+                        <div class="btn-row" style="margin-top:8px;">
                             <button class="btn btn-small" id="imageResetBtn">Reset Image</button>
                         </div>
                     </div>
                 </div>
             </details>
 
+            <!-- STYLE -->
+            <details class="section" id="styleSection">
+                <summary>Style <span class="section-desc">Color and fill</span></summary>
+                <div class="section-body">
+                    <div class="cr">
+                        <label>Foreground</label>
+                        <input type="color" id="fgColor" value="#ffffff">
+                    </div>
+                    <div class="cr">
+                        <label>Blend Mode</label>
+                        <select id="blendMode">
+                            <option value="source-over" selected>Normal</option>
+                            <option value="difference">Difference</option>
+                            <option value="color-dodge">Color Dodge</option>
+                        </select>
+                    </div>
+                    <div class="cr">
+                        <label>Pattern Character</label>
+                        <select id="fillChar">
+                            <option value="&#x2592;">Medium &#x2592;</option>
+                            <option value="&#x2588;">Solid &#x2588;</option>
+                            <option value="&#x2591;">Light &#x2591;</option>
+                            <option value="&#x2593;">Dark &#x2593;</option>
+                        </select>
+                    </div>
+                </div>
+            </details>
+
             <!-- CONTENT -->
             <details class="section" open>
-                <summary>Content</summary>
+                <summary>Content <span class="section-desc">Exhibition text</span></summary>
                 <div class="section-body">
                     <div class="cr">
                         <label>Gallery</label>
                         <input type="text" id="cGallery" value="PRO_STORY">
                     </div>
-                    <div class="cr">
-                        <label>Artist</label>
-                        <input type="text" id="cArtist" value="JMÉNO PŘÍJMENÍ">
+                    <div id="posterArtistField">
+                        <div class="cr">
+                            <label>Artist</label>
+                            <input type="text" id="cArtist" value="JMÉNO PŘÍJMENÍ">
+                        </div>
                     </div>
                     <div class="cr">
                         <label>Title</label>
-                        <input type="text" id="cTitle" value="NÁZEV VÝSTAVY">
+                        <textarea id="cTitle" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">NÁZEV VÝSTAVY</textarea>
                     </div>
                     <div class="cr" style="margin-top: 6px;">
-                        <label>Heading Scale</label>
+                        <label>Title Size</label>
                         <div class="heading-presets" id="headingPresets">
                             <button class="heading-preset" data-scale="1">1x</button>
                             <button class="heading-preset" data-scale="1.5">1.5x</button>
@@ -682,67 +950,85 @@ html, body {
                         </div>
                     </div>
                     <div class="cr">
-                        <label>Heading Font</label>
+                        <label>Title Font</label>
                         <select id="headingFont">
                             <option value="mono-regular">Mono Regular</option>
                             <option value="mono-semibold">Mono Semibold</option>
                             <option value="mono-bold">Mono Bold</option>
-                            <option value="mono-black">Mono Black</option>
                             <option value="display-semibold" selected>Display Semibold</option>
+                            <option value="display-bold">Display Bold</option>
                         </select>
                     </div>
                     <div class="chk">
                         <input type="checkbox" id="headingBg">
-                        <label for="headingBg">Heading Background</label>
+                        <label for="headingBg">Title background fill</label>
                     </div>
-                    <hr style="border-color: var(--border); margin: 8px 0;">
-                    <div class="chk" style="display:flex;align-items:center;gap:8px;">
-                        <input type="checkbox" id="showTagline" checked>
-                        <label for="showTagline" style="flex:1;">Tagline</label>
-                        <input type="checkbox" id="boldTagline" title="Bold">
-                        <label for="boldTagline" style="font-weight:bold;font-size:12px;cursor:pointer;">B</label>
-                    </div>
-                    <div id="taglineFields">
+                    <hr class="sep">
+                    <div id="postFields" style="display:none;">
                         <div class="cr">
-                            <label>Text</label>
-                            <textarea id="cTagline" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:6px;">Spolupráce oborů SUPŠ UH,
+                            <label>Message</label>
+                            <textarea id="cMessage" rows="4" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">PRO_STORY MAJÍ LETNÍ PŘESTÁVKU!
+Těšíme se na vás od Září 2026.</textarea>
+                        </div>
+                    </div>
+                    <div id="paperFields" style="display:none;">
+                        <div class="cr">
+                            <label>Body Text</label>
+                            <textarea id="cBodyText" rows="8" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;"></textarea>
+                        </div>
+                    </div>
+                    <div id="taglineRow">
+                        <div class="chk" style="display:flex;align-items:center;gap:8px;">
+                            <input type="checkbox" id="showTagline" checked>
+                            <label for="showTagline" style="flex:1;">Tagline</label>
+                            <input type="checkbox" id="boldTagline" title="Bold">
+                            <label for="boldTagline" style="font-weight:bold;font-size:12px;cursor:pointer;">B</label>
+                        </div>
+                        <div id="taglineFields">
+                            <div class="cr">
+                                <textarea id="cTagline" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">Spolupráce oborů SUPŠ UH,
 Multimédia, Obuv, Design</textarea>
+                            </div>
                         </div>
                     </div>
-                    <div class="chk" style="display:flex;align-items:center;gap:8px;">
-                        <input type="checkbox" id="showVernisaz" checked>
-                        <label for="showVernisaz" style="flex:1;">Vernisáž</label>
-                        <input type="checkbox" id="boldVernisaz" checked title="Bold">
-                        <label for="boldVernisaz" style="font-weight:bold;font-size:12px;cursor:pointer;">B</label>
+                    <div id="vernisazRow">
+                        <div class="chk" style="display:flex;align-items:center;gap:8px;">
+                            <input type="checkbox" id="showVernisaz" checked>
+                            <label for="showVernisaz" style="flex:1;">Vernisáž</label>
+                            <input type="checkbox" id="boldVernisaz" checked title="Bold">
+                            <label for="boldVernisaz" style="font-weight:bold;font-size:12px;cursor:pointer;">B</label>
+                        </div>
+                        <div id="vernisazFields">
+                            <div class="cr">
+                                <label>Label</label>
+                                <input type="text" id="cVernL" value="VERNISÁŽ">
+                            </div>
+                            <div class="cr">
+                                <label>Date / Time</label>
+                                <input type="text" id="cVernD" value="10_05_2026 | 16_00">
+                            </div>
+                        </div>
                     </div>
-                    <div id="vernisazFields">
-                        <div class="cr">
-                            <label>Label</label>
-                            <input type="text" id="cVernL" value="VERNISÁŽ">
+                    <div id="vystavaRow">
+                        <div class="chk" style="display:flex;align-items:center;gap:8px;">
+                            <input type="checkbox" id="showVystava" checked>
+                            <label for="showVystava" style="flex:1;">Výstava</label>
+                            <input type="checkbox" id="boldVystava" checked title="Bold">
+                            <label for="boldVystava" style="font-weight:bold;font-size:12px;cursor:pointer;">B</label>
                         </div>
-                        <div class="cr">
-                            <label>Date / Time</label>
-                            <input type="text" id="cVernD" value="10_05_2026 | 16_00">
-                        </div>
-                    </div>
-                    <div class="chk" style="display:flex;align-items:center;gap:8px;">
-                        <input type="checkbox" id="showVystava" checked>
-                        <label for="showVystava" style="flex:1;">Výstava</label>
-                        <input type="checkbox" id="boldVystava" checked title="Bold">
-                        <label for="boldVystava" style="font-weight:bold;font-size:12px;cursor:pointer;">B</label>
-                    </div>
-                    <div id="vystavaFields">
-                        <div class="cr">
-                            <label>Label</label>
-                            <input type="text" id="cVystL" value="VÝSTAVA">
-                        </div>
-                        <div class="cr">
-                            <label>From</label>
-                            <input type="text" id="cVystF" value="OD 10_05_2026">
-                        </div>
-                        <div class="cr">
-                            <label>To</label>
-                            <input type="text" id="cVystT" value="DO 10_07_2026">
+                        <div id="vystavaFields">
+                            <div class="cr">
+                                <label>Label</label>
+                                <input type="text" id="cVystL" value="VÝSTAVA">
+                            </div>
+                            <div class="cr">
+                                <label>From</label>
+                                <input type="text" id="cVystF" value="OD 10_05_2026">
+                            </div>
+                            <div class="cr">
+                                <label>To</label>
+                                <input type="text" id="cVystT" value="DO 10_07_2026">
+                            </div>
                         </div>
                     </div>
                     <div class="chk">
@@ -751,7 +1037,6 @@ Multimédia, Obuv, Design</textarea>
                     </div>
                     <div id="socialFields">
                         <div class="cr">
-                            <label>Handle</label>
                             <input type="text" id="cSocial" value="@PRO_STORY_UH | PROSTORY.GALLERY">
                         </div>
                     </div>
@@ -761,26 +1046,26 @@ Multimédia, Obuv, Design</textarea>
                     </div>
                     <div id="addrFields">
                         <div class="cr">
-                            <label>Address</label>
                             <input type="text" id="cAddr" value="Všehrdova 267, Uherské Hradiště">
                         </div>
                     </div>
-                    <div class="chk">
-                        <input type="checkbox" id="showHours" checked>
-                        <label for="showHours">Hours</label>
-                    </div>
-                    <div id="hoursFields">
-                        <div class="cr">
-                            <label>Hours</label>
-                            <input type="text" id="cHours" value="Otevřeno každou středu od 12–17">
+                    <div id="hoursRow">
+                        <div class="chk">
+                            <input type="checkbox" id="showHours" checked>
+                            <label for="showHours">Hours</label>
+                        </div>
+                        <div id="hoursFields">
+                            <div class="cr">
+                                <input type="text" id="cHours" value="Otevřeno každou středu od 12–17">
+                            </div>
                         </div>
                     </div>
                 </div>
             </details>
 
             <!-- ANIMATION -->
-            <details class="section" open>
-                <summary>Animation</summary>
+            <details class="section">
+                <summary>Animation <span class="section-desc">Motion effects</span></summary>
                 <div class="section-body">
                     <div class="cr">
                         <label>Effect</label>
@@ -808,39 +1093,44 @@ Multimédia, Obuv, Design</textarea>
                     <div class="transport">
                         <button class="btn" id="btnPlay" title="Play/Pause">&#9654;</button>
                         <button class="btn" id="btnStop" title="Stop">&#9632;</button>
-                        <button class="btn" id="btnPrevFrame" title="Prev Frame">&#9664;</button>
+                        <button class="btn" id="btnPrevFrame" title="Previous Frame">&#9664;</button>
                         <button class="btn" id="btnNextFrame" title="Next Frame">&#9654;&#124;</button>
                     </div>
                     <div class="cr">
                         <label>Frame <span class="val" id="frameVal">0 / 120</span></label>
                         <input type="range" id="frameScrub" min="0" max="119" step="1" value="0">
                     </div>
-                    <div class="cr">
-                        <label>Duration (s) <span class="val" id="durationVal">8.0</span></label>
-                        <input type="range" id="duration" min="1" max="30" step="0.5" value="8">
-                    </div>
-                    <div class="cr">
-                        <label>FPS <span class="val" id="fpsVal">30</span></label>
-                        <input type="range" id="fps" min="10" max="60" step="1" value="30">
-                    </div>
-                    <div class="cr">
-                        <label>Intensity <span class="val" id="intensityVal">0.50</span></label>
-                        <input type="range" id="intensity" min="0" max="1" step="0.01" value="0.5">
-                    </div>
-                    <div class="chk">
-                        <input type="checkbox" id="animLoop" checked>
-                        <label for="animLoop">Loop</label>
-                    </div>
-                    <div class="info-row">
-                        <span>Total frames</span>
-                        <span class="info-val" id="totalFramesInfo">120</span>
-                    </div>
+                    <details class="sub-advanced">
+                        <summary>Timing</summary>
+                        <div class="sub-advanced-body">
+                            <div class="cr">
+                                <label>Duration <span class="val" id="durationVal">8.0</span>s</label>
+                                <input type="range" id="duration" min="1" max="30" step="0.5" value="8">
+                            </div>
+                            <div class="cr">
+                                <label>FPS <span class="val" id="fpsVal">30</span></label>
+                                <input type="range" id="fps" min="10" max="60" step="1" value="30">
+                            </div>
+                            <div class="cr">
+                                <label>Intensity <span class="val" id="intensityVal">0.50</span></label>
+                                <input type="range" id="intensity" min="0" max="1" step="0.01" value="0.5">
+                            </div>
+                            <div class="chk">
+                                <input type="checkbox" id="animLoop" checked>
+                                <label for="animLoop">Loop</label>
+                            </div>
+                            <div class="info-row">
+                                <span>Total frames</span>
+                                <span class="info-val" id="totalFramesInfo">120</span>
+                            </div>
+                        </div>
+                    </details>
                 </div>
             </details>
 
             <!-- EXPORT -->
-            <details class="section" open>
-                <summary>Export</summary>
+            <details class="section">
+                <summary>Export <span class="section-desc">Download and share</span></summary>
                 <div class="section-body">
                     <div class="cr">
                         <label>Scale</label>
@@ -858,29 +1148,29 @@ Multimédia, Obuv, Design</textarea>
                     </div>
                     <div class="btn-row" style="margin-top: 6px;">
                         <button class="btn btn-primary" id="exportPdf">PDF 300 DPI</button>
-                        <select id="pdfPaper" style="flex:1;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:4px 6px;font-size:11px;">
-                            <option value="A4" selected>A4 (210×297)</option>
-                            <option value="A3">A3 (297×420)</option>
-                            <option value="A2">A2 (420×594)</option>
+                        <select id="pdfPaper" style="flex:1;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:5px 8px;font-size:11px;">
+                            <option value="A4" selected>A4 (210x297)</option>
+                            <option value="A3">A3 (297x420)</option>
+                            <option value="A2">A2 (420x594)</option>
                         </select>
                     </div>
-                    <div class="cr" style="margin-top: 6px;">
-                        <label>Video Max <span class="val" id="videoMaxVal">2560</span>px</label>
-                        <div class="res-presets" id="videoResPresets">
-                            <button class="res-preset" data-vmax="720">720</button>
-                            <button class="res-preset" data-vmax="1920">1080</button>
-                            <button class="res-preset active" data-vmax="2560">1440</button>
-                            <button class="res-preset" data-vmax="3840">4K</button>
-                        </div>
-                    </div>
-                    <div class="btn-row" style="margin-top: 6px;">
-                        <button class="btn" id="exportMp4">MP4 Video</button>
-                        <button class="btn" id="exportMov">MOV Video</button>
-                    </div>
-                    <details style="margin-top: 8px;">
-                        <summary style="font-size:10px;color:var(--text3);cursor:pointer;user-select:none;list-style:none;letter-spacing:0.05em;">Extra</summary>
-                        <div style="padding-top: 6px;">
-                            <div class="btn-row">
+                    <details class="sub-advanced" style="margin-top: 10px;">
+                        <summary>Video export</summary>
+                        <div class="sub-advanced-body">
+                            <div class="cr">
+                                <label>Video Max <span class="val" id="videoMaxVal">2560</span>px</label>
+                                <div class="res-presets" id="videoResPresets">
+                                    <button class="res-preset" data-vmax="720">720</button>
+                                    <button class="res-preset" data-vmax="1920">1080</button>
+                                    <button class="res-preset active" data-vmax="2560">1440</button>
+                                    <button class="res-preset" data-vmax="3840">4K</button>
+                                </div>
+                            </div>
+                            <div class="btn-row" style="margin-top: 6px;">
+                                <button class="btn" id="exportMp4">MP4 Video</button>
+                                <button class="btn" id="exportMov">MOV Video</button>
+                            </div>
+                            <div class="btn-row" style="margin-top: 6px;">
                                 <button class="btn" id="exportWebm">WebM Video</button>
                             </div>
                             <div class="btn-row" style="margin-top: 6px;">
@@ -922,8 +1212,8 @@ Multimédia, Obuv, Design</textarea>
 
 <script>
 /* ===================================================================
-   POSTER_ v7 — PRO_STORY Animated Generator
-   POSTER ratio, BW toggle, bold tagline, layout fixes, streamlined UI
+   POSTER_ v9 — PRO_STORY Animated Generator
+   Mode system (POSTER/POST/PAPER), Degular font family, paper white bg
    =================================================================== */
 
 // === STATE ============================================================
@@ -934,6 +1224,7 @@ const S = {
     fontSize: 20,
     leading: 24,
     preset: 'floor-plan',
+    mode: 'poster',  // 'poster' | 'post' | 'paper'
     bgColor: '#000000',
     fgColor: '#ffffff',
     blendMode: 'source-over',
@@ -984,6 +1275,8 @@ const S = {
         showAddr: true,
         hours: 'Otevřeno každou středu od 12\u201317',
         showHours: true,
+        message: 'PRO_STORY MAJÍ LETNÍ PŘESTÁVKU!\nTěšíme se na vás od Září 2026.',
+        bodyText: '',
     },
     anim: {
         effect: 'none',
@@ -995,6 +1288,96 @@ const S = {
         intensity: 0.5,
     },
 };
+
+// === MODE SYSTEM ======================================================
+
+const MODE_LAYOUTS = {
+    poster: null,  // all layouts
+    post: ['gradient', 'void', 'baseline', 'horizon', 'scatter',
+           'dissolve-edge', 'strata', 'halftone', 'curtain'],
+    paper: ['paper-split', 'paper-header'],
+};
+
+function setMode(mode) {
+    S.mode = mode;
+    // Update mode toggle UI
+    document.querySelectorAll('#modeToggle .res-preset').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.mode === mode);
+    });
+    // Lock aspect ratio for paper mode + white bg default
+    if (mode === 'paper') {
+        S.aspectRatio = [70, 99];
+        S.cols = autoColumns([70, 99]);
+        document.getElementById('cols').value = S.cols;
+        document.getElementById('colsVal').textContent = S.cols;
+        document.querySelectorAll('.aspect-preset').forEach(function(b) {
+            b.classList.toggle('active', b.dataset.ratio === '70:99');
+        });
+        // Paper defaults to white background
+        S.bgColor = '#ffffff';
+        S.fgColor = '#000000';
+        document.getElementById('fgColor').value = S.fgColor;
+        document.querySelectorAll('#bgToggle .res-preset').forEach(function(b) {
+            b.classList.toggle('active', b.dataset.bg === S.bgColor);
+        });
+        // Pre-fill lorem ipsum if body text is empty
+        if (!S.content.bodyText) {
+            S.content.bodyText = 'Galerie PRO_STORY vznikla jako platforma SUP\u0160 Uhersk\u00e9 Hradi\u0161t\u011b pro prezentaci um\u011bleck\u00e9 tvorby ze \u0161koln\u00edho i mimoakademick\u00e9ho prost\u0159ed\u00ed. Jej\u00ed ambic\u00ed je fungovat jako ve\u0159ejn\u00e1 instituce s vlastn\u00edm kur\u00e1torsk\u00fdm programem.\n\nVizu\u00e1ln\u00ed identita vych\u00e1z\u00ed z \u00fast\u0159edn\u00edho principu, \u017ee d\u011blen\u00ed prostoru je univerz\u00e1ln\u00ed z\u00e1klad ka\u017ed\u00e9 kompozice, a\u0165 jde o obraz, fotografii, nebo galerijn\u00ed expozici.';
+            document.getElementById('cBodyText').value = S.content.bodyText;
+        }
+    }
+    // POST mode forces headingScale=3
+    if (mode === 'post') {
+        S.headingScale = 3;
+        document.querySelectorAll('.heading-preset').forEach(function(b) {
+            b.classList.toggle('active', Number(b.dataset.scale) === 3);
+        });
+    }
+    updateContentVisibility();
+    updateLayoutButtons();
+    // Auto-select default layout for mode (paper defaults to paper-header)
+    var allowed = MODE_LAYOUTS[mode];
+    if (allowed && allowed.indexOf(S.preset) === -1) {
+        S.preset = (mode === 'paper' && allowed.length > 1) ? allowed[1] : allowed[0];
+        document.querySelectorAll('.preset-btn').forEach(function(b) {
+            b.classList.toggle('active', b.dataset.preset === S.preset);
+        });
+    }
+    scheduleRender();
+}
+
+function updateContentVisibility() {
+    var mode = S.mode;
+    // Poster-only fields
+    var posterOnly = ['posterArtistField', 'taglineRow', 'vernisazRow', 'hoursRow'];
+    posterOnly.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = (mode === 'poster') ? '' : 'none';
+    });
+    // Výstava row: poster + paper
+    var vystEl = document.getElementById('vystavaRow');
+    if (vystEl) vystEl.style.display = (mode === 'post') ? 'none' : '';
+    // Post fields
+    var postEl = document.getElementById('postFields');
+    if (postEl) postEl.style.display = (mode === 'post') ? '' : 'none';
+    // Paper fields
+    var paperEl = document.getElementById('paperFields');
+    if (paperEl) paperEl.style.display = (mode === 'paper') ? '' : 'none';
+}
+
+function updateLayoutButtons() {
+    var mode = S.mode;
+    var allowed = MODE_LAYOUTS[mode];
+    document.querySelectorAll('.preset-btn').forEach(function(btn) {
+        var preset = btn.dataset.preset;
+        if (allowed === null) {
+            // poster mode: show all except paper layouts
+            btn.style.display = (preset === 'paper-split' || preset === 'paper-header') ? 'none' : '';
+        } else {
+            btn.style.display = (allowed.indexOf(preset) !== -1) ? '' : 'none';
+        }
+    });
+}
 
 // === MARGIN CONSTANTS =================================================
 
@@ -1009,6 +1392,7 @@ function totalFrames() { return Math.round(S.anim.duration * S.anim.fps); }
 // Heading positions collected during grid build
 let headings = [];
 let boldTexts = [];
+let bodyTextZones = [];
 
 // Seeded RNG
 function mulberry32(seed) {
@@ -1073,6 +1457,7 @@ function placeText(grid, r, c, maxW, text, pad, isHeading, isBold) {
         var line = lines[li];
         if (isHeading && S.headingScale > 1) {
             headings.push({ text: line.substring(0, maxW - pad), r: r + row, c: c + pad });
+            row += Math.max(1, S.headingScale);
         } else if (isBold) {
             // Bold text: place on grid (so animations see it) AND collect for bold overlay
             var btext = line.substring(0, maxW - pad);
@@ -1080,12 +1465,13 @@ function placeText(grid, r, c, maxW, text, pad, isHeading, isBold) {
             for (var i = 0; i < btext.length; i++) {
                 set(grid, r + row, c + pad + i, btext[i]);
             }
+            row++;
         } else {
             for (var i = 0; i < Math.min(line.length, maxW - pad); i++) {
                 set(grid, r + row, c + pad + i, line[i]);
             }
+            row++;
         }
-        row++;
     }
     return row;
 }
@@ -1137,10 +1523,59 @@ function placeLogo(grid, r, c) {
 // Linear interpolation helper
 function lerp(a, b, t) { return a + (b - a) * t; }
 
-// Get active content fields based on toggle state
+// Get active content fields based on toggle state and current mode
 // Tagline is a single string; split on \n to get tagLines array
 function getActiveContent() {
     var ct = S.content;
+    var mode = S.mode;
+
+    // POST mode: all message lines become heading text via artist+title
+    if (mode === 'post') {
+        var msgLines = (ct.message || '').split('\n');
+        // First line → artist heading, rest joined with \n → title (multiline heading)
+        return {
+            gallery: ct.gallery,
+            artist: msgLines[0] || '',
+            title: msgLines.slice(1).join('\n'),
+            tagLines: [],
+            boldTag: false,
+            vernL: '',
+            vernD: '',
+            boldVern: false,
+            vystL: '',
+            vystF: '',
+            vystT: '',
+            boldVyst: false,
+            social: ct.showSocial ? ct.social : '',
+            addr: ct.showAddr ? ct.addr : '',
+            hours: '',
+            bodyText: '',
+        };
+    }
+
+    // PAPER mode: gallery, title, dates, body text, social, addr
+    if (mode === 'paper') {
+        return {
+            gallery: ct.gallery,
+            artist: '',
+            title: ct.title,
+            tagLines: [],
+            boldTag: false,
+            vernL: '',
+            vernD: '',
+            boldVern: false,
+            vystL: '',
+            vystF: ct.vystF,
+            vystT: ct.vystT,
+            boldVyst: false,
+            social: ct.showSocial ? ct.social : '',
+            addr: ct.showAddr ? ct.addr : '',
+            hours: '',
+            bodyText: ct.bodyText || '',
+        };
+    }
+
+    // POSTER mode: original behavior
     var tagLines = [];
     if (ct.showTagline && ct.tagline) {
         tagLines = ct.tagline.split('\n').filter(function(l) { return l.length > 0; });
@@ -1161,6 +1596,7 @@ function getActiveContent() {
         social: ct.showSocial ? ct.social : '',
         addr: ct.showAddr ? ct.addr : '',
         hours: ct.showHours ? ct.hours : '',
+        bodyText: '',
     };
 }
 
@@ -2383,6 +2819,129 @@ const PRESETS = {
     }
 },
 
+// --- AC: Paper Split ---
+'paper-split': {
+    name: 'Paper Split',
+    build(grid, cols, rows, ct) {
+        var W = getW(), F = S.fillChar;
+        // Left column ~33%, right ~67%, vertical divider between
+        var leftW = Math.round(cols * 0.33);
+        var divCol = leftW;
+        var rightStart = leftW + 1;
+        var rightW = cols - rightStart;
+        var ind = 2;
+
+        // Left side: checkerboard blocks at top
+        for (var r = 0; r < 4; r++) {
+            for (var c = 0; c < leftW; c++) {
+                if ((r + c) % 2 === 0) set(grid, r, c, F);
+            }
+        }
+
+        // PRO_STORY below checkerboard
+        var y = 5;
+        if (ct.gallery) { placeText(grid, y, 0, leftW, ct.gallery, ind); y += 2; }
+
+        // Title heading (single, supports line breaks, tighter leading)
+        if (ct.title) {
+            var titleLines = ct.title.split('\n');
+            var titleStep = Math.max(1, S.headingScale - 1);
+            for (var ti = 0; ti < titleLines.length; ti++) {
+                if (titleLines[ti].length > 0) {
+                    placeText(grid, y, 0, leftW, titleLines[ti], ind, true);
+                }
+                y += titleStep;
+            }
+            y++;
+        }
+
+        // Dates
+        if (ct.vystF) { placeText(grid, y, 0, leftW, ct.vystF, ind); y++; }
+        if (ct.vystT) { placeText(grid, y, 0, leftW, ct.vystT, ind); y++; }
+
+        // Vertical divider
+        vline(grid, 0, divCol, rows, '\u2502');
+
+        // Right side: body text zone
+        if (ct.bodyText) {
+            bodyTextZones.push({ text: ct.bodyText, r: 2, c: rightStart + 1, w: rightW - 2, maxRows: rows - 8 });
+        }
+
+        // Bottom: horizontal rule
+        var footerRow = rows - 4;
+        hline(grid, footerRow, 0, cols, W.h);
+
+        // Footer: social (left) + addr (right)
+        if (ct.social) placeText(grid, footerRow + 1, 0, leftW, ct.social, ind);
+        if (ct.addr) placeText(grid, footerRow + 1, rightStart, rightW, ct.addr, 1);
+
+        // Light checkerboard at very bottom
+        for (var r = rows - 2; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                if ((r + c) % 3 === 0) set(grid, r, c, '\u2591');
+            }
+        }
+    }
+},
+
+// --- AD: Paper Header ---
+'paper-header': {
+    name: 'Paper Header',
+    build(grid, cols, rows, ct) {
+        var W = getW(), F = S.fillChar;
+        var ind = 2;
+
+        // Top: density gradient (solid → dark → medium → light → dots)
+        var gradChars = ['\u2588', '\u2593', '\u2592', '\u2591', '\u00B7'];
+        for (var gi = 0; gi < gradChars.length; gi++) {
+            var r = gi;
+            if (r >= rows) break;
+            for (var c = 0; c < cols; c++) set(grid, r, c, gradChars[gi]);
+        }
+
+        // Header section
+        var y = gradChars.length + 1;
+        if (ct.gallery) { placeText(grid, y, 0, cols, ct.gallery, ind); y += 2; }
+
+        // Title heading (single, supports line breaks, tighter leading)
+        if (ct.title) {
+            var titleLines = ct.title.split('\n');
+            var titleStep = Math.max(1, S.headingScale - 1);
+            for (var ti = 0; ti < titleLines.length; ti++) {
+                if (titleLines[ti].length > 0) {
+                    placeText(grid, y, 0, cols, titleLines[ti], ind, true);
+                }
+                y += titleStep;
+            }
+            y++;
+        }
+
+        // Dates
+        if (ct.vystF) { placeText(grid, y, 0, cols, ct.vystF, ind); y++; }
+        if (ct.vystT) { placeText(grid, y, 0, cols, ct.vystT, ind); y++; }
+
+        // Horizontal divider
+        y++;
+        hline(grid, y, 0, cols, W.h);
+        y += 2;
+
+        // Body: text zone fills remaining space
+        var bodyStartRow = y;
+        var bodyRows = rows - bodyStartRow - 5;
+        if (ct.bodyText && bodyRows > 0) {
+            bodyTextZones.push({ text: ct.bodyText, r: bodyStartRow, c: ind, w: cols - ind * 2, maxRows: bodyRows });
+        }
+
+        // Footer divider
+        var footerRow = rows - 3;
+        hline(grid, footerRow, 0, cols, W.h);
+
+        // Footer: social + addr
+        if (ct.social) placeText(grid, footerRow + 1, 0, Math.round(cols * 0.5), ct.social, ind);
+        if (ct.addr) placeText(grid, footerRow + 1, Math.round(cols * 0.5), cols - Math.round(cols * 0.5), ct.addr, 1);
+    }
+},
+
 }; // end PRESETS
 
 // === ANIMATION EFFECTS ================================================
@@ -3021,14 +3580,220 @@ var imgDragStartOffX = 0, imgDragStartOffY = 0;
 var lastCanvasScale = 1;
 var lastZonePx = { x: 0, y: 0, w: 1, h: 1 };
 
+// === COLOR EXTRACTION =================================================
+
+function extractSwatches(img, count) {
+    count = count || 5;
+    // Sample image at reduced resolution
+    var sampleSize = 150;
+    var cvs = document.createElement('canvas');
+    var ctx = cvs.getContext('2d');
+    var ratio = Math.min(sampleSize / img.naturalWidth, sampleSize / img.naturalHeight);
+    cvs.width = Math.round(img.naturalWidth * ratio);
+    cvs.height = Math.round(img.naturalHeight * ratio);
+    ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+    var data = ctx.getImageData(0, 0, cvs.width, cvs.height).data;
+
+    // Collect pixels as HSL, filter for saturation and lightness
+    var pixels = [];
+    for (var i = 0; i < data.length; i += 4) {
+        var r = data[i] / 255, g = data[i+1] / 255, b = data[i+2] / 255;
+        var max = Math.max(r, g, b), min = Math.min(r, g, b);
+        var h, s, l = (max + min) / 2;
+        if (max === min) { h = 0; s = 0; }
+        else {
+            var d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+            else if (max === g) h = ((b - r) / d + 2) / 6;
+            else h = ((r - g) / d + 4) / 6;
+        }
+        // Keep pixels with meaningful saturation and not too dark/light
+        if (s > 0.15 && l > 0.1 && l < 0.85) {
+            pixels.push({ h: h, s: s, l: l, r: data[i], g: data[i+1], b: data[i+2] });
+        }
+    }
+
+    if (pixels.length < 5) {
+        // Not enough colorful pixels; return empty
+        return [];
+    }
+
+    // K-means clustering in HSL space to find distinct colors
+    // Initialize centroids spread across hue range
+    var centroids = [];
+    // Sort by hue and pick evenly spaced starting points
+    pixels.sort(function(a, b) { return a.h - b.h; });
+    var step = Math.floor(pixels.length / count);
+    for (var ci = 0; ci < count; ci++) {
+        var p = pixels[Math.min(ci * step, pixels.length - 1)];
+        centroids.push({ h: p.h, s: p.s, l: p.l });
+    }
+
+    // Run k-means iterations
+    for (var iter = 0; iter < 12; iter++) {
+        var clusters = [];
+        for (var j = 0; j < count; j++) clusters.push([]);
+
+        for (var pi = 0; pi < pixels.length; pi++) {
+            var px = pixels[pi];
+            var bestDist = Infinity, bestIdx = 0;
+            for (var ki = 0; ki < count; ki++) {
+                // Hue distance wraps around
+                var dh = Math.abs(px.h - centroids[ki].h);
+                if (dh > 0.5) dh = 1 - dh;
+                var ds = px.s - centroids[ki].s;
+                var dl = px.l - centroids[ki].l;
+                var dist = dh * dh * 4 + ds * ds + dl * dl;
+                if (dist < bestDist) { bestDist = dist; bestIdx = ki; }
+            }
+            clusters[bestIdx].push(px);
+        }
+
+        // Update centroids
+        for (var ki = 0; ki < count; ki++) {
+            if (clusters[ki].length === 0) continue;
+            var sumH = 0, sumS = 0, sumL = 0;
+            // Average hue using circular mean
+            var sinSum = 0, cosSum = 0;
+            for (var m = 0; m < clusters[ki].length; m++) {
+                sinSum += Math.sin(clusters[ki][m].h * Math.PI * 2);
+                cosSum += Math.cos(clusters[ki][m].h * Math.PI * 2);
+                sumS += clusters[ki][m].s;
+                sumL += clusters[ki][m].l;
+            }
+            var avgH = Math.atan2(sinSum, cosSum) / (Math.PI * 2);
+            if (avgH < 0) avgH += 1;
+            centroids[ki] = {
+                h: avgH,
+                s: sumS / clusters[ki].length,
+                l: sumL / clusters[ki].length
+            };
+        }
+    }
+
+    // Score clusters: prefer saturated, well-populated
+    var results = [];
+    for (var ri = 0; ri < count; ri++) {
+        if (!clusters || !clusters[ri] || clusters[ri].length < 2) continue;
+        var c = centroids[ri];
+        var score = c.s * 2 + (1 - Math.abs(c.l - 0.5)) + Math.log(clusters[ri].length + 1) * 0.3;
+        results.push({ h: c.h, s: c.s, l: c.l, score: score, size: clusters[ri].length });
+    }
+
+    // Sort by score descending
+    results.sort(function(a, b) { return b.score - a.score; });
+
+    // Filter out colors too similar to each other (min hue distance)
+    var filtered = [];
+    for (var fi = 0; fi < results.length; fi++) {
+        var tooClose = false;
+        for (var fj = 0; fj < filtered.length; fj++) {
+            var dh = Math.abs(results[fi].h - filtered[fj].h);
+            if (dh > 0.5) dh = 1 - dh;
+            var ds = Math.abs(results[fi].s - filtered[fj].s);
+            var dl = Math.abs(results[fi].l - filtered[fj].l);
+            if (dh < 0.06 && ds < 0.15 && dl < 0.15) { tooClose = true; break; }
+        }
+        if (!tooClose) filtered.push(results[fi]);
+    }
+
+    // Convert HSL to hex
+    var swatches = [];
+    for (var si = 0; si < Math.min(filtered.length, count); si++) {
+        var fc = filtered[si];
+        swatches.push(hslToHex(fc.h, fc.s, fc.l));
+    }
+    return swatches;
+}
+
+function hslToHex(h, s, l) {
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+        function hue2rgb(p, q, t) {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1/6) return p + (q - p) * 6 * t;
+            if (t < 1/2) return q;
+            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        }
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+    var toHex = function(x) { var hex = Math.round(x * 255).toString(16); return hex.length === 1 ? '0' + hex : hex; };
+    return '#' + toHex(r) + toHex(g) + toHex(b);
+}
+
+function invertHue(hex) {
+    // Parse hex to RGB
+    var r = parseInt(hex.slice(1,3), 16) / 255;
+    var g = parseInt(hex.slice(3,5), 16) / 255;
+    var b = parseInt(hex.slice(5,7), 16) / 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = 0; s = 0; }
+    else {
+        var d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+        else if (max === g) h = ((b - r) / d + 2) / 6;
+        else h = ((r - g) / d + 4) / 6;
+    }
+    // Rotate hue 180°
+    h = (h + 0.5) % 1;
+    return hslToHex(h, s, l);
+}
+
+function showSwatches(colors) {
+    var container = document.getElementById('swatchContainer');
+    var row = document.getElementById('swatchRow');
+    container.innerHTML = '';
+    if (!colors || colors.length === 0) {
+        row.style.display = 'none';
+        return;
+    }
+    row.style.display = '';
+
+    function addSwatch(hex, label) {
+        var btn = document.createElement('button');
+        btn.className = 'swatch-btn';
+        btn.style.background = hex;
+        btn.title = (label ? label + ' ' : '') + hex;
+        if (hex === '#000000') btn.style.borderColor = '#444';
+        btn.addEventListener('click', function() {
+            S.fgColor = hex;
+            document.getElementById('fgColor').value = hex;
+            container.querySelectorAll('.swatch-btn').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            scheduleRender();
+        });
+        container.appendChild(btn);
+    }
+
+    addSwatch('#ffffff', 'white');
+    addSwatch('#000000', 'black');
+    // Top 2-3 extracted colors
+    var max = Math.min(colors.length, 3);
+    for (var i = 0; i < max; i++) addSwatch(colors[i]);
+    // Inverted hue of the most dominant color
+    if (colors.length > 0) addSwatch(invertHue(colors[0]), 'inverted');
+}
+
 function getFont() {
     return '"Degular Mono", "SF Mono", "Fira Code", "Consolas", monospace';
 }
 
 function getHeadingFont() {
     var parts = S.headingFont.split('-');
-    var family = parts[0] === 'display' ? '"Degular Display"' : '"Degular Mono"';
-    var weights = { regular: '400', semibold: '600', bold: '700', black: '900' };
+    var family;
+    if (parts[0] === 'display') family = '"Degular Display"';
+    else family = '"Degular Mono"';
+    var weights = { regular: '400', medium: '500', semibold: '600', bold: '700' };
     var w = weights[parts[1]] || '600';
     return w + ' {SIZE}px ' + family + ', "SF Mono", "Fira Code", "Consolas", monospace';
 }
@@ -3240,7 +4005,7 @@ function drawImageLayer(targetCtx, logicalW, logicalH, marginPx, charW, charH, c
     targetCtx.restore();
 }
 
-function renderToContext(targetCtx, grid, cols, rows, fontSize, leading, headingsArr, boldsArr) {
+function renderToContext(targetCtx, grid, cols, rows, fontSize, leading, headingsArr, boldsArr, bodyTextZonesArr) {
     var font = getFont();
     targetCtx.font = fontSize + 'px ' + font;
     var charW = targetCtx.measureText('M').width;
@@ -3354,6 +4119,52 @@ function renderToContext(targetCtx, grid, cols, rows, fontSize, leading, heading
         }
     }
 
+    // Body text zones: proportional word-wrapped text (PAPER mode)
+    if (bodyTextZonesArr && bodyTextZonesArr.length) {
+        var bodyFontSize = fontSize;
+        var bodyFont = '500 ' + bodyFontSize + 'px "Degular", sans-serif';
+        targetCtx.font = bodyFont;
+        targetCtx.fillStyle = S.fgColor;
+        targetCtx.globalCompositeOperation = S.blendMode;
+        targetCtx.textBaseline = 'top';
+
+        for (var bzi = 0; bzi < bodyTextZonesArr.length; bzi++) {
+            var bz = bodyTextZonesArr[bzi];
+            var bzX = ox + bz.c * charW;
+            var bzY = oy + bz.r * charH + yOff;
+            var bzMaxW = bz.w * charW;
+            var bzMaxRows = bz.maxRows;
+
+            // Word-wrap respecting explicit line breaks (\n)
+            var paragraphs = bz.text.split('\n');
+            var bzLines = [];
+            for (var pi = 0; pi < paragraphs.length; pi++) {
+                var para = paragraphs[pi];
+                if (para.length === 0) { bzLines.push(''); continue; }
+                var words = para.split(/\s+/);
+                var currentLine = '';
+                for (var wi = 0; wi < words.length; wi++) {
+                    var testLine = currentLine ? currentLine + ' ' + words[wi] : words[wi];
+                    if (targetCtx.measureText(testLine).width > bzMaxW && currentLine) {
+                        bzLines.push(currentLine);
+                        currentLine = words[wi];
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                if (currentLine) bzLines.push(currentLine);
+            }
+
+            // Render lines
+            var maxLines = bzMaxRows || bzLines.length;
+            for (var bli = 0; bli < Math.min(bzLines.length, maxLines); bli++) {
+                targetCtx.fillText(bzLines[bli], bzX, bzY + bli * charH);
+            }
+        }
+        // Restore font
+        targetCtx.font = fontSize + 'px ' + font;
+    }
+
     // Layer 4: Image on top (optional)
     if (S.imageOnTop) {
         targetCtx.globalCompositeOperation = 'source-over';
@@ -3373,17 +4184,19 @@ function buildBaseGrid() {
 
     headings = [];
     boldTexts = [];
+    bodyTextZones = [];
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
     if (preset) preset.build(grid, cols, rows, getActiveContent());
     baseGrid = grid;
-    return { grid: grid, headings: headings.slice(), bolds: boldTexts.slice() };
+    return { grid: grid, headings: headings.slice(), bolds: boldTexts.slice(), bodyTexts: bodyTextZones.slice() };
 }
 
 function render(frameOverride) {
     var baseResult = buildBaseGrid();
     var savedHeadings = baseResult.headings;
     var savedBolds = baseResult.bolds;
+    var savedBodyTexts = baseResult.bodyTexts;
 
     var cols = currentCols;
     var rows = currentRows;
@@ -3438,11 +4251,11 @@ function render(frameOverride) {
 
     // Render at DPR scale
     ctx.scale(dpr, dpr);
-    var dims = renderToContext(ctx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds);
+    var dims = renderToContext(ctx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds, savedBodyTexts);
 
     // Update status
     document.getElementById('statusDims').textContent = cols + ' x ' + rows;
-    document.getElementById('statusPreset').textContent = (PRESETS[S.preset] || {}).name || '\u2014';
+    document.getElementById('statusPreset').textContent = S.mode.toUpperCase() + ' / ' + ((PRESETS[S.preset] || {}).name || '\u2014');
     document.getElementById('statusAnim').textContent = S.anim.effect;
     document.getElementById('statusFrame').textContent = frame + '/' + total;
     document.getElementById('statusOutput').textContent = dims.logicalW + 'x' + dims.logicalH + ' px';
@@ -3547,11 +4360,13 @@ function exportPNG() {
 
     headings = [];
     boldTexts = [];
+    bodyTextZones = [];
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
     if (preset) preset.build(grid, cols, rows, getActiveContent());
     var savedHeadings = headings.slice();
     var savedBolds = boldTexts.slice();
+    var savedBodyTexts = bodyTextZones.slice();
 
     // Apply animation
     var animFn = ANIMS[S.anim.effect];
@@ -3570,7 +4385,7 @@ function exportPNG() {
     tmpCanvas.width = Math.ceil(cols * charW) + marginPx * 2;
     tmpCanvas.height = rows * leading + marginPx * 2;
 
-    renderToContext(tmpCtx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds);
+    renderToContext(tmpCtx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds, savedBodyTexts);
 
     tmpCanvas.toBlob(function(blob) {
         var url = URL.createObjectURL(blob);
@@ -3602,11 +4417,13 @@ function renderExportFrame(frameNum) {
 
     headings = [];
     boldTexts = [];
+    bodyTextZones = [];
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
     if (preset) preset.build(grid, cols, rows, getActiveContent());
     var savedHeadings = headings.slice();
     var savedBolds = boldTexts.slice();
+    var savedBodyTexts = bodyTextZones.slice();
 
     var animFn = ANIMS[S.anim.effect];
     if (animFn && S.anim.effect !== 'none') {
@@ -3624,7 +4441,7 @@ function renderExportFrame(frameNum) {
     tmpCanvas.width = Math.ceil(cols * charW) + marginPx * 2;
     tmpCanvas.height = rows * leading + marginPx * 2;
 
-    renderToContext(tmpCtx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds);
+    renderToContext(tmpCtx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds, savedBodyTexts);
     return tmpCanvas;
 }
 
@@ -4144,11 +4961,13 @@ function exportPDF() {
 
     headings = [];
     boldTexts = [];
+    bodyTextZones = [];
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
     if (preset) preset.build(grid, cols, rows, getActiveContent());
     var savedHeadings = headings.slice();
     var savedBolds = boldTexts.slice();
+    var savedBodyTexts = bodyTextZones.slice();
 
     var animFn = ANIMS[S.anim.effect];
     if (animFn && S.anim.effect !== 'none') {
@@ -4179,7 +4998,7 @@ function exportPDF() {
     renderCanvas.width = Math.ceil(cols * charW) + marginPx * 2;
     renderCanvas.height = Math.ceil(rows * leading) + marginPx * 2;
 
-    renderToContext(renderCtx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds);
+    renderToContext(renderCtx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds, savedBodyTexts);
 
     showProgress(40);
 
@@ -4302,6 +5121,7 @@ function bindControls() {
     // Aspect ratio presets — auto-adjust columns to keep content visible
     document.querySelectorAll('.aspect-preset').forEach(function(btn) {
         btn.addEventListener('click', function() {
+            if (S.mode === 'paper') return; // locked in paper mode
             document.querySelectorAll('.aspect-preset').forEach(function(b) { b.classList.remove('active'); });
             btn.classList.add('active');
             var parts = btn.dataset.ratio.split(':').map(Number);
@@ -4315,6 +5135,13 @@ function bindControls() {
         });
     });
 
+    // Mode toggle
+    document.querySelectorAll('#modeToggle .res-preset').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            setMode(btn.dataset.mode);
+        });
+    });
+
     // Layout presets
     document.querySelectorAll('.preset-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
@@ -4325,7 +5152,6 @@ function bindControls() {
         });
     });
 
-    // Heading scale
     document.querySelectorAll('.heading-preset').forEach(function(btn) {
         btn.addEventListener('click', function() {
             document.querySelectorAll('.heading-preset').forEach(function(b) { b.classList.remove('active'); });
@@ -4437,6 +5263,9 @@ function bindControls() {
                 document.getElementById('imageRemove').disabled = false;
                 document.getElementById('imageSection').open = true;
                 if (typeof updateCanvasCursor === 'function') updateCanvasCursor();
+                // Extract color swatches from image
+                var swatches = extractSwatches(img, 3);
+                showSwatches(swatches);
                 scheduleRender();
             };
             img.src = ev.target.result;
@@ -4450,6 +5279,7 @@ function bindControls() {
         document.getElementById('imageStatus').textContent = 'No image';
         document.getElementById('imageControls').classList.add('hidden');
         document.getElementById('imageRemove').disabled = true;
+        showSwatches([]);
         if (typeof updateCanvasCursor === 'function') updateCanvasCursor();
         scheduleRender();
     });
@@ -4498,6 +5328,16 @@ function bindControls() {
     // Tagline textarea
     document.getElementById('cTagline').addEventListener('input', function(e) {
         S.content.tagline = e.target.value;
+        scheduleRender();
+    });
+    // Message textarea (POST mode)
+    document.getElementById('cMessage').addEventListener('input', function(e) {
+        S.content.message = e.target.value;
+        scheduleRender();
+    });
+    // Body text textarea (PAPER mode)
+    document.getElementById('cBodyText').addEventListener('input', function(e) {
+        S.content.bodyText = e.target.value;
         scheduleRender();
     });
     // Bold toggles
@@ -4612,6 +5452,7 @@ function resetFormat() {
     S.fontSize = 20;
     S.leading = 24;
     S.preset = 'floor-plan';
+    S.mode = 'poster';
     S.bgColor = '#000000';
     S.fgColor = '#ffffff';
     S.blendMode = 'source-over';
@@ -4633,6 +5474,8 @@ function resetFormat() {
     S.anim.loop = true;
     S.anim.intensity = 0.5;
     stopAnimation();
+    updateContentVisibility();
+    updateLayoutButtons();
     syncUI();
     updateFrameScrub();
     render();
@@ -4681,6 +5524,8 @@ function resetAll() {
     S.content.showAddr = true;
     S.content.hours = 'Otev\u0159eno ka\u017edou st\u0159edu od 12\u201317';
     S.content.showHours = true;
+    S.content.message = 'PRO_STORY MAJ\u00cd LETN\u00cd P\u0158EST\u00c1VKU!\nT\u011b\u0161\u00edme se na v\u00e1s od Z\u00e1\u0159\u00ed 2026.';
+    S.content.bodyText = '';
     // Sync content inputs
     document.getElementById('cGallery').value = S.content.gallery;
     document.getElementById('cArtist').value = S.content.artist;
@@ -4703,10 +5548,14 @@ function resetAll() {
     document.getElementById('showAddr').checked = S.content.showAddr;
     document.getElementById('cHours').value = S.content.hours;
     document.getElementById('showHours').checked = S.content.showHours;
+    document.getElementById('cMessage').value = S.content.message;
+    document.getElementById('cBodyText').value = S.content.bodyText;
     // Show all toggle containers
     ['taglineFields','vernisazFields','vystavaFields','socialFields','addrFields','hoursFields'].forEach(function(id) {
         var el = document.getElementById(id); if (el) el.style.display = '';
     });
+    updateContentVisibility();
+    updateLayoutButtons();
     syncUI();
     updateFrameScrub();
     render();
@@ -4714,7 +5563,8 @@ function resetAll() {
 
 // Shuffle layout only (no animation change)
 function shuffleLayout() {
-    var presetKeys = Object.keys(PRESETS);
+    var allowed = MODE_LAYOUTS[S.mode];
+    var presetKeys = allowed || Object.keys(PRESETS).filter(function(k) { return k !== 'paper-split' && k !== 'paper-header'; });
     S.preset = presetKeys[Math.floor(Math.random() * presetKeys.length)];
     S.anim.frame = 0;
     syncUI();
@@ -4724,7 +5574,8 @@ function shuffleLayout() {
 
 // Shuffle layout + animation, auto-play
 function shuffleAll() {
-    var presetKeys = Object.keys(PRESETS);
+    var allowed = MODE_LAYOUTS[S.mode];
+    var presetKeys = allowed || Object.keys(PRESETS).filter(function(k) { return k !== 'paper-split' && k !== 'paper-header'; });
     var animKeys = Object.keys(ANIMS);
     S.preset = presetKeys[Math.floor(Math.random() * presetKeys.length)];
     S.anim.effect = animKeys[Math.floor(Math.random() * animKeys.length)];
@@ -4762,6 +5613,10 @@ function syncUI() {
     document.getElementById('fps').value = S.anim.fps;
     document.getElementById('fpsVal').textContent = S.anim.fps;
     document.getElementById('animLoop').checked = S.anim.loop;
+    // Mode toggle
+    document.querySelectorAll('#modeToggle .res-preset').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.mode === S.mode);
+    });
     // BG toggle
     document.querySelectorAll('#bgToggle .res-preset').forEach(function(b) {
         b.classList.toggle('active', b.dataset.bg === S.bgColor);
@@ -4940,6 +5795,8 @@ canvasContainer.addEventListener('drop', function(e) {
             document.getElementById('imageRemove').disabled = false;
             document.getElementById('imageSection').open = true;
             updateCanvasCursor();
+            var swatches = extractSwatches(img, 3);
+            showSwatches(swatches);
             render();
         };
         img.src = ev.target.result;
@@ -4956,6 +5813,8 @@ document.getElementById('btnShuffleLayout').addEventListener('click', shuffleLay
 document.getElementById('btnShuffleAll').addEventListener('click', shuffleAll);
 updateFrameScrub();
 updateCanvasCursor();
+updateLayoutButtons();
+updateContentVisibility();
 
 // Wait for fonts before first render to avoid fallback font flash
 document.fonts.ready.then(function() { render(); });
