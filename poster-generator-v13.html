@@ -1027,7 +1027,7 @@ Otevřeno každou středu od 12–17</textarea>
                     </div>
                     <div class="cr">
                         <label>Title Gap <span class="val" id="headingGapVal">0</span></label>
-                        <input type="range" id="headingGapExtra" min="-2" max="5" step="1" value="0">
+                        <input type="range" id="headingGapExtra" min="-3" max="5" step="1" value="0">
                     </div>
                     <div class="chk">
                         <input type="checkbox" id="headingSync" checked>
@@ -1209,7 +1209,7 @@ const S = {
         vystL: 'VÝSTAVA',
         vystF: 'OD 10_05_2026',
         vystT: 'DO 10_07_2026',
-        social: '@PRO_STORY_UH | PROSTORY.GALLERY',
+        social: '@PRO_STORY_UH\nPROSTORY.GALLERY',
         addr: 'Všehrdova 267, Uherské Hradiště\nOtevřeno každou středu od 12\u201317',
         message: 'PRO_STORY MAJÍ LETNÍ PŘESTÁVKU!\nTěšíme se na vás od Září 2026.',
         bodyText: '',
@@ -1262,11 +1262,11 @@ function setMode(mode) {
             document.getElementById('cBodyText').value = S.content.bodyText;
         }
     }
-    // POST mode forces headingScale=3
+    // POST mode forces headingScale=4 for bigger message
     if (mode === 'post') {
-        S.headingScale = 3;
+        S.headingScale = 4;
         document.querySelectorAll('.heading-preset').forEach(function(b) {
-            b.classList.toggle('active', Number(b.dataset.scale) === 3);
+            b.classList.toggle('active', Number(b.dataset.scale) === 4);
         });
     }
     updateContentVisibility();
@@ -1393,8 +1393,8 @@ var SCALE_STEPS = [5, 4, 3, 2, 1.5, 1];
 
 // Minimum row gap between two consecutive heading placements
 function headingGap() {
-    var base = S.headingScale > 1 ? Math.ceil(S.headingScale) : 2;
-    return Math.max(1, base + S.headingGapExtra);
+    var base = S.headingScale > 1 ? Math.ceil(S.headingScale) - 1 : 2;
+    return Math.max(0, base + S.headingGapExtra);
 }
 
 // Compute effective heading scale for a single text line
@@ -1470,6 +1470,7 @@ function effectiveHeadingScale(text, maxW, pad) {
 }
 
 function placeText(grid, r, c, maxW, text, pad, isHeading, isBold) {
+    if (!text || !text.trim()) return 0;
     pad = pad || 0;
     var lines = text.split('\n');
     var row = 0;
@@ -1575,15 +1576,14 @@ function getActiveContent() {
     var ct = S.content;
     var mode = S.mode;
 
-    // POST mode: message lines as tagLines (standard text size, not headings)
+    // POST mode: message as heading (Degular Display) for visual impact
     if (mode === 'post') {
-        var msgLines = (ct.message || '').split('\n').filter(function(l) { return l.length > 0; });
         return {
             gallery: ct.gallery,
             artist: '',
-            title: '',
-            tagLines: msgLines,
-            boldTag: true,
+            title: ct.message || '',
+            tagLines: [],
+            boldTag: false,
             vernL: '',
             vernD: '',
             boldVern: false,
@@ -2921,18 +2921,18 @@ const PRESETS = {
 
         // Right side: body text zone
         if (ct.bodyText) {
-            bodyTextZones.push({ text: ct.bodyText, r: 2, c: rightStart + 1, w: rightW - 2, maxRows: rows - 8 });
+            bodyTextZones.push({ text: ct.bodyText, r: 2, c: rightStart + 1, w: rightW - 2, maxRows: rows - 10 });
         }
 
         // Bottom: horizontal rule
-        var footerRow = rows - 4;
+        var footerRow = rows - 6;
         hline(grid, footerRow, 0, cols, W.h);
 
         // Vertical divider (stops before footer)
         vline(grid, 0, divCol, footerRow, '\u2502');
 
-        // Footer: social (left) + addr (right-aligned per line)
-        if (ct.social) placeText(grid, footerRow + 1, 0, cols, ct.social, ind);
+        // Footer: social (left, 2 lines) + addr (right-aligned, 2 lines)
+        if (ct.social) placeText(grid, footerRow + 1, 0, Math.round(cols * 0.5), ct.social, ind);
         if (ct.addr) placeRightAligned(grid, footerRow + 1, cols, ct.addr, ind);
 
         // Light checkerboard at very bottom
@@ -2987,16 +2987,16 @@ const PRESETS = {
 
         // Body: text zone fills remaining space
         var bodyStartRow = y;
-        var bodyRows = rows - bodyStartRow - 5;
+        var bodyRows = rows - bodyStartRow - 7;
         if (ct.bodyText && bodyRows > 0) {
             bodyTextZones.push({ text: ct.bodyText, r: bodyStartRow, c: ind, w: cols - ind * 2, maxRows: bodyRows });
         }
 
-        // Footer: horizontal rule, social left, addr right-aligned
-        var footerRow = rows - 4;
+        // Footer: horizontal rule, social left (2 lines), addr right-aligned (2 lines)
+        var footerRow = rows - 6;
         hline(grid, footerRow, 0, cols, W.h);
 
-        if (ct.social) placeText(grid, footerRow + 1, 0, cols, ct.social, ind);
+        if (ct.social) placeText(grid, footerRow + 1, 0, Math.round(cols * 0.5), ct.social, ind);
         if (ct.addr) placeRightAligned(grid, footerRow + 1, cols, ct.addr, ind);
 
         // Light checkerboard at very bottom
