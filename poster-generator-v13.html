@@ -1447,8 +1447,8 @@ function computeSyncedScale(maxW, pad) {
         if (s < minScale) minScale = s;
     }
     _syncedTitleScale = minScale;
-    // Artist one step smaller (title is always dominant)
-    _syncedArtistScale = (ct.artist && ct.title) ? stepDown(minScale) : minScale;
+    // Sync ON = same size for both artist and title
+    _syncedArtistScale = minScale;
     _syncedContent = null;
 }
 
@@ -1456,9 +1456,16 @@ function effectiveHeadingScale(text, maxW, pad) {
     // Lazy compute on first heading placement
     if (_syncedContent) computeSyncedScale(maxW, pad);
     _headingCount++;
-    // First heading placed = artist, subsequent = title
-    if (_syncedArtistScale !== null && _headingCount === 1) return _syncedArtistScale;
-    if (_syncedTitleScale !== null) return _syncedTitleScale;
+    if (S.headingSync) {
+        // Sync ON: artist and title share the same scale
+        if (_syncedArtistScale !== null && _headingCount === 1) return _syncedArtistScale;
+        if (_syncedTitleScale !== null) return _syncedTitleScale;
+    } else {
+        // Sync OFF: artist one step smaller than title
+        var scale = fitScale(text, maxW, pad);
+        if (_headingCount === 1) return stepDown(scale);
+        return scale;
+    }
     return fitScale(text, maxW, pad);
 }
 
