@@ -839,19 +839,19 @@ html, body {
                                 <hr class="sep" style="margin:8px 0;">
                                 <div class="cr">
                                     <label>Crop Top <span class="val" id="zoneTopVal">0</span>%</label>
-                                    <input type="range" id="zoneTop" min="0" max="50" step="1" value="0">
+                                    <input type="range" id="zoneTop" min="-25" max="25" step="1" value="0">
                                 </div>
                                 <div class="cr">
                                     <label>Crop Bottom <span class="val" id="zoneBotVal">0</span>%</label>
-                                    <input type="range" id="zoneBot" min="0" max="50" step="1" value="0">
+                                    <input type="range" id="zoneBot" min="-25" max="25" step="1" value="0">
                                 </div>
                                 <div class="cr">
                                     <label>Crop Left <span class="val" id="zoneLeftVal">0</span>%</label>
-                                    <input type="range" id="zoneLeft" min="0" max="50" step="1" value="0">
+                                    <input type="range" id="zoneLeft" min="-25" max="25" step="1" value="0">
                                 </div>
                                 <div class="cr">
                                     <label>Crop Right <span class="val" id="zoneRightVal">0</span>%</label>
-                                    <input type="range" id="zoneRight" min="0" max="50" step="1" value="0">
+                                    <input type="range" id="zoneRight" min="-25" max="25" step="1" value="0">
                                 </div>
                                 <div class="chk">
                                     <input type="checkbox" id="imageOnTop">
@@ -1548,7 +1548,7 @@ const PRESETS = {
 // --- A: Floor Plan ---
 'floor-plan': {
     name: 'Floor Plan',
-    imageZone(cols, rows) { var sepY = Math.round(rows * 0.58); return {r: sepY + 1, c: 1, w: cols - 2, h: rows - sepY - 2}; },
+    imageZone(cols, rows) { var sepY = Math.round(rows * 0.58); return {r: sepY + 1, c: 0, w: cols, h: rows - sepY - 1}; },
     build(grid, cols, rows, ct) {
         var W = getW(), F = S.fillChar;
         var lw = 22, rw = cols - lw - 3;
@@ -1865,7 +1865,7 @@ const PRESETS = {
 // --- G: Gallery Windows ---
 'windows': {
     name: 'Windows',
-    imageZone(cols, rows) { return {r: Math.round(rows * 0.2), c: 1, w: cols - 2, h: Math.round(rows * 0.5)}; },
+    imageZone(cols, rows) { return {r: Math.round(rows * 0.2), c: 0, w: cols, h: Math.round(rows * 0.5)}; },
     build(grid, cols, rows, ct) {
         var W = getW(), F = S.fillChar;
         var c1 = Math.round(cols * 0.125), c2 = c1, c3 = Math.round(cols * 0.26), c4 = cols - c1 - c2 - c3 - 5;
@@ -1988,7 +1988,7 @@ const PRESETS = {
 // --- J: Split ---
 'split': {
     name: 'Split',
-    imageZone(cols, rows) { var mid = Math.round(cols / 2); return {r: 1, c: mid + 1, w: cols - mid - 2, h: rows - 2}; },
+    imageZone(cols, rows) { var mid = Math.round(cols / 2); return {r: 0, c: mid, w: cols - mid, h: rows}; },
     build(grid, cols, rows, ct) {
         var W = getW(), F = S.fillChar;
         var mid = Math.round(cols / 2), lw = mid - 1, rw = cols - mid - 1;
@@ -2020,7 +2020,7 @@ const PRESETS = {
 // --- K: Stack ---
 'stack': {
     name: 'Stack',
-    imageZone(cols, rows) { return {r: 1, c: 1, w: cols - 2, h: Math.round(rows * 0.3)}; },
+    imageZone(cols, rows) { return {r: 0, c: 0, w: cols, h: Math.round(rows * 0.3)}; },
     build(grid, cols, rows, ct) {
         var W = getW(), F = S.fillChar;
         var r1 = Math.round(rows * 0.33), r2 = Math.round(rows * 0.66);
@@ -2183,7 +2183,7 @@ const PRESETS = {
 // --- P: Margin --- All content pushed to margins, vast empty center
 'margin': {
     name: 'Margin',
-    imageZone(cols, rows) { return {r: 9, c: 1, w: cols - 2, h: rows - 20}; },
+    imageZone(cols, rows) { return {r: 9, c: 0, w: cols, h: rows - 20}; },
     build(grid, cols, rows, ct) {
         var W = getW();
         var pad = 2, fw = cols - 2;
@@ -2215,7 +2215,7 @@ const PRESETS = {
 // --- Q: Ratio --- Golden ratio proportions, asymmetric two-panel
 'ratio': {
     name: 'Ratio',
-    imageZone(cols, rows) { var gx = Math.round(cols * 0.618); return {r: 1, c: gx + 1, w: cols - gx - 2, h: rows - 2}; },
+    imageZone(cols, rows) { var gx = Math.round(cols * 0.618); return {r: 0, c: gx, w: cols - gx, h: rows}; },
     build(grid, cols, rows, ct) {
         var W = getW(), F = S.fillChar;
         // Golden ratio split: 0.618 / 0.382
@@ -3899,11 +3899,11 @@ function drawImageLayer(targetCtx, logicalW, logicalH, marginPx, charW, charH, c
     var adjW = zone.w - imgS.zoneLeft + imgS.zoneRight;
     var adjH = zone.h - imgS.zoneTop + imgS.zoneBot;
 
-    // Convert grid coords to pixel coords
-    var zx = marginPx + adjC * charW;
-    var zy = marginPx + adjR * charH;
-    var zw = adjW * charW;
-    var zh = adjH * charH;
+    // Convert grid coords to pixel coords (round to avoid sub-pixel gaps)
+    var zx = Math.round(marginPx + adjC * charW);
+    var zy = Math.round(marginPx + adjR * charH);
+    var zw = Math.round(adjW * charW);
+    var zh = Math.round(adjH * charH);
     if (zw <= 0 || zh <= 0) return;
 
     // Cover fit: scale image to fill zone, preserving aspect ratio
@@ -3924,8 +3924,8 @@ function drawImageLayer(targetCtx, logicalW, logicalH, marginPx, charW, charH, c
     }
 
     // Center in zone, then apply user offset (% of zone dimensions)
-    var dx = zx + (zw - drawW) / 2 + (zw * imgS.offsetX / 100);
-    var dy = zy + (zh - drawH) / 2 + (zh * imgS.offsetY / 100);
+    var dx = Math.round(zx + (zw - drawW) / 2 + (zw * imgS.offsetX / 100));
+    var dy = Math.round(zy + (zh - drawH) / 2 + (zh * imgS.offsetY / 100));
 
     // Clip to zone bounds and draw
     targetCtx.save();
@@ -3934,13 +3934,15 @@ function drawImageLayer(targetCtx, logicalW, logicalH, marginPx, charW, charH, c
     targetCtx.clip();
     targetCtx.globalAlpha = imgS.opacity;
 
-    var filtered = getFilteredImage(img, imgS.filter, 0, 0, srcW, srcH, Math.round(drawW), Math.round(drawH));
+    var rdW = Math.round(drawW);
+    var rdH = Math.round(drawH);
+    var filtered = getFilteredImage(img, imgS.filter, 0, 0, srcW, srcH, rdW, rdH);
     if (filtered) {
         targetCtx.imageSmoothingEnabled = (imgS.filter === 'none');
-        targetCtx.drawImage(filtered, 0, 0, filtered.width, filtered.height, dx, dy, drawW, drawH);
+        targetCtx.drawImage(filtered, 0, 0, filtered.width, filtered.height, dx, dy, rdW, rdH);
         targetCtx.imageSmoothingEnabled = true;
     } else {
-        targetCtx.drawImage(img, 0, 0, srcW, srcH, dx, dy, drawW, drawH);
+        targetCtx.drawImage(img, 0, 0, srcW, srcH, dx, dy, rdW, rdH);
     }
 
     targetCtx.restore();
@@ -4177,7 +4179,7 @@ function render(frameOverride) {
         var adjC = zone.c + S.image.zoneLeft;
         var adjW = zone.w - S.image.zoneLeft + S.image.zoneRight;
         var adjH = zone.h - S.image.zoneTop + S.image.zoneBot;
-        lastZonePx = { x: marginPx + adjC * charW, y: marginPx + adjR * charH, w: adjW * charW, h: adjH * charH };
+        lastZonePx = { x: Math.round(marginPx + adjC * charW), y: Math.round(marginPx + adjR * charH), w: Math.round(adjW * charW), h: Math.round(adjH * charH) };
     }
 
     // Render at DPR scale
