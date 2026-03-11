@@ -960,42 +960,32 @@ Multimédia, Obuv, Design</textarea>
                             <button class="anim-preset" data-anim="wave">Wave</button>
                             <button class="anim-preset" data-anim="scan">Scan</button>
                             <button class="anim-preset" data-anim="glitch">Glitch</button>
+                            <button class="anim-preset" data-anim="rain">Rain</button>
+                            <button class="anim-preset" data-anim="cell-shift">Shift</button>
+                            <button class="anim-preset" data-anim="maze-walker">Maze</button>
+                            <button class="anim-preset" data-anim="scroll-rewrite">Scroll</button>
+                            <button class="anim-preset" data-anim="cell-swap">Swap</button>
+                            <button class="anim-preset" data-anim="breathe">Breathe</button>
+                            <button class="anim-preset" data-anim="erosion">Erode</button>
+                            <button class="anim-preset" data-anim="pulse">Pulse</button>
+                            <button class="anim-preset" data-anim="cascade">Casc</button>
+                            <button class="anim-preset" data-anim="flicker">Flick</button>
+                            <button class="anim-preset" data-anim="gravity">Grav</button>
+                            <button class="anim-preset" data-anim="invert">Invert</button>
                         </div>
                     </div>
                     <div class="transport">
                         <button class="btn" id="btnPlay" title="Play/Pause">&#9654;</button>
                         <button class="btn" id="btnStop" title="Stop">&#9632;</button>
                     </div>
-                    <details class="sub-advanced">
-                        <summary>All effects and timing</summary>
-                        <div class="sub-advanced-body">
-                            <div class="cr">
-                                <label>All effects</label>
-                                <div class="anim-presets" id="animPresetsAll">
-                                    <button class="anim-preset" data-anim="rain">Rain</button>
-                                    <button class="anim-preset" data-anim="cell-shift">Shift</button>
-                                    <button class="anim-preset" data-anim="maze-walker">Maze</button>
-                                    <button class="anim-preset" data-anim="scroll-rewrite">Scroll</button>
-                                    <button class="anim-preset" data-anim="cell-swap">Swap</button>
-                                    <button class="anim-preset" data-anim="breathe">Breathe</button>
-                                    <button class="anim-preset" data-anim="erosion">Erode</button>
-                                    <button class="anim-preset" data-anim="pulse">Pulse</button>
-                                    <button class="anim-preset" data-anim="cascade">Casc</button>
-                                    <button class="anim-preset" data-anim="flicker">Flick</button>
-                                    <button class="anim-preset" data-anim="gravity">Grav</button>
-                                    <button class="anim-preset" data-anim="invert">Invert</button>
-                                </div>
-                            </div>
-                            <div class="cr">
-                                <label>Duration <span class="val" id="durationVal">8.0</span>s</label>
-                                <input type="range" id="duration" min="1" max="30" step="0.5" value="8">
-                            </div>
-                            <div class="cr">
-                                <label>Intensity <span class="val" id="intensityVal">0.50</span></label>
-                                <input type="range" id="intensity" min="0" max="1" step="0.01" value="0.5">
-                            </div>
-                        </div>
-                    </details>
+                    <div class="cr">
+                        <label>Duration <span class="val" id="durationVal">8.0</span>s</label>
+                        <input type="range" id="duration" min="1" max="30" step="0.5" value="8">
+                    </div>
+                    <div class="cr">
+                        <label>Intensity <span class="val" id="intensityVal">0.50</span></label>
+                        <input type="range" id="intensity" min="0" max="1" step="0.01" value="0.5">
+                    </div>
                 </div>
             </details>
 
@@ -1009,8 +999,10 @@ Multimédia, Obuv, Design</textarea>
                         <select id="pdfPaper" style="width:auto;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:5px 8px;font-size:11px;">
                             <option value="A4" selected>A4</option>
                             <option value="A3">A3</option>
+                            <option value="A2">A2</option>
                         </select>
                     </div>
+                    <div id="pdfTip" class="section-desc" style="margin-top:4px;font-size:10px;opacity:0.6;display:none;">A2/A3 works best with Poster aspect ratio</div>
                     <details class="sub-advanced" style="margin-top: 10px;">
                         <summary>More export options</summary>
                         <div class="sub-advanced-body">
@@ -2792,9 +2784,12 @@ const PRESETS = {
         // Vertical divider (stops before footer)
         vline(grid, 0, divCol, footerRow, '\u2502');
 
-        // Footer: social (left) + addr (right)
-        if (ct.social) placeText(grid, footerRow + 1, 0, leftW, ct.social, ind);
-        if (ct.addr) placeText(grid, footerRow + 1, rightStart, rightW, ct.addr, 1);
+        // Footer: social (left) + addr (right-aligned)
+        if (ct.social) placeText(grid, footerRow + 1, 0, cols, ct.social, ind);
+        if (ct.addr) {
+            var addrStart = cols - ct.addr.length - ind;
+            if (addrStart > 0) placeText(grid, footerRow + 1, addrStart, cols - addrStart, ct.addr, 0);
+        }
 
         // Light checkerboard at very bottom
         for (var r = rows - 2; r < rows; r++) {
@@ -2853,13 +2848,22 @@ const PRESETS = {
             bodyTextZones.push({ text: ct.bodyText, r: bodyStartRow, c: ind, w: cols - ind * 2, maxRows: bodyRows });
         }
 
-        // Footer divider
-        var footerRow = rows - 3;
+        // Footer: horizontal rule, social left, addr right-aligned
+        var footerRow = rows - 4;
         hline(grid, footerRow, 0, cols, W.h);
 
-        // Footer: social + addr
-        if (ct.social) placeText(grid, footerRow + 1, 0, Math.round(cols * 0.5), ct.social, ind);
-        if (ct.addr) placeText(grid, footerRow + 1, Math.round(cols * 0.5), cols - Math.round(cols * 0.5), ct.addr, 1);
+        if (ct.social) placeText(grid, footerRow + 1, 0, cols, ct.social, ind);
+        if (ct.addr) {
+            var addrStart = cols - ct.addr.length - ind;
+            if (addrStart > 0) placeText(grid, footerRow + 1, addrStart, cols - addrStart, ct.addr, 0);
+        }
+
+        // Light checkerboard at very bottom
+        for (var r = rows - 2; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                if ((r + c) % 3 === 0) set(grid, r, c, '\u2591');
+            }
+        }
     }
 },
 
@@ -5266,6 +5270,10 @@ function bindControls() {
     document.getElementById('exportPdf').addEventListener('click', exportPDF);
     document.getElementById('exportMp4').addEventListener('click', exportMP4);
     document.getElementById('exportMov').addEventListener('click', exportMOV);
+    document.getElementById('pdfPaper').addEventListener('change', function() {
+        var tip = document.getElementById('pdfTip');
+        if (tip) tip.style.display = (this.value !== 'A4') ? 'block' : 'none';
+    });
 
     // Resize
     window.addEventListener('resize', scheduleRender);
