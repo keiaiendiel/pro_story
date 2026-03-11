@@ -776,6 +776,7 @@ html, body {
                             <button class="aspect-preset" data-ratio="9:16">9:16</button>
                             <button class="aspect-preset" data-ratio="1:1">1:1</button>
                             <button class="aspect-preset" data-ratio="4:3">4:3</button>
+                            <button class="aspect-preset" data-ratio="16:9">16:9</button>
                         </div>
                     </div>
                     <div class="cr">
@@ -1479,7 +1480,8 @@ function placeText(grid, r, c, maxW, text, pad, isHeading, isBold) {
         if (isHeading && S.headingScale > 1) {
             var hs = effectiveHeadingScale(line, maxW, pad);
             // Vertical overlap check: auto-reduce scale if colliding with previous heading
-            if (headings.length > 0) {
+            // Skip when headingSync is ON — synced scale already fits both texts
+            if (headings.length > 0 && !S.headingSync) {
                 var prev = headings[headings.length - 1];
                 var prevEnd = prev.r + Math.ceil(prev.scale || S.headingScale);
                 while (hs > 1 && r + row < prevEnd) {
