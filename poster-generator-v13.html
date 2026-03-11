@@ -664,6 +664,11 @@ html, body {
     margin: 8px 0 4px;
     line-height: 1.4;
     border-radius: 0 var(--r) var(--r) 0;
+    transition: opacity 0.2s, max-height 0.2s;
+}
+
+.hide-guides .guide-tip {
+    display: none;
 }
 
 .sep { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
@@ -1118,7 +1123,8 @@ Otevřeno každou středu od 12–17</textarea>
         </div>
 
         <footer class="site-footer">
-            <a href="https://kindl.work/" target="_blank" rel="noopener">kindl.work</a> &middot; PRO_STORY 2026
+            <button id="toggleGuides" style="background:none;border:none;color:var(--text4);font-size:10px;cursor:pointer;padding:0;margin-bottom:4px;transition:color 0.15s;" onmouseover="this.style.color='var(--guide)'" onmouseout="this.style.color='var(--text4)'">Skrýt nápovědu</button>
+            <div><a href="https://kindl.work/" target="_blank" rel="noopener">kindl.work</a> &middot; PRO_STORY 2026</div>
         </footer>
     </aside>
 
@@ -5860,6 +5866,13 @@ document.getElementById('toggleAllLayouts').addEventListener('click', function()
     var showing = wrap.style.display !== 'none';
     wrap.style.display = showing ? 'none' : '';
     this.textContent = showing ? 'Show all 28 layouts' : 'Hide extra layouts';
+});
+
+// Toggle guide tips visibility
+document.getElementById('toggleGuides').addEventListener('click', function() {
+    var sidebar = document.querySelector('.sidebar');
+    var hidden = sidebar.classList.toggle('hide-guides');
+    this.textContent = hidden ? 'Zobrazit nápovědu' : 'Skrýt nápovědu';
 });
 
 updateFrameScrub();
