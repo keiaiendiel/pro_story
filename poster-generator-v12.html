@@ -933,16 +933,16 @@ Multimédia, Obuv, Design</textarea>
                     </div>
                     <div class="cr">
                         <label>Social</label>
-                        <input type="text" id="cSocial" value="@PRO_STORY_UH | PROSTORY.GALLERY">
+                        <textarea id="cSocial" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">@PRO_STORY_UH | PROSTORY.GALLERY</textarea>
                     </div>
                     <div class="cr">
                         <label>Address</label>
-                        <input type="text" id="cAddr" value="Všehrdova 267, Uherské Hradiště">
+                        <textarea id="cAddr" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">Všehrdova 267, Uherské Hradiště</textarea>
                     </div>
                     <div id="hoursRow">
                         <div class="cr">
                             <label>Hours</label>
-                            <input type="text" id="cHours" value="Otevřeno každou středu od 12–17">
+                            <textarea id="cHours" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">Otevřeno každou středu od 12–17</textarea>
                         </div>
                     </div>
                 </div>
@@ -1043,7 +1043,17 @@ Multimédia, Obuv, Design</textarea>
                             <button class="heading-preset" data-scale="1.5">1.5x</button>
                             <button class="heading-preset" data-scale="2">2x</button>
                             <button class="heading-preset active" data-scale="3">3x</button>
+                            <button class="heading-preset" data-scale="4">4x</button>
+                            <button class="heading-preset" data-scale="5">5x</button>
                         </div>
+                    </div>
+                    <div class="cr">
+                        <label>Title Gap <span class="val" id="headingGapVal">0</span></label>
+                        <input type="range" id="headingGapExtra" min="-2" max="5" step="1" value="0">
+                    </div>
+                    <div class="chk">
+                        <input type="checkbox" id="headingSync" checked>
+                        <label for="headingSync">Sync title sizes</label>
                     </div>
                     <div class="info-row">
                         <span>Grid</span>
@@ -1107,6 +1117,8 @@ const S = {
     headingScale: 3,
     headingFont: 'display-semibold',
     headingBg: false,
+    headingGapExtra: 0,
+    headingSync: true,
     imageOnTop: false,
     margin: 10,
     exportScale: 2,
@@ -1317,24 +1329,52 @@ function vline(grid, r, c, h, ch) {
     for (var i = 0; i < h; i++) set(grid, r + i, c, ch);
 }
 
+// Scale steps for auto-reduction (descending)
+var SCALE_STEPS = [5, 4, 3, 2, 1.5, 1];
+
 // Minimum row gap between two consecutive heading placements
 function headingGap() {
-    return S.headingScale > 1 ? Math.ceil(S.headingScale) : 2;
+    var base = S.headingScale > 1 ? Math.ceil(S.headingScale) : 2;
+    return Math.max(1, base + S.headingGapExtra);
 }
 
-// Compute effective heading scale: auto-reduce when text is too long for the cell
-function effectiveHeadingScale(text, maxW, pad) {
+// Compute effective heading scale for a single text line
+function fitScale(text, maxW, pad) {
     var avail = maxW - (pad || 0);
     var scale = S.headingScale;
     if (scale <= 1) return scale;
-    // At 3x scale, each char takes ~3 columns visually.
-    // If text overflows at current scale, step down.
-    // Threshold: text.length * scale should fit in avail columns
-    while (scale > 1.5 && text.length * scale > avail * 1.1) {
-        scale = scale >= 3 ? 2 : (scale >= 2 ? 1.5 : 1.5);
+    for (var i = 0; i < SCALE_STEPS.length; i++) {
+        if (SCALE_STEPS[i] > scale) continue;
+        if (text.length * SCALE_STEPS[i] <= avail * 1.1) return SCALE_STEPS[i];
     }
-    // Minimum 1.5 when original scale > 1 to prevent too-small titles
-    return Math.max(scale, 1.5);
+    return Math.max(1.5, SCALE_STEPS[SCALE_STEPS.length - 2]);
+}
+
+// Synced heading scale: find the minimum scale that fits ALL heading texts
+// Called once per build, caches result for the current render pass
+var _syncedScale = null;
+
+function computeSyncedScale(ct, maxW, pad) {
+    if (!S.headingSync || S.headingScale <= 1) { _syncedScale = null; return; }
+    var texts = [];
+    if (ct.artist) {
+        ct.artist.split('\n').forEach(function(l) { if (l.length > 0) texts.push(l); });
+    }
+    if (ct.title) {
+        ct.title.split('\n').forEach(function(l) { if (l.length > 0) texts.push(l); });
+    }
+    if (texts.length === 0) { _syncedScale = null; return; }
+    var minScale = S.headingScale;
+    for (var i = 0; i < texts.length; i++) {
+        var s = fitScale(texts[i], maxW, pad);
+        if (s < minScale) minScale = s;
+    }
+    _syncedScale = minScale;
+}
+
+function effectiveHeadingScale(text, maxW, pad) {
+    if (_syncedScale !== null) return _syncedScale;
+    return fitScale(text, maxW, pad);
 }
 
 function placeText(grid, r, c, maxW, text, pad, isHeading, isBold) {
@@ -1350,7 +1390,11 @@ function placeText(grid, r, c, maxW, text, pad, isHeading, isBold) {
                 var prev = headings[headings.length - 1];
                 var prevEnd = prev.r + Math.ceil(prev.scale || S.headingScale);
                 while (hs > 1 && r + row < prevEnd) {
-                    hs = hs >= 3 ? 2 : (hs >= 2 ? 1.5 : 1);
+                    var nextStep = 1;
+                    for (var si = 0; si < SCALE_STEPS.length; si++) {
+                        if (SCALE_STEPS[si] < hs) { nextStep = SCALE_STEPS[si]; break; }
+                    }
+                    hs = nextStep;
                 }
             }
             headings.push({ text: line.substring(0, maxW - pad), r: r + row, c: c + pad, scale: hs });
@@ -1370,6 +1414,20 @@ function placeText(grid, r, c, maxW, text, pad, isHeading, isBold) {
         }
     }
     return row;
+}
+
+// Right-align text: each line placed so its right edge aligns with cols - pad
+function placeRightAligned(grid, r, cols, text, pad) {
+    var lines = text.split('\n');
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        var startC = cols - line.length - pad;
+        if (startC < 0) startC = 0;
+        for (var j = 0; j < line.length && startC + j < cols; j++) {
+            set(grid, r + i, startC + j, line[j]);
+        }
+    }
+    return lines.length;
 }
 
 // Word wrapping: break text at word boundaries (space, pipe, comma)
@@ -2784,12 +2842,9 @@ const PRESETS = {
         // Vertical divider (stops before footer)
         vline(grid, 0, divCol, footerRow, '\u2502');
 
-        // Footer: social (left) + addr (right-aligned)
+        // Footer: social (left) + addr (right-aligned per line)
         if (ct.social) placeText(grid, footerRow + 1, 0, cols, ct.social, ind);
-        if (ct.addr) {
-            var addrStart = cols - ct.addr.length - ind;
-            if (addrStart > 0) placeText(grid, footerRow + 1, addrStart, cols - addrStart, ct.addr, 0);
-        }
+        if (ct.addr) placeRightAligned(grid, footerRow + 1, cols, ct.addr, ind);
 
         // Light checkerboard at very bottom
         for (var r = rows - 2; r < rows; r++) {
@@ -2853,10 +2908,7 @@ const PRESETS = {
         hline(grid, footerRow, 0, cols, W.h);
 
         if (ct.social) placeText(grid, footerRow + 1, 0, cols, ct.social, ind);
-        if (ct.addr) {
-            var addrStart = cols - ct.addr.length - ind;
-            if (addrStart > 0) placeText(grid, footerRow + 1, addrStart, cols - addrStart, ct.addr, 0);
-        }
+        if (ct.addr) placeRightAligned(grid, footerRow + 1, cols, ct.addr, ind);
 
         // Light checkerboard at very bottom
         for (var r = rows - 2; r < rows; r++) {
@@ -4110,9 +4162,12 @@ function buildBaseGrid() {
     headings = [];
     boldTexts = [];
     bodyTextZones = [];
+    var ct = getActiveContent();
+    computeSyncedScale(ct, cols, 3);
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
-    if (preset) preset.build(grid, cols, rows, getActiveContent());
+    if (preset) preset.build(grid, cols, rows, ct);
+    _syncedScale = null;
     baseGrid = grid;
     return { grid: grid, headings: headings.slice(), bolds: boldTexts.slice(), bodyTexts: bodyTextZones.slice() };
 }
@@ -4291,9 +4346,12 @@ function exportPNG() {
     headings = [];
     boldTexts = [];
     bodyTextZones = [];
+    var ctExport = getActiveContent();
+    computeSyncedScale(ctExport, cols, 3);
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
-    if (preset) preset.build(grid, cols, rows, getActiveContent());
+    if (preset) preset.build(grid, cols, rows, ctExport);
+    _syncedScale = null;
     var savedHeadings = headings.slice();
     var savedBolds = boldTexts.slice();
     var savedBodyTexts = bodyTextZones.slice();
@@ -4353,9 +4411,12 @@ function renderExportFrame(frameNum) {
     headings = [];
     boldTexts = [];
     bodyTextZones = [];
+    var ctFrame = getActiveContent();
+    computeSyncedScale(ctFrame, cols, 3);
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
-    if (preset) preset.build(grid, cols, rows, getActiveContent());
+    if (preset) preset.build(grid, cols, rows, ctFrame);
+    _syncedScale = null;
     var savedHeadings = headings.slice();
     var savedBolds = boldTexts.slice();
     var savedBodyTexts = bodyTextZones.slice();
@@ -4897,9 +4958,12 @@ function exportPDF() {
     headings = [];
     boldTexts = [];
     bodyTextZones = [];
+    var ctPdf = getActiveContent();
+    computeSyncedScale(ctPdf, cols, 3);
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
-    if (preset) preset.build(grid, cols, rows, getActiveContent());
+    if (preset) preset.build(grid, cols, rows, ctPdf);
+    _syncedScale = null;
     var savedHeadings = headings.slice();
     var savedBolds = boldTexts.slice();
     var savedBodyTexts = bodyTextZones.slice();
@@ -5143,6 +5207,11 @@ function bindControls() {
         S.leading = Math.round(v * 1.2);
     }, 'fontSizeVal');
     bindSlider('margin', function(v) { S.margin = v; }, 'marginVal');
+    bindSlider('headingGapExtra', function(v) { S.headingGapExtra = v; }, 'headingGapVal');
+    document.getElementById('headingSync').addEventListener('change', function() {
+        S.headingSync = this.checked;
+        scheduleRender();
+    });
 
     // BG toggle (Black/White)
     document.querySelectorAll('#bgToggle .res-preset').forEach(function(btn) {
@@ -5306,6 +5375,8 @@ function resetFormat() {
     S.headingScale = 3;
     S.headingFont = 'display-semibold';
     S.headingBg = false;
+    S.headingGapExtra = 0;
+    S.headingSync = true;
     S.imageOnTop = false;
     resetImageSettings();
     S.margin = 10;
@@ -5420,6 +5491,9 @@ function syncUI() {
     document.getElementById('fontSizeVal').textContent = S.fontSize;
     document.getElementById('margin').value = S.margin;
     document.getElementById('marginVal').textContent = S.margin;
+    document.getElementById('headingGapExtra').value = S.headingGapExtra;
+    document.getElementById('headingGapVal').textContent = S.headingGapExtra;
+    document.getElementById('headingSync').checked = S.headingSync;
     document.getElementById('fgColor').value = S.fgColor;
     document.getElementById('blendMode').value = S.blendMode;
     document.getElementById('imageOnTop').checked = S.imageOnTop;
