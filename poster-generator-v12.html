@@ -1364,11 +1364,10 @@ function placeText(grid, r, c, maxW, text, pad, isHeading, isBold) {
             headings.push({ text: line.substring(0, maxW - pad), r: r + row, c: c + pad, scale: hs });
             row += Math.max(1, Math.ceil(hs));
         } else if (isBold) {
-            // Bold text: place on grid (so animations see it) AND collect for bold overlay
+            // Bold text: encode with PUA offset so boldness travels with the character through animations
             var btext = line.substring(0, maxW - pad);
-            boldTexts.push({ text: btext, r: r + row, c: c + pad });
             for (var i = 0; i < btext.length; i++) {
-                set(grid, r + row, c + pad + i, btext[i]);
+                set(grid, r + row, c + pad + i, String.fromCharCode(btext.charCodeAt(i) + 0xE000));
             }
             row++;
         } else {
@@ -3979,27 +3978,29 @@ function renderToContext(targetCtx, grid, cols, rows, fontSize, leading, heading
 
     var ox = marginPx, oy = marginPx;
 
-    // Build set of bold positions to skip in grid loop (bold overlay draws these)
-    var boldSet = null;
-    if (boldsArr && boldsArr.length) {
-        boldSet = {};
-        for (var bi = 0; bi < boldsArr.length; bi++) {
-            var b = boldsArr[bi];
-            for (var i = 0; i < b.text.length; i++) {
-                boldSet[b.r + ',' + (b.c + i)] = true;
-            }
-        }
-    }
-
-    // Draw grid characters (skip positions handled by bold overlay)
+    // Draw grid characters (PUA-encoded chars rendered in bold font)
+    var regularFont = fontSize + 'px ' + font;
+    var boldFont = 'bold ' + fontSize + 'px ' + font;
+    var currentBold = false;
     for (var r = 0; r < rows; r++) {
         for (var c = 0; c < cols; c++) {
             var ch = grid[r][c];
-            if (ch !== ' ' && !(boldSet && boldSet[r + ',' + c])) {
+            if (ch !== ' ') {
+                var code = ch.charCodeAt(0);
+                var isBoldChar = code >= 0xE000 && code < 0xF900;
+                if (isBoldChar) ch = String.fromCharCode(code - 0xE000);
+                if (isBoldChar && !currentBold) {
+                    targetCtx.font = boldFont;
+                    currentBold = true;
+                } else if (!isBoldChar && currentBold) {
+                    targetCtx.font = regularFont;
+                    currentBold = false;
+                }
                 targetCtx.fillText(ch, ox + c * charW, oy + r * charH + yOff);
             }
         }
     }
+    if (currentBold) targetCtx.font = regularFont;
 
     // Heading overlay: each heading may have its own effective scale
     if (S.headingScale > 1 && headingsArr && headingsArr.length) {
@@ -4035,19 +4036,6 @@ function renderToContext(targetCtx, grid, cols, rows, fontSize, leading, heading
                 for (var i = 0; i < h.text.length; i++) {
                     targetCtx.fillText(h.text[i], startX + i * hCharW, startY);
                 }
-            }
-        }
-    }
-
-    // Bold text overlay: same size, bold weight
-    if (boldsArr && boldsArr.length) {
-        targetCtx.font = 'bold ' + fontSize + 'px ' + font;
-        for (var bi = 0; bi < boldsArr.length; bi++) {
-            var b = boldsArr[bi];
-            var bx = ox + b.c * charW;
-            var by = oy + b.r * charH + yOff;
-            for (var i = 0; i < b.text.length; i++) {
-                targetCtx.fillText(b.text[i], bx + i * charW, by);
             }
         }
     }
@@ -4339,7 +4327,12 @@ function exportPNG() {
 
 function copyText() {
     if (!currentGrid) return;
-    var lines = currentGrid.map(function(row) { return row.join(''); });
+    var lines = currentGrid.map(function(row) {
+        return row.map(function(ch) {
+            var code = ch.charCodeAt(0);
+            return (code >= 0xE000 && code < 0xF900) ? String.fromCharCode(code - 0xE000) : ch;
+        }).join('');
+    });
     var text = lines.map(function(l) { return l.replace(/\s+$/, ''); }).join('\n');
     navigator.clipboard.writeText(text).then(function() {
         var btn = document.getElementById('exportTxt');
