@@ -936,14 +936,9 @@ Multimédia, Obuv, Design</textarea>
                         <textarea id="cSocial" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">@PRO_STORY_UH | PROSTORY.GALLERY</textarea>
                     </div>
                     <div class="cr">
-                        <label>Address</label>
-                        <textarea id="cAddr" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">Všehrdova 267, Uherské Hradiště</textarea>
-                    </div>
-                    <div id="hoursRow">
-                        <div class="cr">
-                            <label>Hours</label>
-                            <textarea id="cHours" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">Otevřeno každou středu od 12–17</textarea>
-                        </div>
+                        <label>Address / Hours</label>
+                        <textarea id="cAddr" rows="3" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">Všehrdova 267, Uherské Hradiště
+Otevřeno každou středu od 12–17</textarea>
                     </div>
                 </div>
             </details>
@@ -1150,8 +1145,7 @@ const S = {
         vystF: 'OD 10_05_2026',
         vystT: 'DO 10_07_2026',
         social: '@PRO_STORY_UH | PROSTORY.GALLERY',
-        addr: 'Všehrdova 267, Uherské Hradiště',
-        hours: 'Otevřeno každou středu od 12\u201317',
+        addr: 'Všehrdova 267, Uherské Hradiště\nOtevřeno každou středu od 12\u201317',
         message: 'PRO_STORY MAJÍ LETNÍ PŘESTÁVKU!\nTěšíme se na vás od Září 2026.',
         bodyText: '',
     },
@@ -1226,7 +1220,7 @@ function setMode(mode) {
 function updateContentVisibility() {
     var mode = S.mode;
     // Poster-only fields
-    var posterOnly = ['posterArtistField', 'taglineRow', 'vernisazRow', 'hoursRow'];
+    var posterOnly = ['posterArtistField', 'taglineRow', 'vernisazRow'];
     posterOnly.forEach(function(id) {
         var el = document.getElementById(id);
         if (el) el.style.display = (mode === 'poster') ? '' : 'none';
@@ -1350,30 +1344,56 @@ function fitScale(text, maxW, pad) {
     return Math.max(1.5, SCALE_STEPS[SCALE_STEPS.length - 2]);
 }
 
-// Synced heading scale: find the minimum scale that fits ALL heading texts
-// Called once per build, caches result for the current render pass
-var _syncedScale = null;
+// Synced heading scale: title scale + artist scale (one step smaller)
+// Computed lazily on first heading placement using the actual layout maxW
+var _syncedTitleScale = null;
+var _syncedArtistScale = null;
+var _syncedContent = null;
+var _headingCount = 0;
 
-function computeSyncedScale(ct, maxW, pad) {
-    if (!S.headingSync || S.headingScale <= 1) { _syncedScale = null; return; }
-    var texts = [];
-    if (ct.artist) {
-        ct.artist.split('\n').forEach(function(l) { if (l.length > 0) texts.push(l); });
+function prepareSyncedScale(ct) {
+    _headingCount = 0;
+    if (!S.headingSync || S.headingScale <= 1) {
+        _syncedTitleScale = null; _syncedArtistScale = null; _syncedContent = null; return;
     }
-    if (ct.title) {
-        ct.title.split('\n').forEach(function(l) { if (l.length > 0) texts.push(l); });
+    _syncedTitleScale = null;
+    _syncedArtistScale = null;
+    _syncedContent = ct;
+}
+
+function stepDown(scale) {
+    for (var i = 0; i < SCALE_STEPS.length; i++) {
+        if (SCALE_STEPS[i] < scale) return SCALE_STEPS[i];
     }
-    if (texts.length === 0) { _syncedScale = null; return; }
+    return 1;
+}
+
+function computeSyncedScale(maxW, pad) {
+    if (!_syncedContent) return;
+    var ct = _syncedContent;
+    var allTexts = [];
+    if (ct.artist) ct.artist.split('\n').forEach(function(l) { if (l.length > 0) allTexts.push(l); });
+    if (ct.title) ct.title.split('\n').forEach(function(l) { if (l.length > 0) allTexts.push(l); });
+    if (allTexts.length === 0) { _syncedTitleScale = null; _syncedArtistScale = null; _syncedContent = null; return; }
+    // Find minimum scale that fits all texts
     var minScale = S.headingScale;
-    for (var i = 0; i < texts.length; i++) {
-        var s = fitScale(texts[i], maxW, pad);
+    for (var i = 0; i < allTexts.length; i++) {
+        var s = fitScale(allTexts[i], maxW, pad);
         if (s < minScale) minScale = s;
     }
-    _syncedScale = minScale;
+    _syncedTitleScale = minScale;
+    // Artist one step smaller (title is always dominant)
+    _syncedArtistScale = (ct.artist && ct.title) ? stepDown(minScale) : minScale;
+    _syncedContent = null;
 }
 
 function effectiveHeadingScale(text, maxW, pad) {
-    if (_syncedScale !== null) return _syncedScale;
+    // Lazy compute on first heading placement
+    if (_syncedContent) computeSyncedScale(maxW, pad);
+    _headingCount++;
+    // First heading placed = artist, subsequent = title
+    if (_syncedArtistScale !== null && _headingCount === 1) return _syncedArtistScale;
+    if (_syncedTitleScale !== null) return _syncedTitleScale;
     return fitScale(text, maxW, pad);
 }
 
@@ -1501,7 +1521,6 @@ function getActiveContent() {
             boldVyst: false,
             social: ct.social.trim() ? ct.social : '',
             addr: ct.addr.trim() ? ct.addr : '',
-            hours: '',
             bodyText: '',
         };
     }
@@ -1523,7 +1542,6 @@ function getActiveContent() {
             boldVyst: false,
             social: ct.social.trim() ? ct.social : '',
             addr: ct.addr.trim() ? ct.addr : '',
-            hours: '',
             bodyText: ct.bodyText || '',
         };
     }
@@ -1548,7 +1566,6 @@ function getActiveContent() {
         boldVyst: true,    // always bold in v12
         social: ct.social.trim() ? ct.social : '',
         addr: ct.addr.trim() ? ct.addr : '',
-        hours: ct.hours.trim() ? ct.hours : '',
         bodyText: '',
     };
 }
@@ -4163,11 +4180,11 @@ function buildBaseGrid() {
     boldTexts = [];
     bodyTextZones = [];
     var ct = getActiveContent();
-    computeSyncedScale(ct, cols, 3);
+    prepareSyncedScale(ct);
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
     if (preset) preset.build(grid, cols, rows, ct);
-    _syncedScale = null;
+    _syncedTitleScale = null; _syncedArtistScale = null;
     baseGrid = grid;
     return { grid: grid, headings: headings.slice(), bolds: boldTexts.slice(), bodyTexts: bodyTextZones.slice() };
 }
@@ -4347,11 +4364,11 @@ function exportPNG() {
     boldTexts = [];
     bodyTextZones = [];
     var ctExport = getActiveContent();
-    computeSyncedScale(ctExport, cols, 3);
+    prepareSyncedScale(ctExport);
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
     if (preset) preset.build(grid, cols, rows, ctExport);
-    _syncedScale = null;
+    _syncedTitleScale = null; _syncedArtistScale = null;
     var savedHeadings = headings.slice();
     var savedBolds = boldTexts.slice();
     var savedBodyTexts = bodyTextZones.slice();
@@ -4412,11 +4429,11 @@ function renderExportFrame(frameNum) {
     boldTexts = [];
     bodyTextZones = [];
     var ctFrame = getActiveContent();
-    computeSyncedScale(ctFrame, cols, 3);
+    prepareSyncedScale(ctFrame);
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
     if (preset) preset.build(grid, cols, rows, ctFrame);
-    _syncedScale = null;
+    _syncedTitleScale = null; _syncedArtistScale = null;
     var savedHeadings = headings.slice();
     var savedBolds = boldTexts.slice();
     var savedBodyTexts = bodyTextZones.slice();
@@ -4959,11 +4976,11 @@ function exportPDF() {
     boldTexts = [];
     bodyTextZones = [];
     var ctPdf = getActiveContent();
-    computeSyncedScale(ctPdf, cols, 3);
+    prepareSyncedScale(ctPdf);
     var grid = createGrid(cols, rows);
     var preset = PRESETS[S.preset];
     if (preset) preset.build(grid, cols, rows, ctPdf);
-    _syncedScale = null;
+    _syncedTitleScale = null; _syncedArtistScale = null;
     var savedHeadings = headings.slice();
     var savedBolds = boldTexts.slice();
     var savedBodyTexts = bodyTextZones.slice();
@@ -5292,7 +5309,7 @@ function bindControls() {
         cGallery: 'gallery', cArtist: 'artist', cTitle: 'title',
         cVernL: 'vernL', cVernD: 'vernD',
         cVystL: 'vystL', cVystF: 'vystF', cVystT: 'vystT',
-        cSocial: 'social', cAddr: 'addr', cHours: 'hours',
+        cSocial: 'social', cAddr: 'addr',
     };
     for (var id in contentFields) {
         (function(fieldId, key) {
@@ -5429,8 +5446,7 @@ function resetAll() {
     S.content.vystF = 'OD 10_05_2026';
     S.content.vystT = 'DO 10_07_2026';
     S.content.social = '@PRO_STORY_UH | PROSTORY.GALLERY';
-    S.content.addr = 'V\u0161ehrdova 267, Uhersk\u00e9 Hradi\u0161t\u011b';
-    S.content.hours = 'Otev\u0159eno ka\u017edou st\u0159edu od 12\u201317';
+    S.content.addr = 'V\u0161ehrdova 267, Uhersk\u00e9 Hradi\u0161t\u011b\nOtev\u0159eno ka\u017edou st\u0159edu od 12\u201317';
     S.content.message = 'PRO_STORY MAJ\u00cd LETN\u00cd P\u0158EST\u00c1VKU!\nT\u011b\u0161\u00edme se na v\u00e1s od Z\u00e1\u0159\u00ed 2026.';
     S.content.bodyText = '';
     // Sync content inputs
@@ -5445,7 +5461,6 @@ function resetAll() {
     document.getElementById('cVystT').value = S.content.vystT;
     document.getElementById('cSocial').value = S.content.social;
     document.getElementById('cAddr').value = S.content.addr;
-    document.getElementById('cHours').value = S.content.hours;
     document.getElementById('cMessage').value = S.content.message;
     document.getElementById('cBodyText').value = S.content.bodyText;
     updateContentVisibility();
