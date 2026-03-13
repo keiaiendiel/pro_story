@@ -1148,8 +1148,8 @@ Otevřeno každou středu od 12–17</textarea>
                         <button class="btn" id="btnStop" title="Stop">&#9632;</button>
                     </div>
                     <div class="cr">
-                        <label>Duration <span class="val" id="durationVal">8.0</span>s</label>
-                        <input type="range" id="duration" min="1" max="30" step="0.5" value="8">
+                        <label>Duration <span class="val" id="durationVal">5.0</span>s</label>
+                        <input type="range" id="duration" min="1" max="30" step="0.5" value="5">
                     </div>
                     <div class="cr">
                         <label>Intensity <span class="val" id="intensityVal">0.50</span></label>
@@ -1268,9 +1268,9 @@ const S = {
     autoExtendLeft: false,
     autoExtendRight: false,
     margin: 10,
-    exportScale: 2,       // kept for video/sequence internal use
-    exportLongSide: 3840,  // PNG/image export: long side in px
-    videoMaxPx: 2560,
+    exportScale: 2,       // fallback only
+    exportLongSide: 3840,  // long side in px for ALL exports (PNG, video, sequence)
+    videoMaxPx: 1920,     // max long side for video (H.264 safe)
     loopCount: 1,       // video export frame repetition
     showVernL: true,    // show "Vernisáž" label
     showVystL: true,    // show "Výstava" label
@@ -1321,7 +1321,7 @@ const S = {
         effect: 'none',
         playing: false,
         frame: 0,
-        duration: 8.0,
+        duration: 5.0,
         fps: 30,
         loop: true,
         intensity: 0.5,
@@ -4687,82 +4687,11 @@ function togglePlay() {
 // === EXPORT ===========================================================
 
 function exportPNG() {
-    var cols = currentCols;
-    var rows = currentRows;
-
-    headings = [];
-    boldTexts = [];
-    bodyTextZones = [];
-    var ctExport = getActiveContent();
-    prepareSyncedScale(ctExport);
-    var grid = createGrid(cols, rows);
-    var preset = PRESETS[S.preset];
-    if (preset) preset.build(grid, cols, rows, ctExport);
-    _syncedTitleScale = null; _syncedArtistScale = null;
-    var savedHeadings = headings.slice();
-    var savedBolds = boldTexts.slice();
-    var savedBodyTexts = bodyTextZones.slice();
-
-    var animFn = ANIMS[S.anim.effect];
-    if (animFn && S.anim.effect !== 'none') {
-        grid = animFn.apply(grid, S.anim.frame, totalFrames(), cols, rows, S.anim.intensity);
-    }
-
-    // v14: compute target resolution from long side + aspect ratio
-    var longSide = S.exportLongSide;
-    // Measure natural aspect from grid
-    var tmpMeasure = document.createElement('canvas').getContext('2d');
-    tmpMeasure.font = S.fontSize + 'px ' + getFont();
-    var natCharW = tmpMeasure.measureText('M').width;
-    var natW = Math.ceil(cols * natCharW) + S.margin * (S.fontSize / 10) * 2;
-    var natH = rows * S.leading + S.margin * (S.fontSize / 10) * 2;
-    var isPortrait = natH >= natW;
-    var targetW, targetH;
-    if (isPortrait) {
-        targetH = longSide;
-        targetW = Math.round(longSide * (natW / natH));
-    } else {
-        targetW = longSide;
-        targetH = Math.round(longSide * (natH / natW));
-    }
-    // Ensure even dimensions
-    if (targetW % 2 !== 0) targetW++;
-    if (targetH % 2 !== 0) targetH++;
-
-    // Render at scale that exceeds target, then composite
-    var scale = Math.max(2, Math.ceil(Math.max(targetW, targetH) / Math.max(natW, natH)));
-    var tmpCanvas = document.createElement('canvas');
-    var tmpCtx = tmpCanvas.getContext('2d');
-    var fontSize = S.fontSize * scale;
-    var leading = S.leading * scale;
-    var marginPx = S.margin * (fontSize / 10);
-
-    tmpCtx.font = fontSize + 'px ' + getFont();
-    var charW = tmpCtx.measureText('M').width;
-    tmpCanvas.width = Math.ceil(cols * charW) + marginPx * 2;
-    tmpCanvas.height = rows * leading + marginPx * 2;
-
-    renderToContext(tmpCtx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds, savedBodyTexts);
-
-    // Composite onto exact target canvas
-    var finalCanvas = document.createElement('canvas');
-    finalCanvas.width = targetW;
-    finalCanvas.height = targetH;
-    var fCtx = finalCanvas.getContext('2d');
-    fCtx.fillStyle = S.bgColor;
-    fCtx.fillRect(0, 0, targetW, targetH);
-    fCtx.drawImage(tmpCanvas, 0, 0, tmpCanvas.width, tmpCanvas.height, 0, 0, targetW, targetH);
-
-    var resLabel = targetW + 'x' + targetH;
-    finalCanvas.toBlob(function(blob) {
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = 'poster_' + S.preset + '_' + S.anim.effect + '_f' + S.anim.frame + '_' + resLabel + '.png';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+    // Uses renderExportFrame which now handles longside-based resolution
+    var frameCanvas = renderExportFrame(S.anim.frame);
+    var resLabel = frameCanvas.width + 'x' + frameCanvas.height;
+    frameCanvas.toBlob(function(blob) {
+        downloadBlob(blob, 'poster_' + S.preset + '_' + S.anim.effect + '_f' + S.anim.frame + '_' + resLabel + '.png');
     });
 }
 
@@ -4782,8 +4711,25 @@ function copyText() {
     });
 }
 
-function renderExportFrame(frameNum) {
-    var scale = S.exportScale;
+// Compute export target dims from longside + grid aspect ratio
+function computeExportDims(longSide) {
+    var cols = currentCols, rows = currentRows;
+    var tmpM = document.createElement('canvas').getContext('2d');
+    tmpM.font = S.fontSize + 'px ' + getFont();
+    var natCharW = tmpM.measureText('M').width;
+    var natW = Math.ceil(cols * natCharW) + S.margin * (S.fontSize / 10) * 2;
+    var natH = rows * S.leading + S.margin * (S.fontSize / 10) * 2;
+    var isPortrait = natH >= natW;
+    var tw, th;
+    if (isPortrait) { th = longSide; tw = Math.round(longSide * (natW / natH)); }
+    else { tw = longSide; th = Math.round(longSide * (natH / natW)); }
+    if (tw % 2 !== 0) tw++;
+    if (th % 2 !== 0) th++;
+    return { w: tw, h: th, natW: natW, natH: natH };
+}
+
+function renderExportFrame(frameNum, overrideLongSide) {
+    var longSide = overrideLongSide || S.exportLongSide;
     var cols = currentCols;
     var rows = currentRows;
 
@@ -4805,6 +4751,9 @@ function renderExportFrame(frameNum) {
         grid = animFn.apply(grid, frameNum, totalFrames(), cols, rows, S.anim.intensity);
     }
 
+    // Compute target from longside
+    var dims = computeExportDims(longSide);
+    var scale = Math.max(2, Math.ceil(Math.max(dims.w, dims.h) / Math.max(dims.natW, dims.natH)));
     var tmpCanvas = document.createElement('canvas');
     var tmpCtx = tmpCanvas.getContext('2d');
     var fontSize = S.fontSize * scale;
@@ -4817,7 +4766,14 @@ function renderExportFrame(frameNum) {
     tmpCanvas.height = rows * leading + marginPx * 2;
 
     renderToContext(tmpCtx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds, savedBodyTexts);
-    return tmpCanvas;
+
+    // Composite onto exact target canvas
+    var finalCanvas = document.createElement('canvas');
+    finalCanvas.width = dims.w;
+    finalCanvas.height = dims.h;
+    var fCtx = finalCanvas.getContext('2d');
+    fCtx.drawImage(tmpCanvas, 0, 0, tmpCanvas.width, tmpCanvas.height, 0, 0, dims.w, dims.h);
+    return finalCanvas;
 }
 
 function showProgress(pct) {
@@ -4832,28 +4788,20 @@ async function exportWebM() {
     var total = totalFrames();
     var fps = S.anim.fps;
     var btn = document.getElementById('exportWebm');
-    btn.textContent = 'Recording...';
+    if (btn) btn.textContent = 'Recording...';
     showProgress(0);
 
-    // Render first frame to get dimensions, scale to video max
-    var firstCanvas = renderExportFrame(0);
-    var srcW = firstCanvas.width;
-    var srcH = firstCanvas.height;
-    var maxPx = S.videoMaxPx || 1920;
-    var videoScale = 1;
-    if (srcW > maxPx || srcH > maxPx) {
-        videoScale = maxPx / Math.max(srcW, srcH);
-    }
-    var w = Math.round(srcW * videoScale);
-    var h = Math.round(srcH * videoScale);
+    // Video uses videoMaxPx as long side cap
+    var videoLong = Math.min(S.exportLongSide, S.videoMaxPx);
+    var dims = computeExportDims(videoLong);
+    var w = dims.w, h = dims.h;
 
-    // Create recording canvas at target resolution
     var recCanvas = document.createElement('canvas');
     recCanvas.width = w;
     recCanvas.height = h;
     var recCtx = recCanvas.getContext('2d');
 
-    var stream = recCanvas.captureStream(0); // manual frame control
+    var stream = recCanvas.captureStream(0);
     var mimeType = 'video/webm;codecs=vp9';
     if (!MediaRecorder.isTypeSupported(mimeType)) {
         mimeType = 'video/webm;codecs=vp8';
@@ -4871,12 +4819,11 @@ async function exportWebM() {
     var videoTrack = stream.getVideoTracks()[0];
 
     for (var f = 0; f < total; f++) {
-        var frameCanvas = renderExportFrame(f);
+        var frameCanvas = renderExportFrame(f, videoLong);
         recCtx.clearRect(0, 0, w, h);
         recCtx.drawImage(frameCanvas, 0, 0, frameCanvas.width, frameCanvas.height, 0, 0, w, h);
         if (videoTrack.requestFrame) videoTrack.requestFrame();
         showProgress(Math.round((f / total) * 100));
-        // Wait for frame interval
         await new Promise(function(r) { setTimeout(r, 1000 / fps); });
     }
 
@@ -4893,7 +4840,7 @@ async function exportWebM() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    btn.textContent = 'WebM Video';
+    if (btn) btn.textContent = 'WebM Video';
     showProgress(-1);
 }
 
@@ -5122,26 +5069,20 @@ async function exportVideoH264(format) {
     if (btn) btn.textContent = 'Encoding...';
     showProgress(0);
 
-    var firstCanvas = renderExportFrame(0);
-    var srcW = firstCanvas.width;
-    var srcH = firstCanvas.height;
-
-    // Scale down to fit within videoMaxPx on the longest side
-    var maxPx = S.videoMaxPx || 1920;
-    var videoScale = 1;
-    if (srcW > maxPx || srcH > maxPx) {
-        videoScale = maxPx / Math.max(srcW, srcH);
-    }
-    var w = Math.round(srcW * videoScale);
-    var h = Math.round(srcH * videoScale);
+    // Video uses videoMaxPx as long side cap (H.264 safe)
+    var videoLong = Math.min(S.exportLongSide, S.videoMaxPx);
+    var dims = computeExportDims(videoLong);
+    var w = dims.w, h = dims.h;
     // H.264 requires even dimensions
     if (w % 2 !== 0) w++;
     if (h % 2 !== 0) h++;
 
     // Choose codec profile based on resolution
+    var maxDim = Math.max(w, h);
     var codecString = 'avc1.42001f'; // Baseline Level 3.1
-    if (w > 1280 || h > 720) codecString = 'avc1.640028'; // High Level 4.0
-    if (w > 1920 || h > 1080) codecString = 'avc1.640032'; // High Level 5.0
+    if (maxDim > 720) codecString = 'avc1.640028'; // High Level 4.0
+    if (maxDim > 1080) codecString = 'avc1.640032'; // High Level 5.0
+    if (maxDim > 1920) codecString = 'avc1.640033'; // High Level 5.1
 
     var encConfig = {
         codec: codecString,
@@ -5162,7 +5103,7 @@ async function exportVideoH264(format) {
                 + 'Try a lower export scale, or use WebM export.');
             return;
         }
-        console.log(formatLabel + ' export: ' + total + 'f @' + fps + 'fps, render ' + srcW + 'x' + srcH + ' → encode ' + w + 'x' + h + 'px (max ' + maxPx + '), codec ' + codecString);
+        console.log(formatLabel + ' export: ' + total + 'f @' + fps + 'fps, ' + w + 'x' + h + 'px (longside ' + videoLong + '), codec ' + codecString);
     } catch (e) {
         console.warn('isConfigSupported failed, trying anyway:', e);
     }
@@ -5195,7 +5136,7 @@ async function exportVideoH264(format) {
         if (encodeError) throw encodeError;
 
         var gopSize = Math.max(1, Math.round(fps));
-        // Reusable encode canvas (avoids creating 120+ canvases)
+        // Reusable encode canvas at exact video dims
         var encCanvas = document.createElement('canvas');
         encCanvas.width = w; encCanvas.height = h;
         var encCtx = encCanvas.getContext('2d');
@@ -5203,8 +5144,7 @@ async function exportVideoH264(format) {
         for (var f = 0; f < total; f++) {
             if (encodeError) break;
 
-            var frameCanvas = renderExportFrame(f);
-            // Draw onto fixed-size encode canvas (downscales if needed)
+            var frameCanvas = renderExportFrame(f, videoLong);
             encCtx.fillStyle = S.bgColor;
             encCtx.fillRect(0, 0, w, h);
             encCtx.drawImage(frameCanvas, 0, 0, frameCanvas.width, frameCanvas.height, 0, 0, w, h);
@@ -5278,41 +5218,144 @@ async function exportVideoH264(format) {
 function exportMP4() { return exportVideoH264('mp4'); }
 function exportMOV() { return exportVideoH264('mov'); }
 
+// -- Minimal ZIP builder (store, no compression - PNG/JPG already compressed) --
+function buildZip(files) {
+    // files: [{name: string, data: Uint8Array}]
+    var localHeaders = [];
+    var centralHeaders = [];
+    var dataOffset = 0;
+    for (var i = 0; i < files.length; i++) {
+        var nameBytes = new TextEncoder().encode(files[i].name);
+        // Local file header (30 + name)
+        var lh = new Uint8Array(30 + nameBytes.length);
+        var lv = new DataView(lh.buffer);
+        lv.setUint32(0, 0x04034b50, true);   // signature
+        lv.setUint16(4, 20, true);            // version needed
+        lv.setUint16(6, 0, true);             // flags
+        lv.setUint16(8, 0, true);             // compression: store
+        lv.setUint16(10, 0, true);            // mod time
+        lv.setUint16(12, 0, true);            // mod date
+        // CRC32
+        var crc = crc32(files[i].data);
+        lv.setUint32(14, crc, true);
+        lv.setUint32(18, files[i].data.length, true); // compressed
+        lv.setUint32(22, files[i].data.length, true); // uncompressed
+        lv.setUint16(26, nameBytes.length, true);
+        lv.setUint16(28, 0, true);            // extra field length
+        lh.set(nameBytes, 30);
+        localHeaders.push(lh);
+
+        // Central directory header (46 + name)
+        var ch = new Uint8Array(46 + nameBytes.length);
+        var cv = new DataView(ch.buffer);
+        cv.setUint32(0, 0x02014b50, true);
+        cv.setUint16(4, 20, true);
+        cv.setUint16(6, 20, true);
+        cv.setUint16(8, 0, true);
+        cv.setUint16(10, 0, true);
+        cv.setUint16(12, 0, true);
+        cv.setUint16(14, 0, true);
+        cv.setUint32(16, crc, true);
+        cv.setUint32(20, files[i].data.length, true);
+        cv.setUint32(24, files[i].data.length, true);
+        cv.setUint16(28, nameBytes.length, true);
+        cv.setUint16(30, 0, true);
+        cv.setUint16(32, 0, true);
+        cv.setUint16(34, 0, true);
+        cv.setUint16(36, 0, true);
+        cv.setUint32(38, 0, true);
+        cv.setUint32(42, dataOffset, true);   // local header offset
+        ch.set(nameBytes, 46);
+        centralHeaders.push(ch);
+
+        dataOffset += lh.length + files[i].data.length;
+    }
+    // End of central directory
+    var centralOffset = dataOffset;
+    var centralSize = 0;
+    for (var j = 0; j < centralHeaders.length; j++) centralSize += centralHeaders[j].length;
+    var eocd = new Uint8Array(22);
+    var ev = new DataView(eocd.buffer);
+    ev.setUint32(0, 0x06054b50, true);
+    ev.setUint16(4, 0, true);
+    ev.setUint16(6, 0, true);
+    ev.setUint16(8, files.length, true);
+    ev.setUint16(10, files.length, true);
+    ev.setUint32(12, centralSize, true);
+    ev.setUint32(16, centralOffset, true);
+    ev.setUint16(20, 0, true);
+
+    var totalSize = dataOffset + centralSize + 22;
+    var zip = new Uint8Array(totalSize);
+    var off = 0;
+    for (var k = 0; k < files.length; k++) {
+        zip.set(localHeaders[k], off); off += localHeaders[k].length;
+        zip.set(files[k].data, off); off += files[k].data.length;
+    }
+    for (var k = 0; k < centralHeaders.length; k++) {
+        zip.set(centralHeaders[k], off); off += centralHeaders[k].length;
+    }
+    zip.set(eocd, off);
+    return zip;
+}
+
+function crc32(data) {
+    if (!crc32._table) {
+        var t = new Uint32Array(256);
+        for (var i = 0; i < 256; i++) {
+            var c = i;
+            for (var j = 0; j < 8; j++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+            t[i] = c;
+        }
+        crc32._table = t;
+    }
+    var crc = 0xFFFFFFFF;
+    var tab = crc32._table;
+    for (var i = 0; i < data.length; i++) crc = tab[(crc ^ data[i]) & 0xFF] ^ (crc >>> 8);
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
+function downloadBlob(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+}
+
 async function exportSequence(format) {
     var total = totalFrames();
     var btn = format === 'png' ? document.getElementById('exportPngSeq') : document.getElementById('exportJpgSeq');
+    if (!btn) return;
     var origText = btn.textContent;
     btn.textContent = 'Rendering...';
     showProgress(0);
 
-    // Collect blobs
-    var blobs = [];
+    var zipFiles = [];
+    var prefix = 'poster_' + S.preset + '_' + S.anim.effect;
     for (var f = 0; f < total; f++) {
         var frameCanvas = renderExportFrame(f);
         var blob = await new Promise(function(resolve) {
             if (format === 'png') frameCanvas.toBlob(resolve, 'image/png');
             else frameCanvas.toBlob(resolve, 'image/jpeg', 0.92);
         });
-        blobs.push(blob);
-        showProgress(Math.round((f / total) * 100));
+        var arrBuf = await blob.arrayBuffer();
+        var pad = String(f).padStart(4, '0');
+        zipFiles.push({ name: prefix + '_' + pad + '.' + format, data: new Uint8Array(arrBuf) });
+        showProgress(Math.round((f / total) * 90));
+        if (f % 4 === 0) await new Promise(function(r) { setTimeout(r, 0); });
     }
 
-    // Download as zip-like sequence (individual files via click)
-    // For simplicity, download each frame
-    btn.textContent = 'Downloading...';
-    for (var i = 0; i < blobs.length; i++) {
-        var url = URL.createObjectURL(blobs[i]);
-        var a = document.createElement('a');
-        a.href = url;
-        var pad = String(i).padStart(4, '0');
-        a.download = 'poster_' + S.preset + '_' + S.anim.effect + '_' + pad + '.' + format;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        // Small delay to avoid browser blocking
-        await new Promise(function(r) { setTimeout(r, 50); });
-    }
+    btn.textContent = 'Zipping...';
+    showProgress(95);
+    await new Promise(function(r) { setTimeout(r, 10); });
+
+    var zipData = buildZip(zipFiles);
+    var zipBlob = new Blob([zipData], { type: 'application/zip' });
+    downloadBlob(zipBlob, prefix + '_' + total + 'f_' + format + '.zip');
 
     btn.textContent = origText;
     showProgress(-1);
@@ -5321,15 +5364,23 @@ async function exportSequence(format) {
 async function exportSequenceAlpha() {
     var total = totalFrames();
     var btn = document.getElementById('exportPngAlpha');
+    if (!btn) return;
     var origText = btn.textContent;
     btn.textContent = 'Rendering...';
     showProgress(0);
 
-    var blobs = [];
+    var zipFiles = [];
+    var prefix = 'poster_' + S.preset + '_alpha';
     for (var f = 0; f < total; f++) {
-        // Render frame without background
-        var cols = currentCols;
-        var rows = currentRows;
+        // Render frame with transparent background
+        var frameCanvas = renderExportFrame(f);
+        // Re-render onto a clean canvas with alpha
+        var alphaCanvas = document.createElement('canvas');
+        alphaCanvas.width = frameCanvas.width;
+        alphaCanvas.height = frameCanvas.height;
+        var alphaCtx = alphaCanvas.getContext('2d');
+        // Rebuild grid for this frame with transparent bg
+        var cols = currentCols, rows = currentRows;
         headings = [];
         boldTexts = [];
         bodyTextZones = [];
@@ -5339,50 +5390,51 @@ async function exportSequenceAlpha() {
         var preset = PRESETS[S.preset];
         if (preset) preset.build(grid, cols, rows, ctFrame);
         _syncedTitleScale = null; _syncedArtistScale = null;
-        var savedHeadings = headings.slice();
-        var savedBolds = boldTexts.slice();
-        var savedBodyTexts = bodyTextZones.slice();
+        var savedH = headings.slice(), savedB = boldTexts.slice(), savedBT = bodyTextZones.slice();
         var animFn = ANIMS[S.anim.effect];
         if (animFn && S.anim.effect !== 'none') {
             grid = animFn.apply(grid, f, totalFrames(), cols, rows, S.anim.intensity);
         }
-        var scale = S.exportScale;
+        // Use longside-based scale
+        var dims = computeExportDims(S.exportLongSide);
+        var scale = Math.max(2, Math.ceil(Math.max(dims.w, dims.h) / Math.max(dims.natW, dims.natH)));
         var tmpCanvas = document.createElement('canvas');
         var tmpCtx = tmpCanvas.getContext('2d');
         var fontSize = S.fontSize * scale;
-        var leading = S.leading * scale;
+        var leadVal = S.leading * scale;
         var marginPx = S.margin * (fontSize / 10);
         tmpCtx.font = fontSize + 'px ' + getFont();
         var charW = tmpCtx.measureText('M').width;
         tmpCanvas.width = Math.ceil(cols * charW) + marginPx * 2;
-        tmpCanvas.height = rows * leading + marginPx * 2;
-        // Transparent background - skip fillRect with bgColor
-        // Render text layer only
+        tmpCanvas.height = rows * leadVal + marginPx * 2;
+        // Transparent bg
         var savedBg = S.bgColor;
         S.bgColor = 'rgba(0,0,0,0)';
-        renderToContext(tmpCtx, grid, cols, rows, fontSize, leading, savedHeadings, savedBolds, savedBodyTexts);
+        renderToContext(tmpCtx, grid, cols, rows, fontSize, leadVal, savedH, savedB, savedBT);
         S.bgColor = savedBg;
+        // Composite to target size
+        alphaCanvas.width = dims.w;
+        alphaCanvas.height = dims.h;
+        alphaCtx = alphaCanvas.getContext('2d');
+        alphaCtx.drawImage(tmpCanvas, 0, 0, tmpCanvas.width, tmpCanvas.height, 0, 0, dims.w, dims.h);
 
         var blob = await new Promise(function(resolve) {
-            tmpCanvas.toBlob(resolve, 'image/png');
+            alphaCanvas.toBlob(resolve, 'image/png');
         });
-        blobs.push(blob);
-        showProgress(Math.round((f / total) * 100));
+        var arrBuf = await blob.arrayBuffer();
+        var pad = String(f).padStart(4, '0');
+        zipFiles.push({ name: prefix + '_' + pad + '.png', data: new Uint8Array(arrBuf) });
+        showProgress(Math.round((f / total) * 90));
+        if (f % 4 === 0) await new Promise(function(r) { setTimeout(r, 0); });
     }
 
-    btn.textContent = 'Downloading...';
-    for (var i = 0; i < blobs.length; i++) {
-        var url = URL.createObjectURL(blobs[i]);
-        var a = document.createElement('a');
-        a.href = url;
-        var pad = String(i).padStart(4, '0');
-        a.download = 'poster_' + S.preset + '_alpha_' + pad + '.png';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        await new Promise(function(r) { setTimeout(r, 50); });
-    }
+    btn.textContent = 'Zipping...';
+    showProgress(95);
+    await new Promise(function(r) { setTimeout(r, 10); });
+
+    var zipData = buildZip(zipFiles);
+    var zipBlob = new Blob([zipData], { type: 'application/zip' });
+    downloadBlob(zipBlob, prefix + '_' + total + 'f.zip');
 
     btn.textContent = origText;
     showProgress(-1);
@@ -6052,7 +6104,7 @@ function resetFormat() {
     S.margin = 10;
     S.exportScale = 2;
     S.exportLongSide = 3840;
-    S.videoMaxPx = 2560;
+    S.videoMaxPx = 1920;
     S.loopCount = 1;
     S.showVernL = true;
     S.showVystL = true;
@@ -6065,7 +6117,7 @@ function resetFormat() {
     S.anim.effect = 'none';
     S.anim.playing = false;
     S.anim.frame = 0;
-    S.anim.duration = 8.0;
+    S.anim.duration = 5.0;
     S.anim.fps = 30;
     S.anim.loop = true;
     S.anim.intensity = 0.5;
