@@ -1507,6 +1507,32 @@ function setMode(mode) {
         var chkP2P = document.getElementById('chkPage2Paper'); if (chkP2P) chkP2P.checked = S.page2;
         var p2btn = document.getElementById('page2TabBtn'); if (p2btn) p2btn.style.display = S.page2 ? '' : 'none';
     }
+    // POSTER mode: reset from paper defaults
+    if (mode === 'poster') {
+        // If coming from paper layout, switch to default poster layout
+        if (S.preset === 'paper-split' || S.preset === 'paper-header') {
+            S.preset = 'floor-plan';
+        }
+        // Reset to poster color defaults (paper uses white bg)
+        S.bgColor = '#000000';
+        S.fgColor = '#ffffff';
+        document.getElementById('fgColor').value = S.fgColor;
+        document.querySelectorAll('#bgToggle .res-preset').forEach(function(b) {
+            b.classList.toggle('active', b.dataset.bg === S.bgColor);
+        });
+        // Sync poster content fields from S.content
+        document.getElementById('cGallery').value = S.content.gallery;
+        document.getElementById('cArtist').value = S.content.artist;
+        document.getElementById('cTitle').value = S.content.title;
+        document.getElementById('cTagline').value = S.content.tagline;
+        document.getElementById('cVernL').value = S.content.vernL;
+        document.getElementById('cVernD').value = S.content.vernD;
+        document.getElementById('cVystL').value = S.content.vystL;
+        document.getElementById('cVystD').value = S.content.vystD;
+        document.getElementById('cSocial').value = S.content.social;
+        document.getElementById('cAddr').value = S.content.addr;
+        document.getElementById('cBodyText').value = S.content.bodyText;
+    }
     // POST mode forces headingScale=4 for bigger message
     if (mode === 'post') {
         S.headingScale = 4;
