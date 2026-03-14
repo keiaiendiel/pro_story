@@ -824,6 +824,7 @@ html, body {
 
                 <div class="ctrl-group">
                     <div class="ctrl-group-title">Layout</div>
+                    <p class="guide-tip">Zvol rozložení, formát a poměr stran. Pro rychlou inspiraci zkus Shuffle / Shuffle Anim.</p>
                     <div class="preset-grid" id="presetGrid">
                         <button class="preset-btn active" data-preset="floor-plan">Blueprint</button>
                         <button class="preset-btn" data-preset="blocks">Editorial</button>
@@ -865,6 +866,7 @@ html, body {
 
                 <div class="ctrl-group" id="formatGroup">
                     <div class="ctrl-group-title">Format</div>
+                    <p class="guide-tip">Více sloupců = jemnější mřížka a více prostoru pro nadpisy.</p>
                     <div class="cr">
                         <div class="aspect-presets" id="aspectPresets">
                             <button class="aspect-preset active" data-ratio="70:99">Poster</button>
@@ -912,6 +914,7 @@ html, body {
 
                 <div class="ctrl-group">
                     <div class="ctrl-group-title">Typography</div>
+                    <p class="guide-tip">Pokud je text příliš velký, snižte velikost nadpisu nebo zvětšete sloupce.</p>
                     <div class="cr">
                         <label>Title Size</label>
                         <div class="heading-presets" id="headingPresets">
@@ -961,6 +964,7 @@ html, body {
 
             <!-- ===== TAB: CONTENT ===== -->
             <div class="tab-page" id="tabContent" data-tab="content">
+                <p class="guide-tip">Vyplň údaje výstavy. Prázdná pole se na plakátu nezobrazí. Některá pole podporují více řádků, odděl enterem.</p>
 
                 <!-- PAPER CONFIG (only visible in paper mode) -->
                 <div id="paperConfigSection" style="display:none;">
@@ -1129,7 +1133,7 @@ Otevřeno každou středu od 12–17</textarea>
                 <div id="imageSection">
                     <div class="ctrl-group">
                         <div class="ctrl-group-title">Photo Overlay</div>
-                        <p class="guide-tip">Drop an image on the canvas or use the button below. Scroll to zoom, drag to pan.</p>
+                        <p class="guide-tip">Nahraj fotografii tlačítkem nebo ji přetáhni na plátno. Kolečkem myši přibližuješ, tažením posouváš.</p>
                         <div class="cr">
                             <div class="btn-row">
                                 <label class="btn btn-primary" for="imageInput" style="cursor:pointer; text-align:center; flex:1;">Choose File</label>
@@ -1162,6 +1166,7 @@ Otevřeno každou středu od 12–17</textarea>
 
                         <div class="ctrl-group">
                             <div class="ctrl-group-title">Adjustments</div>
+                            <p class="guide-tip">Některé kompozice vyžadují přesnější práci s fotografií: roztažení do stran, úpravu jasu nebo kontrastu.</p>
                             <div class="cr">
                                 <label>Offset X <span class="val" id="imgOffsetXVal">0</span>%</label>
                                 <input type="range" id="imgOffsetX" min="-100" max="100" step="0.5" value="0">
@@ -1237,6 +1242,7 @@ Otevřeno každou středu od 12–17</textarea>
 
             <!-- ===== TAB: ANIMATE ===== -->
             <div class="tab-page" id="tabAnimate" data-tab="animate">
+                <p class="guide-tip">Vyber efekt a stiskni Play pro náhled. Nastavit můžeš délku a intenzitu animace. Exportuj jako MP4/MOV.</p>
                 <div class="ctrl-group">
                     <div class="ctrl-group-title">Effect</div>
                     <div class="anim-presets" id="animPresets">
@@ -1340,7 +1346,7 @@ Otevřeno každou středu od 12–17</textarea>
         </div>
 
         <div class="panel-footer">
-            <button id="toggleGuides" style="background:none;border:none;color:var(--text4);font-size:10px;cursor:pointer;padding:0;transition:color 0.15s;">Tips</button>
+            <button id="toggleGuides" style="background:none;border:none;color:var(--text4);font-size:10px;cursor:pointer;padding:0;transition:color 0.15s;">Skrýt nápovědu</button>
             <span><a href="https://kindl.work/" target="_blank" rel="noopener">kindl.work</a> &middot; PRO_STORY 2026</span>
         </div>
     </aside>
@@ -6597,7 +6603,7 @@ document.getElementById('toggleAllLayouts').addEventListener('click', function()
 document.getElementById('toggleGuides').addEventListener('click', function() {
     var panel = document.getElementById('mainPanel');
     var hidden = panel.classList.toggle('hide-guides');
-    this.textContent = hidden ? 'Show tips' : 'Hide tips';
+    this.textContent = hidden ? 'Zobrazit nápovědu' : 'Skrýt nápovědu';
 });
 
 // === TAB NAVIGATION ===
