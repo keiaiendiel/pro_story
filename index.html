@@ -3,30 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POSTER_ v14 — PRO_STORY Generator</title>
+<title>POSTER_ v16 — PRO_STORY Generator</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-    --bg: #0a0a0a;
-    --bg2: #111111;
-    --bg3: #1a1a1a;
-    --text: #e0e0e0;
-    --text2: #999;
-    --text3: #666;
-    --text4: #444;
-    --border: #1e1e1e;
-    --border2: #2a2a2a;
-    --accent: #e0e0e0;
-    --accent-dim: #333;
+    --bg: #09090b;
+    --bg2: #0f0f12;
+    --bg3: #18181b;
+    --bg4: #222225;
+    --text: #e4e4e7;
+    --text2: #a1a1aa;
+    --text3: #71717a;
+    --text4: #52525b;
+    --border: #27272a;
+    --border2: #3f3f46;
+    --accent: #e4e4e7;
+    --accent-dim: #27272a;
     --guide: #c9a84c;
     --guide-dim: #3d3520;
     --font: -apple-system, 'Segoe UI', system-ui, sans-serif;
     --mono: 'Degular Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace;
-    --sidebar: 340px;
-    --r: 5px;
+    --panel: 360px;
+    --r: 6px;
+    --r2: 10px;
+    --toolbar-h: 48px;
+    --tab-h: 40px;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+<style>
 @font-face {
     font-family: 'Degular Mono';
     src: url('OTF/DegularMono-Medium.otf') format('opentype'),
@@ -82,164 +88,249 @@ html, body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* === APP LAYOUT === */
+/* ============================================
+   APP LAYOUT — canvas left, panel right
+   ============================================ */
 
 .app {
     display: grid;
-    grid-template-columns: var(--sidebar) 1fr;
+    grid-template-columns: 1fr var(--panel);
+    grid-template-rows: var(--toolbar-h) 1fr;
     height: 100vh;
+    height: 100dvh;
 }
 
-.sidebar {
-    background: var(--bg2);
-    border-right: 1px solid var(--border);
+/* --- Floating Toolbar --- */
+
+.toolbar {
+    grid-column: 1 / -1;
     display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-/* === APP HEADER === */
-
-.app-header {
-    padding: 16px 20px 14px;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    background: var(--bg2);
     border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
+    z-index: 10;
 }
 
-.app-header h1 {
+.toolbar .brand {
     font-family: var(--mono);
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.04em;
     color: var(--text);
+    white-space: nowrap;
+    margin-right: 4px;
 }
 
-.app-header .subtitle {
-    font-size: 10px;
-    color: var(--text3);
-    margin-top: 1px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-}
-
-/* Mode tabs - primary navigation */
-.mode-tabs {
+.toolbar .mode-switch {
     display: flex;
-    gap: 2px;
-    margin-top: 12px;
+    gap: 1px;
     background: var(--bg);
     border-radius: var(--r);
     padding: 2px;
 }
 
-.mode-tab {
-    flex: 1;
-    padding: 7px 8px;
+.toolbar .mode-switch .mode-tab {
+    padding: 5px 14px;
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     background: transparent;
     border: none;
-    color: var(--text3);
+    color: var(--text4);
     border-radius: calc(var(--r) - 1px);
     cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
+    transition: all 0.15s var(--ease);
 }
 
-.mode-tab:hover { color: var(--text2); }
-.mode-tab.active {
+.toolbar .mode-switch .mode-tab:hover { color: var(--text2); }
+.toolbar .mode-switch .mode-tab.active {
     background: var(--text);
     color: var(--bg);
     font-weight: 600;
 }
 
-/* Action buttons row */
-.action-row {
+.toolbar .quick-actions {
     display: flex;
     gap: 4px;
-    margin-top: 10px;
-}
-
-.action-row .btn { flex: 1; }
-
-.action-row-secondary {
-    display: flex;
-    gap: 4px;
-    margin-top: 4px;
-}
-
-.action-row-secondary .btn { flex: 1; font-size: 10px; padding: 5px 8px; color: var(--text3); }
-
-/* === SCROLLABLE CONTROLS === */
-
-.controls {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-bottom: 20px;
-}
-
-.controls::-webkit-scrollbar { width: 3px; }
-.controls::-webkit-scrollbar-track { background: transparent; }
-.controls::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-.controls::-webkit-scrollbar-thumb:hover { background: var(--text3); }
-
-/* === SECTION PANELS === */
-
-.section { border-bottom: 1px solid var(--border); }
-
-.section > summary {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 10px 20px;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text3);
-    cursor: pointer;
-    user-select: none;
-    list-style: none;
-    transition: color 0.15s;
-}
-
-.section > summary::-webkit-details-marker { display: none; }
-
-.section > summary::before {
-    content: '+';
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 12px;
-    height: 12px;
-    font-size: 11px;
-    font-weight: 400;
-    font-family: var(--mono);
-    color: var(--text4);
-    flex-shrink: 0;
-    transition: color 0.15s;
-}
-
-.section[open] > summary::before { content: '\2013'; color: var(--text3); }
-.section > summary:hover { color: var(--guide); }
-.section > summary:hover::before { color: var(--text3); }
-
-.section-desc {
-    font-size: 9px;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    text-transform: none;
-    color: var(--text4);
     margin-left: auto;
 }
 
-.section-body { padding: 4px 20px 16px; }
+.toolbar .quick-actions .btn {
+    padding: 5px 12px;
+    font-size: 10px;
+    font-family: var(--mono);
+    letter-spacing: 0.02em;
+}
 
-/* === CONTROL ROWS === */
+.panel-toggle-btn {
+    padding: 5px 8px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    color: var(--text3);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+}
+.panel-toggle-btn:hover { color: var(--text); border-color: var(--border2); }
 
+/* --- Canvas Viewport --- */
+
+.viewport {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    overflow: hidden;
+    position: relative;
+}
+
+.canvas-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    padding: 20px;
+}
+
+.canvas-container canvas {
+    background: #000;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+    image-rendering: auto;
+    border-radius: 2px;
+}
+
+/* Status bar */
+.status-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 16px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text4);
+    flex-shrink: 0;
+    background: var(--bg2);
+    letter-spacing: 0.02em;
+}
+
+.status-bar .status-sep { color: var(--border); font-size: 6px; }
+
+/* --- Right Panel --- */
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg2);
+    border-left: 1px solid var(--border);
+    overflow: hidden;
+    transition: width 0.3s var(--ease), margin-right 0.3s var(--ease);
+}
+
+.panel.collapsed {
+    width: 0 !important;
+    min-width: 0 !important;
+    border-left: none;
+    overflow: hidden;
+}
+
+/* Panel Tab Bar */
+.panel-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    overflow-x: auto;
+    background: var(--bg2);
+}
+
+.panel-tabs::-webkit-scrollbar { display: none; }
+
+.panel-tab {
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--text4);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    text-transform: uppercase;
+}
+
+.panel-tab:hover { color: var(--text2); }
+.panel-tab.active {
+    color: var(--text);
+    border-bottom-color: var(--text);
+}
+
+/* Panel content area */
+.panel-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.panel-content::-webkit-scrollbar { width: 3px; }
+.panel-content::-webkit-scrollbar-track { background: transparent; }
+.panel-content::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.panel-content::-webkit-scrollbar-thumb:hover { background: var(--text4); }
+
+/* Tab pages */
+.tab-page { display: none; padding: 16px; }
+.tab-page.active { display: block; }
+
+/* Panel footer */
+.panel-footer {
+    padding: 8px 16px;
+    font-size: 10px;
+    color: var(--text4);
+    text-align: center;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.panel-footer a { color: var(--text3); text-decoration: none; }
+.panel-footer a:hover { color: var(--text); }
+
+/* ============================================
+   CONTROLS — shared component styles
+   ============================================ */
+
+/* Section groups within tab pages */
+.ctrl-group {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.ctrl-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.ctrl-group-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+}
+
+/* Control rows */
 .cr { margin-bottom: 10px; }
 .cr:last-child { margin-bottom: 0; }
 
@@ -247,7 +338,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text2);
     margin-bottom: 5px;
 }
@@ -255,12 +346,11 @@ html, body {
 .cr > label .val {
     font-family: var(--mono);
     font-size: 10px;
-    color: var(--text3);
+    color: var(--text4);
     font-variant-numeric: tabular-nums;
 }
 
-/* === INPUT STYLES === */
-
+/* Inputs */
 .cr input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
@@ -274,8 +364,8 @@ html, body {
 
 .cr input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: var(--text);
     cursor: pointer;
@@ -284,13 +374,8 @@ html, body {
     transition: transform 0.1s;
 }
 
-.cr input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-}
-
-.cr input[type="range"]:active::-webkit-slider-thumb {
-    transform: scale(0.95);
-}
+.cr input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.cr input[type="range"]:active::-webkit-slider-thumb { transform: scale(0.95); }
 
 .cr select,
 .cr input[type="text"],
@@ -311,7 +396,7 @@ html, body {
 
 .cr select:focus,
 .cr input:focus,
-.cr textarea:focus { border-color: var(--text3); }
+.cr textarea:focus { border-color: var(--text4); }
 .cr select { cursor: pointer; }
 .cr select option { background: var(--bg); }
 .cr input[type="color"] { padding: 3px; height: 30px; cursor: pointer; }
@@ -323,54 +408,16 @@ html, body {
     line-height: 1.5;
 }
 
-.color-row { display: flex; gap: 8px; }
-.color-row .cr { flex: 1; }
-
-/* === CHECKBOXES === */
-
+/* Checkboxes */
 .chk {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
-.chk label { font-size: 12px; color: var(--text2); cursor: pointer; }
+.chk label { font-size: 11px; color: var(--text2); cursor: pointer; }
 .chk input[type="checkbox"] { accent-color: var(--text); cursor: pointer; }
-
-.input-row {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-}
-
-.input-row input[type="number"] { flex: 1; font-family: var(--mono); }
-
-/* === PRESET GRIDS === */
-
-.preset-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 3px;
-}
-
-.preset-btn {
-    padding: 7px 4px;
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 500;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text3);
-    border-radius: var(--r);
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.12s;
-    line-height: 1.3;
-}
-
-.preset-btn:hover { color: var(--text2); border-color: var(--border2); background: var(--bg3); }
-.preset-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
 /* === BUTTONS === */
 
@@ -400,25 +447,50 @@ html, body {
     font-weight: 600;
 }
 
-.btn-primary:hover { background: #ccc; border-color: transparent; }
+.btn-primary:hover { background: #d4d4d8; border-color: transparent; }
 .btn-small { padding: 4px 10px; font-size: 10px; }
 
 .btn-row { display: flex; gap: 4px; }
 .btn-row .btn { flex: 1; }
 
-/* === TOGGLE PRESETS (mode, bg, scale, etc.) === */
+/* === PRESET GRIDS === */
 
+.preset-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+}
+
+.preset-btn {
+    padding: 6px 4px;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text4);
+    border-radius: var(--r);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.12s;
+    line-height: 1.3;
+}
+
+.preset-btn:hover { color: var(--text2); border-color: var(--border2); background: var(--bg3); }
+.preset-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+/* Toggle presets (shared) */
 .res-presets { display: flex; gap: 2px; }
 
 .res-preset {
     flex: 1;
-    padding: 6px 4px;
+    padding: 5px 4px;
     font-family: var(--mono);
     font-size: 10px;
     font-weight: 500;
     background: var(--bg);
     border: 1px solid var(--border);
-    color: var(--text3);
+    color: var(--text4);
     border-radius: var(--r);
     cursor: pointer;
     text-align: center;
@@ -432,12 +504,12 @@ html, body {
 .aspect-presets { display: flex; gap: 2px; flex-wrap: wrap; }
 
 .aspect-preset {
-    padding: 5px 8px;
+    padding: 5px 7px;
     font-family: var(--mono);
     font-size: 10px;
     background: var(--bg);
     border: 1px solid var(--border);
-    color: var(--text3);
+    color: var(--text4);
     border-radius: var(--r);
     cursor: pointer;
     text-align: center;
@@ -458,7 +530,7 @@ html, body {
     font-weight: 500;
     background: var(--bg);
     border: 1px solid var(--border);
-    color: var(--text3);
+    color: var(--text4);
     border-radius: var(--r);
     cursor: pointer;
     text-align: center;
@@ -476,13 +548,13 @@ html, body {
 }
 
 .anim-preset {
-    padding: 6px 4px;
+    padding: 5px 4px;
     font-family: var(--mono);
     font-size: 9px;
     font-weight: 500;
     background: var(--bg);
     border: 1px solid var(--border);
-    color: var(--text3);
+    color: var(--text4);
     border-radius: var(--r);
     cursor: pointer;
     text-align: center;
@@ -493,11 +565,10 @@ html, body {
 .anim-preset:hover { color: var(--text2); border-color: var(--border2); }
 .anim-preset.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
-/* === SWATCHES === */
-
+/* Swatches */
 .swatch-btn {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     border: 2px solid var(--border);
     border-radius: var(--r);
     cursor: pointer;
@@ -509,8 +580,7 @@ html, body {
 .swatch-btn:hover { border-color: var(--text2); transform: scale(1.1); }
 .swatch-btn.active { border-color: var(--text); box-shadow: 0 0 0 1px var(--text); }
 
-/* === TRANSPORT CONTROLS === */
-
+/* Transport */
 .transport {
     display: flex;
     gap: 3px;
@@ -526,28 +596,23 @@ html, body {
 
 .transport .btn.playing { background: var(--text); color: var(--bg); border-color: var(--text); }
 
-/* === INFO ROWS === */
-
+/* Info rows */
 .info-row {
     display: flex;
     justify-content: space-between;
     font-size: 10px;
-    color: var(--text3);
+    color: var(--text4);
     padding: 3px 0;
 }
 
 .info-row .info-val {
     font-family: var(--mono);
-    color: var(--text2);
+    color: var(--text3);
     font-variant-numeric: tabular-nums;
 }
 
-/* === IMAGE POSITION PRESETS === */
-
-.img-pos-presets {
-    display: flex;
-    gap: 3px;
-}
+/* Image position presets */
+.img-pos-presets { display: flex; gap: 3px; }
 
 .img-pos-preset {
     flex: 1;
@@ -564,67 +629,8 @@ html, body {
 .img-pos-preset:hover { border-color: var(--border2); color: var(--text); }
 .img-pos-preset.active { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
 
-/* === VIEWPORT === */
-
-.viewport {
-    display: flex;
-    flex-direction: column;
-    background: #050505;
-    overflow: hidden;
-}
-
-.canvas-container {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-    padding: 24px;
-}
-
-.canvas-container canvas {
-    background: #000;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
-    image-rendering: auto;
-}
-
-/* === STATUS BAR === */
-
-.status-bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 6px 16px;
-    border-top: 1px solid var(--border);
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text3);
-    flex-shrink: 0;
-    background: var(--bg2);
-}
-
-.status-bar .status-sep { color: var(--border2); font-size: 6px; }
-
-/* === FOOTER === */
-
-.site-footer {
-    padding: 10px 20px;
-    font-size: 10px;
-    color: var(--text4);
-    text-align: center;
-    border-top: 1px solid var(--border);
-    flex-shrink: 0;
-}
-
-.site-footer a { color: var(--text3); text-decoration: none; }
-.site-footer a:hover { color: var(--text); }
-
-/* === ADVANCED SUB-SECTIONS === */
-
-.sub-advanced {
-    margin-top: 8px;
-}
+/* Advanced sub-sections */
+.sub-advanced { margin-top: 8px; }
 
 .sub-advanced > summary {
     font-size: 10px;
@@ -661,17 +667,20 @@ html, body {
     background: var(--guide-dim);
     border-left: 2px solid var(--guide);
     padding: 5px 8px;
-    margin: 8px 0 4px;
+    margin: 8px 0 6px;
     line-height: 1.4;
     border-radius: 0 var(--r) var(--r) 0;
-    transition: opacity 0.2s, max-height 0.2s;
 }
 
-.hide-guides .guide-tip {
-    display: none;
-}
+.hide-guides .guide-tip { display: none; }
 
 .sep { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+
+/* For backward compat with accordion sections still used in tab pages */
+.section { border-bottom: none; }
+.section > summary { display: none; }
+.section-body { padding: 0; }
+.section-desc { display: none; }
 
 /* === EXPORT PROGRESS === */
 
@@ -690,86 +699,175 @@ html, body {
     width: 0%;
 }
 
-/* === RESPONSIVE === */
+/* ============================================
+   RESPONSIVE — Mobile / Tablet
+   ============================================ */
 
-@media (max-width: 900px) {
-    .app { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
-    .sidebar { order: 2; max-height: 50vh; border-right: none; border-top: 1px solid var(--border); }
-    .viewport { order: 1; }
+@media (max-width: 860px) {
+    .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: var(--toolbar-h) 1fr auto;
+    }
+
+    .viewport { order: 1; min-height: 0; }
+
+    .panel {
+        order: 2;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        max-height: 50dvh;
+        min-height: 200px;
+    }
+
+    .panel.collapsed { max-height: 0 !important; min-height: 0 !important; }
+
+    .panel-tabs {
+        justify-content: stretch;
+    }
+
+    .panel-tab {
+        flex: 1;
+        text-align: center;
+        padding: 8px 6px;
+        font-size: 9px;
+    }
+
+    .tab-page { padding: 12px; }
+
+    .toolbar {
+        padding: 0 10px;
+        gap: 8px;
+    }
+
+    .toolbar .brand { font-size: 12px; }
+
+    .toolbar .mode-switch .mode-tab {
+        padding: 4px 10px;
+        font-size: 9px;
+    }
+
+    .toolbar .quick-actions .btn {
+        padding: 4px 8px;
+        font-size: 9px;
+    }
+
+    .canvas-container { padding: 12px; }
+
+    .status-bar { padding: 4px 10px; font-size: 9px; gap: 6px; }
+
+    /* Stack export buttons */
+    .preset-grid { grid-template-columns: repeat(3, 1fr); }
+    .anim-presets { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 480px) {
+    .toolbar { gap: 6px; padding: 0 8px; }
+    .toolbar .brand { display: none; }
+    .toolbar .quick-actions .btn { padding: 4px 6px; font-size: 8px; }
+    .toolbar .mode-switch .mode-tab { padding: 4px 8px; font-size: 8px; }
+    .panel { max-height: 55dvh; }
+    .panel-tab { font-size: 8px; padding: 8px 4px; }
 }
 </style>
 </head>
 <body>
 <div class="app">
-    <aside class="sidebar">
-        <header class="app-header">
-            <h1>POSTER_ v14</h1>
-            <div class="mode-tabs" id="modeToggle">
-                <button class="mode-tab res-preset active" data-mode="poster">Poster</button>
-                <button class="mode-tab res-preset" data-mode="post">Post</button>
-                <button class="mode-tab res-preset" data-mode="paper">Paper</button>
-            </div>
-            <div class="action-row">
-                <button class="btn" id="btnShuffleLayout">Shuffle</button>
-                <button class="btn" id="btnShuffleAnim">Shuffle Anim</button>
-                <button class="btn" id="btnResetAll">Reset</button>
-            </div>
-        </header>
 
-        <div class="controls">
+    <!-- ===== TOOLBAR ===== -->
+    <header class="toolbar">
+        <div class="brand">POSTER_ v16</div>
+        <div class="mode-switch" id="modeToggle">
+            <button class="mode-tab active" data-mode="poster">Poster</button>
+            <button class="mode-tab" data-mode="post">Post</button>
+            <button class="mode-tab" data-mode="paper">Paper</button>
+        </div>
+        <div class="quick-actions">
+            <button class="btn" id="btnShuffleLayout">Shuffle</button>
+            <button class="btn" id="btnShuffleAnim">Anim</button>
+            <button class="btn" id="btnResetAll">Reset</button>
+            <button class="panel-toggle-btn" id="panelToggle" title="Toggle panel">&#9776;</button>
+        </div>
+    </header>
 
-            <!-- LOOK (merged Format + Layout) -->
-            <details class="section" open>
-                <summary title="Vyber rozvržení, formát a barvy plakátu">Look <span class="section-desc">Rozvržení a formát</span></summary>
-                <div class="section-body">
+    <!-- ===== CANVAS VIEWPORT ===== -->
+    <main class="viewport">
+        <div class="canvas-container" id="canvasContainer">
+            <canvas id="canvas"></canvas>
+        </div>
+        <div class="status-bar">
+            <span id="statusDims">80 x 53</span>
+            <span class="status-sep">&middot;</span>
+            <span id="statusPreset">Floor Plan</span>
+            <span class="status-sep">&middot;</span>
+            <span id="statusAnim">none</span>
+            <span class="status-sep">&middot;</span>
+            <span id="statusFrame">0/120</span>
+            <span class="status-sep">&middot;</span>
+            <span id="statusOutput">&mdash;</span>
+        </div>
+    </main>
+
+    <!-- ===== RIGHT PANEL ===== -->
+    <aside class="panel" id="mainPanel">
+        <nav class="panel-tabs" id="panelTabs">
+            <button class="panel-tab active" data-tab="design">Design</button>
+            <button class="panel-tab" data-tab="content">Content</button>
+            <button class="panel-tab" data-tab="image">Image</button>
+            <button class="panel-tab" data-tab="animate">Animate</button>
+            <button class="panel-tab" data-tab="export">Export</button>
+        </nav>
+
+        <div class="panel-content">
+
+            <!-- ===== TAB: DESIGN ===== -->
+            <div class="tab-page active" id="tabDesign" data-tab="design">
+
+                <div class="ctrl-group">
+                    <div class="ctrl-group-title">Layout</div>
                     <p class="guide-tip">Zvol rozložení, formát a poměr stran. Pro rychlou inspiraci zkus Shuffle / Shuffle Anim.</p>
-                    <div class="cr">
-                        <label>Layout</label>
-                        <div class="preset-grid" id="presetGrid">
-                            <button class="preset-btn active" data-preset="floor-plan">Blueprint</button>
-                            <button class="preset-btn" data-preset="blocks">Editorial</button>
-                            <button class="preset-btn" data-preset="split">Split</button>
-                            <button class="preset-btn" data-preset="windows">Win</button>
-                            <button class="preset-btn" data-preset="gallery">Maze</button>
-                            <button class="preset-btn" data-preset="cross">Cross</button>
-                            <button class="preset-btn" data-preset="halftone">Half</button>
-                            <button class="preset-btn" data-preset="horizon">Horiz</button>
-                            <button class="preset-btn" data-preset="paper-split" style="display:none;">Paper A</button>
-                            <button class="preset-btn" data-preset="paper-header" style="display:none;">Paper B</button>
+                    <div class="preset-grid" id="presetGrid">
+                        <button class="preset-btn active" data-preset="floor-plan">Blueprint</button>
+                        <button class="preset-btn" data-preset="blocks">Editorial</button>
+                        <button class="preset-btn" data-preset="split">Split</button>
+                        <button class="preset-btn" data-preset="windows">Win</button>
+                        <button class="preset-btn" data-preset="gallery">Maze</button>
+                        <button class="preset-btn" data-preset="cross">Cross</button>
+                        <button class="preset-btn" data-preset="halftone">Half</button>
+                        <button class="preset-btn" data-preset="horizon">Horiz</button>
+                        <button class="preset-btn hidden" data-preset="paper-split">Paper A</button>
+                        <button class="preset-btn hidden" data-preset="paper-header">Paper B</button>
+                    </div>
+                    <div id="allLayoutsWrap" style="display:none;margin-top:6px;">
+                        <div class="preset-grid" id="presetGridAll">
+                            <button class="preset-btn" data-preset="gradient">Fade</button>
+                            <button class="preset-btn" data-preset="cells">Grid</button>
+                            <button class="preset-btn" data-preset="void">Minimal</button>
+                            <button class="preset-btn" data-preset="baseline">Lines</button>
+                            <button class="preset-btn" data-preset="dissolve-edge">Frame</button>
+                            <button class="preset-btn" data-preset="columns">Cols</button>
+                            <button class="preset-btn" data-preset="l-frame">L-Fr</button>
+                            <button class="preset-btn" data-preset="hybrid">Hybr</button>
+                            <button class="preset-btn" data-preset="stack">Stack</button>
+                            <button class="preset-btn" data-preset="diagonal">Diag</button>
+                            <button class="preset-btn" data-preset="margin">Margin</button>
+                            <button class="preset-btn" data-preset="ratio">Ratio</button>
+                            <button class="preset-btn" data-preset="verso">Verso</button>
+                            <button class="preset-btn" data-preset="grid-system">Grid</button>
+                            <button class="preset-btn" data-preset="broadsheet">Broad</button>
+                            <button class="preset-btn" data-preset="zigzag">Zig</button>
+                            <button class="preset-btn" data-preset="curtain">Curt</button>
+                            <button class="preset-btn" data-preset="scatter">Scat</button>
+                            <button class="preset-btn" data-preset="strata">Strat</button>
+                            <button class="preset-btn" data-preset="monolith">Mono</button>
                         </div>
                     </div>
-                    <div id="allLayoutsWrap" style="display:none;">
-                        <div class="cr">
-                            <label>All layouts</label>
-                            <div class="preset-grid" id="presetGridAll">
-                                <button class="preset-btn" data-preset="gradient">Fade</button>
-                                <button class="preset-btn" data-preset="cells">Grid</button>
-                                <button class="preset-btn" data-preset="void">Minimal</button>
-                                <button class="preset-btn" data-preset="baseline">Lines</button>
-                                <button class="preset-btn" data-preset="dissolve-edge">Frame</button>
-                                <button class="preset-btn" data-preset="columns">Cols</button>
-                                <button class="preset-btn" data-preset="l-frame">L-Fr</button>
-                                <button class="preset-btn" data-preset="hybrid">Hybr</button>
-                                <button class="preset-btn" data-preset="stack">Stack</button>
-                                <button class="preset-btn" data-preset="diagonal">Diag</button>
-                                <button class="preset-btn" data-preset="margin">Margin</button>
-                                <button class="preset-btn" data-preset="ratio">Ratio</button>
-                                <button class="preset-btn" data-preset="verso">Verso</button>
-                                <button class="preset-btn" data-preset="grid-system">Grid</button>
-                                <button class="preset-btn" data-preset="broadsheet">Broad</button>
-                                <button class="preset-btn" data-preset="zigzag">Zig</button>
-                                <button class="preset-btn" data-preset="curtain">Curt</button>
-                                <button class="preset-btn" data-preset="scatter">Scat</button>
-                                <button class="preset-btn" data-preset="strata">Strat</button>
-                                <button class="preset-btn" data-preset="monolith">Mono</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="margin-bottom:10px;">
-                        <button class="btn btn-small" id="toggleAllLayouts" style="width:100%;color:var(--text4);">Show all 28 layouts</button>
-                    </div>
+                    <button class="btn btn-small" id="toggleAllLayouts" style="width:100%;margin-top:6px;color:var(--text4);">Show all 28 layouts</button>
+                </div>
+
+                <div class="ctrl-group" id="formatGroup">
+                    <div class="ctrl-group-title">Format</div>
+                    <p class="guide-tip">Více sloupců = jemnější mřížka a více prostoru pro nadpisy.</p>
                     <div class="cr">
-                        <label>Format</label>
                         <div class="aspect-presets" id="aspectPresets">
                             <button class="aspect-preset active" data-ratio="70:99">Poster</button>
                             <button class="aspect-preset" data-ratio="3:4">3:4</button>
@@ -785,7 +883,14 @@ html, body {
                         </div>
                     </div>
                     <div class="cr">
-                        <label>Background</label>
+                        <label>Columns <span class="val" id="colsVal">90</span></label>
+                        <input type="range" id="cols" min="40" max="200" step="1" value="90">
+                    </div>
+                </div>
+
+                <div class="ctrl-group">
+                    <div class="ctrl-group-title">Color</div>
+                    <div class="cr">
                         <div class="res-presets" id="bgToggle">
                             <button class="res-preset active" data-bg="#000000">Black</button>
                             <button class="res-preset" data-bg="#ffffff">White</button>
@@ -802,290 +907,14 @@ html, body {
                         </div>
                     </div>
                     <div id="swatchRow" class="cr">
-                        <label>Palette <span class="hint" style="margin:0;">(z obrázku)</span></label>
+                        <label>Palette <span class="hint" style="margin:0;">(from image)</span></label>
                         <div id="swatchContainer" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
                     </div>
-                    <div class="cr">
-                        <label>Space (Columns) <span class="val" id="colsVal">90</span></label>
-                        <input type="range" id="cols" min="40" max="200" step="1" value="90">
-                        <p class="guide-tip">Více sloupců = jemnější mřížka a více prostoru pro nadpisy.</p>
-                    </div>
                 </div>
-            </details>
 
-            <!-- IMAGE -->
-            <details class="section" id="imageSection" open>
-                <summary title="Přidej fotografii nebo grafiku přes plakát">Image <span class="section-desc">Fotografie přes plakát</span></summary>
-                <div class="section-body">
-                    <p class="guide-tip">Nahraj fotografii tlačítkem nebo ji přetáhni na plátno. Kolečkem myši přibližuješ, tažením posouváš.</p>
-                    <div class="cr">
-                        <div class="btn-row">
-                            <label class="btn btn-primary" for="imageInput" style="cursor:pointer; text-align:center; flex:1;">Choose File</label>
-                            <input type="file" id="imageInput" accept="image/*" style="display:none;">
-                            <button class="btn" id="imageRemove" disabled>Remove</button>
-                        </div>
-                    </div>
-                    <div class="info-row">
-                        <span>Status</span>
-                        <span class="info-val" id="imageStatus">No image</span>
-                    </div>
-                    <p class="hint">Scroll to zoom, drag to pan</p>
-                    <div id="imageControls" class="hidden">
-                        <div class="cr">
-                            <label>Scale <span class="val" id="imgScaleVal">1.00</span>x</label>
-                            <input type="range" id="imgScale" min="0.25" max="4.0" step="0.05" value="1">
-                        </div>
-                        <div class="cr">
-                            <label>Filter</label>
-                            <div class="img-pos-presets" id="imgFilterPresets">
-                                <button class="img-pos-preset active" data-filter="none">None</button>
-                                <button class="img-pos-preset" data-filter="dither">Dither</button>
-                                <button class="img-pos-preset" data-filter="bayer">Bayer</button>
-                            </div>
-                        </div>
-                        <details class="sub-advanced">
-                            <summary>Image adjustments</summary>
-                            <div class="sub-advanced-body">
-                                <p class="guide-tip">Některé kompozice vyžadují přesnější práci s fotografií: roztažení do stran, úpravu jasu nebo kontrastu.</p>
-                                <div class="cr">
-                                    <label>Offset X <span class="val" id="imgOffsetXVal">0</span>%</label>
-                                    <input type="range" id="imgOffsetX" min="-100" max="100" step="0.5" value="0">
-                                </div>
-                                <div class="cr">
-                                    <label>Offset Y <span class="val" id="imgOffsetYVal">0</span>%</label>
-                                    <input type="range" id="imgOffsetY" min="-100" max="100" step="0.5" value="0">
-                                </div>
-                                <div class="cr">
-                                    <label>Brightness <span class="val" id="imgBrightnessVal">0</span></label>
-                                    <input type="range" id="imgBrightness" min="-100" max="100" step="1" value="0">
-                                </div>
-                                <div class="cr">
-                                    <label>Contrast <span class="val" id="imgContrastVal">0</span></label>
-                                    <input type="range" id="imgContrast" min="-100" max="100" step="1" value="0">
-                                </div>
-                                <div class="cr">
-                                    <label>Gamma <span class="val" id="imgGammaVal">1.0</span></label>
-                                    <input type="range" id="imgGamma" min="0.2" max="3.0" step="0.1" value="1.0">
-                                </div>
-                                <hr class="sep" style="margin:8px 0;">
-                                <div class="cr">
-                                    <label>Crop Top <span class="val" id="zoneTopVal">0</span>%</label>
-                                    <input type="range" id="zoneTop" min="-25" max="25" step="1" value="0">
-                                </div>
-                                <div class="cr">
-                                    <label>Crop Bottom <span class="val" id="zoneBotVal">0</span>%</label>
-                                    <input type="range" id="zoneBot" min="-25" max="25" step="1" value="0">
-                                </div>
-                                <div class="cr">
-                                    <label>Crop Left <span class="val" id="zoneLeftVal">0</span>%</label>
-                                    <input type="range" id="zoneLeft" min="-25" max="25" step="1" value="0">
-                                </div>
-                                <div class="cr">
-                                    <label>Crop Right <span class="val" id="zoneRightVal">0</span>%</label>
-                                    <input type="range" id="zoneRight" min="-25" max="25" step="1" value="0">
-                                </div>
-                                <hr class="sep" style="margin:8px 0;">
-                                <p class="hint" style="margin-bottom:6px;">Auto-extend: rozšíří zónu obrázku na celý okraj plakátu</p>
-                                <div class="chk">
-                                    <input type="checkbox" id="autoExtendTop">
-                                    <label for="autoExtendTop">Rozšířit nahoru</label>
-                                </div>
-                                <div class="chk">
-                                    <input type="checkbox" id="autoExtendBot">
-                                    <label for="autoExtendBot">Rozšířit dolů</label>
-                                </div>
-                                <div class="chk">
-                                    <input type="checkbox" id="autoExtendLeft">
-                                    <label for="autoExtendLeft">Rozšířit vlevo</label>
-                                </div>
-                                <div class="chk">
-                                    <input type="checkbox" id="autoExtendRight">
-                                    <label for="autoExtendRight">Rozšířit vpravo</label>
-                                </div>
-                                <div class="chk">
-                                    <input type="checkbox" id="imageOnTop">
-                                    <label for="imageOnTop">Image on top of text</label>
-                                </div>
-                            </div>
-                        </details>
-                        <div class="btn-row" style="margin-top:8px;">
-                            <button class="btn btn-small" id="imageResetBtn">Reset Image</button>
-                        </div>
-                    </div>
-                </div>
-            </details>
-
-            <!-- PAPER CONFIG (only visible in paper mode) -->
-            <details class="section" id="paperConfigSection" style="display:none;" open>
-                <summary>Paper <span class="section-desc">Obsah a rozvržení stránek</span></summary>
-                <div class="section-body">
-                    <div class="chk" style="margin-bottom:10px;">
-                        <input type="checkbox" id="chkPage2Paper">
-                        <label for="chkPage2Paper">2 pages (front + back)</label>
-                    </div>
-
-                    <!-- Page tabs -->
-                    <div id="paperPageToggle" style="margin-bottom:12px;">
-                        <div class="res-presets">
-                            <button class="res-preset active" data-page="1">Page 1</button>
-                            <button class="res-preset" data-page="2" id="page2TabBtn" style="display:none;">Page 2</button>
-                        </div>
-                    </div>
-
-                    <!-- PAGE 1 CONTENT -->
-                    <div id="paperPage1" class="paper-page-config">
-                        <label style="font-size:11px;color:var(--text3);margin-bottom:4px;display:block;">Layout</label>
-                        <div class="res-presets" style="margin-bottom:10px;" id="paperPage1Presets">
-                            <button class="res-preset" data-preset="paper-split">Split</button>
-                            <button class="res-preset active" data-preset="paper-header">Header</button>
-                        </div>
-                        <div class="cr">
-                            <label>Gallery</label>
-                            <input type="text" id="cGalleryP" value="PRO_STORY">
-                        </div>
-                        <div class="cr">
-                            <label>Title</label>
-                            <textarea id="cTitleP" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">NÁZEV VÝSTAVY</textarea>
-                        </div>
-                        <div class="cr">
-                            <label>Dates</label>
-                            <textarea id="cVystDP" rows="3" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">OD 10_05_2026
-DO 10_07_2026</textarea>
-                        </div>
-                        <div class="cr">
-                            <label>Body Text</label>
-                            <textarea id="cBodyTextP1" rows="8" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;"></textarea>
-                        </div>
-                        <div class="cr">
-                            <label>Social</label>
-                            <textarea id="cSocialP" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">@PRO_STORY_UH | PROSTORY.GALLERY</textarea>
-                        </div>
-                        <div class="cr">
-                            <label>Address / Hours</label>
-                            <textarea id="cAddrP" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">Všehrdova 267, Uherské Hradiště
-Otevřeno každou středu od 12–17</textarea>
-                        </div>
-                    </div>
-
-                    <!-- PAGE 2 CONTENT -->
-                    <div id="paperPage2" class="paper-page-config" style="display:none;">
-                        <label style="font-size:11px;color:var(--text3);margin-bottom:4px;display:block;">Layout</label>
-                        <div class="res-presets" style="margin-bottom:10px;" id="paperPage2Presets">
-                            <button class="res-preset" data-preset="paper-split">Split</button>
-                            <button class="res-preset active" data-preset="paper-header">Header</button>
-                        </div>
-                        <div class="cr">
-                            <label>Title</label>
-                            <textarea id="cTitle2P" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;"></textarea>
-                        </div>
-                        <div class="cr">
-                            <label>Body Text</label>
-                            <textarea id="cBodyText2P" rows="8" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </details>
-
-            <!-- CONTENT -->
-            <details class="section" id="contentSection" open>
-                <summary title="Vyplň texty výstavy — název, umělce, data, adresu">Content <span class="section-desc">Texty výstavy</span></summary>
-                <div class="section-body">
-                    <p class="guide-tip">Vyplň údaje výstavy. Prázdná pole se na plakátu nezobrazí. Některá pole podporují více řádků, odděl enterem.</p>
-                    <div class="cr">
-                        <label>Gallery</label>
-                        <input type="text" id="cGallery" value="PRO_STORY">
-                    </div>
-                    <div id="posterArtistField">
-                        <div class="cr">
-                            <label>Artist</label>
-                            <input type="text" id="cArtist" value="JMÉNO PŘÍJMENÍ">
-                        </div>
-                    </div>
-                    <div id="posterTitleField">
-                        <div class="cr">
-                            <label>Title</label>
-                            <textarea id="cTitle" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">NÁZEV VÝSTAVY</textarea>
-                        </div>
-                    </div>
-                    <div id="postFields" style="display:none;">
-                        <div class="cr">
-                            <label>Message</label>
-                            <textarea id="cMessage" rows="4" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">PRO_STORY MAJÍ LETNÍ PŘESTÁVKU!
-Těšíme se na vás od Září 2026.</textarea>
-                        </div>
-                    </div>
-                    <!-- Old paper/page2 fields removed — now in paperConfigSection -->
-                    <textarea id="cBodyText" style="display:none;"></textarea>
-                    <hr class="sep">
-                    <div id="taglineRow">
-                        <div class="cr">
-                            <label>Tagline <span class="hint" style="margin:0;">(leave empty to hide)</span></label>
-                            <textarea id="cTagline" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">Spolupráce oborů SUPŠ UH,
-Multimédia, Obuv, Design</textarea>
-                        </div>
-                    </div>
-                    <div id="vernisazRow">
-                        <div class="cr">
-                            <label>Opening</label>
-                            <input type="text" id="cVernL" value="VERNISÁŽ">
-                        </div>
-                        <div class="cr">
-                            <label>Date / Time</label>
-                            <textarea id="cVernD" rows="3" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">10_05_2026 | 16_00</textarea>
-                        </div>
-                    </div>
-                    <div class="chk">
-                        <input type="checkbox" id="chkBoldVern" checked>
-                        <label for="chkBoldVern">Bold</label>
-                        <input type="checkbox" id="chkShowVernL" checked style="margin-left:12px;">
-                        <label for="chkShowVernL">Show "Vernisáž" label</label>
-                    </div>
-                    <div id="vystavaRow">
-                        <div class="cr">
-                            <label>Exhibition</label>
-                            <input type="text" id="cVystL" value="VÝSTAVA">
-                        </div>
-                        <div class="cr">
-                            <label>Dates</label>
-                            <textarea id="cVystD" rows="4" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">OD 10_05_2026
-DO 10_07_2026</textarea>
-                        </div>
-                    </div>
-                    <div class="chk">
-                        <input type="checkbox" id="chkBoldVyst" checked>
-                        <label for="chkBoldVyst">Bold</label>
-                        <input type="checkbox" id="chkShowVystL" checked style="margin-left:12px;">
-                        <label for="chkShowVystL">Show "Výstava" label</label>
-                    </div>
-                    <div class="cr">
-                        <label>Social</label>
-                        <textarea id="cSocial" rows="2" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">@PRO_STORY_UH | PROSTORY.GALLERY</textarea>
-                    </div>
-                    <div class="cr">
-                        <label>Address / Hours</label>
-                        <textarea id="cAddr" rows="3" style="width:100%;resize:vertical;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;">Všehrdova 267, Uherské Hradiště
-Otevřeno každou středu od 12–17</textarea>
-                    </div>
-                </div>
-            </details>
-
-            <!-- ADVANCED (moved before Animation for quicker access) -->
-            <details class="section">
-                <summary title="Jemné doladění písma, mezer a mřížky">Advanced <span class="section-desc">Doladění typografie</span></summary>
-                <div class="section-body">
+                <div class="ctrl-group">
+                    <div class="ctrl-group-title">Typography</div>
                     <p class="guide-tip">Pokud je text příliš velký, snižte velikost nadpisu nebo zvětšete sloupce.</p>
-                    <div class="cr">
-                        <label>Space (Columns) <span class="val" id="colsVal2">90</span></label>
-                        <input type="range" id="cols2" min="40" max="200" step="1" value="90">
-                    </div>
-                    <div class="cr">
-                        <label>Character Size <span class="val" id="fontSizeVal">20</span></label>
-                        <input type="range" id="fontSize" min="6" max="48" step="1" value="20">
-                    </div>
-                    <div class="cr">
-                        <label>Page Margin <span class="val" id="marginVal">10</span></label>
-                        <input type="range" id="margin" min="0" max="80" step="1" value="10">
-                    </div>
                     <div class="cr">
                         <label>Title Size</label>
                         <div class="heading-presets" id="headingPresets">
@@ -1105,7 +934,24 @@ Otevřeno každou středu od 12–17</textarea>
                         <input type="checkbox" id="headingSync" checked>
                         <label for="headingSync">Sync title sizes</label>
                     </div>
-                    <div class="info-row">
+                    <details class="sub-advanced">
+                        <summary>More settings</summary>
+                        <div class="sub-advanced-body">
+                            <div class="cr">
+                                <label>Columns <span class="val" id="colsVal2">90</span></label>
+                                <input type="range" id="cols2" min="40" max="200" step="1" value="90">
+                            </div>
+                            <div class="cr">
+                                <label>Character Size <span class="val" id="fontSizeVal">20</span></label>
+                                <input type="range" id="fontSize" min="6" max="48" step="1" value="20">
+                            </div>
+                            <div class="cr">
+                                <label>Page Margin <span class="val" id="marginVal">10</span></label>
+                                <input type="range" id="margin" min="0" max="80" step="1" value="10">
+                            </div>
+                        </div>
+                    </details>
+                    <div class="info-row" style="margin-top:8px;">
                         <span>Grid</span>
                         <span class="info-val" id="infoDims">90 x 60</span>
                     </div>
@@ -1114,35 +960,315 @@ Otevřeno každou středu od 12–17</textarea>
                         <span class="info-val" id="infoOutput">&mdash;</span>
                     </div>
                 </div>
-            </details>
+            </div>
 
-            <!-- ANIMATION (collapsed by default) -->
-            <details class="section">
-                <summary title="Animace pro video export — pohybové efekty">Animation <span class="section-desc">Pohybové efekty pro video</span></summary>
-                <div class="section-body">
-                    <p class="guide-tip">Vyber efekt a stiskni Play pro náhled. Nastavit můžeš délku a intenzitu animace. Exportuj jako MP4/MOV.</p>
-                    <div class="cr">
-                        <div class="anim-presets" id="animPresets">
-                            <button class="anim-preset active" data-anim="none">None</button>
-                            <button class="anim-preset" data-anim="typewriter">Type</button>
-                            <button class="anim-preset" data-anim="dissolve">Dissolve</button>
-                            <button class="anim-preset" data-anim="wave">Wave</button>
-                            <button class="anim-preset" data-anim="scan">Scan</button>
-                            <button class="anim-preset" data-anim="glitch">Glitch</button>
-                            <button class="anim-preset" data-anim="rain">Rain</button>
-                            <button class="anim-preset" data-anim="cell-shift">Shift</button>
-                            <button class="anim-preset" data-anim="maze-walker">Maze</button>
-                            <button class="anim-preset" data-anim="scroll-rewrite">Scroll</button>
-                            <button class="anim-preset" data-anim="cell-swap">Swap</button>
-                            <button class="anim-preset" data-anim="breathe">Breathe</button>
-                            <button class="anim-preset" data-anim="erosion">Erode</button>
-                            <button class="anim-preset" data-anim="pulse">Pulse</button>
-                            <button class="anim-preset" data-anim="cascade">Casc</button>
-                            <button class="anim-preset" data-anim="flicker">Flick</button>
-                            <button class="anim-preset" data-anim="gravity">Grav</button>
-                            <button class="anim-preset" data-anim="invert">Invert</button>
+            <!-- ===== TAB: CONTENT ===== -->
+            <div class="tab-page" id="tabContent" data-tab="content">
+                <p class="guide-tip">Vyplň údaje výstavy. Prázdná pole se na plakátu nezobrazí. Některá pole podporují více řádků, odděl enterem.</p>
+
+                <!-- PAPER CONFIG (only visible in paper mode) -->
+                <div id="paperConfigSection" style="display:none;">
+                    <div class="ctrl-group">
+                        <div class="ctrl-group-title">Paper Setup</div>
+                        <div class="chk">
+                            <input type="checkbox" id="chkPage2Paper">
+                            <label for="chkPage2Paper">2 pages (front + back)</label>
+                        </div>
+                        <div id="paperPageToggle" style="margin-bottom:10px;">
+                            <div class="res-presets">
+                                <button class="res-preset active" data-page="1">Page 1</button>
+                                <button class="res-preset" data-page="2" id="page2TabBtn" style="display:none;">Page 2</button>
+                            </div>
+                        </div>
+
+                        <div id="paperPage1" class="paper-page-config">
+                            <div class="cr">
+                                <label>Layout</label>
+                                <div class="res-presets" id="paperPage1Presets">
+                                    <button class="res-preset" data-preset="paper-split">Split</button>
+                                    <button class="res-preset active" data-preset="paper-header">Header</button>
+                                </div>
+                            </div>
+                            <div class="cr">
+                                <label>Gallery</label>
+                                <input type="text" id="cGalleryP" value="PRO_STORY">
+                            </div>
+                            <div class="cr">
+                                <label>Title</label>
+                                <textarea id="cTitleP" rows="2">NÁZEV VÝSTAVY</textarea>
+                            </div>
+                            <div class="cr">
+                                <label>Dates</label>
+                                <textarea id="cVystDP" rows="3">OD 10_05_2026
+DO 10_07_2026</textarea>
+                            </div>
+                            <div class="cr">
+                                <label>Body Text</label>
+                                <textarea id="cBodyTextP1" rows="6"></textarea>
+                            </div>
+                            <div class="cr">
+                                <label>Social</label>
+                                <textarea id="cSocialP" rows="2">@PRO_STORY_UH | PROSTORY.GALLERY</textarea>
+                            </div>
+                            <div class="cr">
+                                <label>Address / Hours</label>
+                                <textarea id="cAddrP" rows="2">Všehrdova 267, Uherské Hradiště
+Otevřeno každou středu od 12–17</textarea>
+                            </div>
+                        </div>
+
+                        <div id="paperPage2" class="paper-page-config" style="display:none;">
+                            <div class="cr">
+                                <label>Layout</label>
+                                <div class="res-presets" id="paperPage2Presets">
+                                    <button class="res-preset" data-preset="paper-split">Split</button>
+                                    <button class="res-preset active" data-preset="paper-header">Header</button>
+                                </div>
+                            </div>
+                            <div class="cr">
+                                <label>Title</label>
+                                <textarea id="cTitle2P" rows="2"></textarea>
+                            </div>
+                            <div class="cr">
+                                <label>Body Text</label>
+                                <textarea id="cBodyText2P" rows="6"></textarea>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- POSTER/POST CONTENT -->
+                <div id="contentSection">
+                    <div class="ctrl-group">
+                        <div class="ctrl-group-title">Exhibition Info</div>
+                        <div class="cr">
+                            <label>Gallery</label>
+                            <input type="text" id="cGallery" value="PRO_STORY">
+                        </div>
+                        <div id="posterArtistField">
+                            <div class="cr">
+                                <label>Artist</label>
+                                <input type="text" id="cArtist" value="JMÉNO PŘÍJMENÍ">
+                            </div>
+                        </div>
+                        <div id="posterTitleField">
+                            <div class="cr">
+                                <label>Title</label>
+                                <textarea id="cTitle" rows="2">NÁZEV VÝSTAVY</textarea>
+                            </div>
+                        </div>
+                        <div id="postFields" style="display:none;">
+                            <div class="cr">
+                                <label>Message</label>
+                                <textarea id="cMessage" rows="4">PRO_STORY MAJÍ LETNÍ PŘESTÁVKU!
+Těšíme se na vás od Září 2026.</textarea>
+                            </div>
+                        </div>
+                        <textarea id="cBodyText" style="display:none;"></textarea>
+                    </div>
+
+                    <div id="taglineRow" class="ctrl-group">
+                        <div class="ctrl-group-title">Tagline</div>
+                        <div class="cr">
+                            <textarea id="cTagline" rows="2">Spolupráce oborů SUPŠ UH,
+Multimédia, Obuv, Design</textarea>
+                            <p class="hint">Leave empty to hide</p>
+                        </div>
+                    </div>
+
+                    <div id="vernisazRow" class="ctrl-group">
+                        <div class="ctrl-group-title">Opening</div>
+                        <div class="cr">
+                            <label>Label</label>
+                            <input type="text" id="cVernL" value="VERNISÁŽ">
+                        </div>
+                        <div class="cr">
+                            <label>Date / Time</label>
+                            <textarea id="cVernD" rows="2">10_05_2026 | 16_00</textarea>
+                        </div>
+                        <div class="chk">
+                            <input type="checkbox" id="chkBoldVern" checked>
+                            <label for="chkBoldVern">Bold</label>
+                            <input type="checkbox" id="chkShowVernL" checked style="margin-left:12px;">
+                            <label for="chkShowVernL">Show label</label>
+                        </div>
+                    </div>
+
+                    <div id="vystavaRow" class="ctrl-group">
+                        <div class="ctrl-group-title">Exhibition</div>
+                        <div class="cr">
+                            <label>Label</label>
+                            <input type="text" id="cVystL" value="VÝSTAVA">
+                        </div>
+                        <div class="cr">
+                            <label>Dates</label>
+                            <textarea id="cVystD" rows="3">OD 10_05_2026
+DO 10_07_2026</textarea>
+                        </div>
+                        <div class="chk">
+                            <input type="checkbox" id="chkBoldVyst" checked>
+                            <label for="chkBoldVyst">Bold</label>
+                            <input type="checkbox" id="chkShowVystL" checked style="margin-left:12px;">
+                            <label for="chkShowVystL">Show label</label>
+                        </div>
+                    </div>
+
+                    <div class="ctrl-group">
+                        <div class="ctrl-group-title">Contact</div>
+                        <div class="cr">
+                            <label>Social</label>
+                            <textarea id="cSocial" rows="2">@PRO_STORY_UH | PROSTORY.GALLERY</textarea>
+                        </div>
+                        <div class="cr">
+                            <label>Address / Hours</label>
+                            <textarea id="cAddr" rows="2">Všehrdova 267, Uherské Hradiště
+Otevřeno každou středu od 12–17</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TAB: IMAGE ===== -->
+            <div class="tab-page" id="tabImage" data-tab="image">
+                <div id="imageSection">
+                    <div class="ctrl-group">
+                        <div class="ctrl-group-title">Photo Overlay</div>
+                        <p class="guide-tip">Nahraj fotografii tlačítkem nebo ji přetáhni na plátno. Kolečkem myši přibližuješ, tažením posouváš.</p>
+                        <div class="cr">
+                            <div class="btn-row">
+                                <label class="btn btn-primary" for="imageInput" style="cursor:pointer; text-align:center; flex:1;">Choose File</label>
+                                <input type="file" id="imageInput" accept="image/*" style="display:none;">
+                                <button class="btn" id="imageRemove" disabled>Remove</button>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span>Status</span>
+                            <span class="info-val" id="imageStatus">No image</span>
+                        </div>
+                    </div>
+
+                    <div id="imageControls" class="hidden">
+                        <div class="ctrl-group">
+                            <div class="ctrl-group-title">Transform</div>
+                            <div class="cr">
+                                <label>Scale <span class="val" id="imgScaleVal">1.00</span>x</label>
+                                <input type="range" id="imgScale" min="0.25" max="4.0" step="0.05" value="1">
+                            </div>
+                            <div class="cr">
+                                <label>Filter</label>
+                                <div class="img-pos-presets" id="imgFilterPresets">
+                                    <button class="img-pos-preset active" data-filter="none">None</button>
+                                    <button class="img-pos-preset" data-filter="dither">Dither</button>
+                                    <button class="img-pos-preset" data-filter="bayer">Bayer</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ctrl-group">
+                            <div class="ctrl-group-title">Adjustments</div>
+                            <p class="guide-tip">Některé kompozice vyžadují přesnější práci s fotografií: roztažení do stran, úpravu jasu nebo kontrastu.</p>
+                            <div class="cr">
+                                <label>Offset X <span class="val" id="imgOffsetXVal">0</span>%</label>
+                                <input type="range" id="imgOffsetX" min="-100" max="100" step="0.5" value="0">
+                            </div>
+                            <div class="cr">
+                                <label>Offset Y <span class="val" id="imgOffsetYVal">0</span>%</label>
+                                <input type="range" id="imgOffsetY" min="-100" max="100" step="0.5" value="0">
+                            </div>
+                            <div class="cr">
+                                <label>Brightness <span class="val" id="imgBrightnessVal">0</span></label>
+                                <input type="range" id="imgBrightness" min="-100" max="100" step="1" value="0">
+                            </div>
+                            <div class="cr">
+                                <label>Contrast <span class="val" id="imgContrastVal">0</span></label>
+                                <input type="range" id="imgContrast" min="-100" max="100" step="1" value="0">
+                            </div>
+                            <div class="cr">
+                                <label>Gamma <span class="val" id="imgGammaVal">1.0</span></label>
+                                <input type="range" id="imgGamma" min="0.2" max="3.0" step="0.1" value="1.0">
+                            </div>
+                        </div>
+
+                        <div class="ctrl-group">
+                            <div class="ctrl-group-title">Crop</div>
+                            <div class="cr">
+                                <label>Top <span class="val" id="zoneTopVal">0</span>%</label>
+                                <input type="range" id="zoneTop" min="-25" max="25" step="1" value="0">
+                            </div>
+                            <div class="cr">
+                                <label>Bottom <span class="val" id="zoneBotVal">0</span>%</label>
+                                <input type="range" id="zoneBot" min="-25" max="25" step="1" value="0">
+                            </div>
+                            <div class="cr">
+                                <label>Left <span class="val" id="zoneLeftVal">0</span>%</label>
+                                <input type="range" id="zoneLeft" min="-25" max="25" step="1" value="0">
+                            </div>
+                            <div class="cr">
+                                <label>Right <span class="val" id="zoneRightVal">0</span>%</label>
+                                <input type="range" id="zoneRight" min="-25" max="25" step="1" value="0">
+                            </div>
+                        </div>
+
+                        <div class="ctrl-group">
+                            <div class="ctrl-group-title">Extend</div>
+                            <div class="chk">
+                                <input type="checkbox" id="autoExtendTop">
+                                <label for="autoExtendTop">Extend top</label>
+                            </div>
+                            <div class="chk">
+                                <input type="checkbox" id="autoExtendBot">
+                                <label for="autoExtendBot">Extend bottom</label>
+                            </div>
+                            <div class="chk">
+                                <input type="checkbox" id="autoExtendLeft">
+                                <label for="autoExtendLeft">Extend left</label>
+                            </div>
+                            <div class="chk">
+                                <input type="checkbox" id="autoExtendRight">
+                                <label for="autoExtendRight">Extend right</label>
+                            </div>
+                            <div class="chk">
+                                <input type="checkbox" id="imageOnTop">
+                                <label for="imageOnTop">Image on top of text</label>
+                            </div>
+                        </div>
+
+                        <div class="btn-row">
+                            <button class="btn btn-small" id="imageResetBtn">Reset Image</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TAB: ANIMATE ===== -->
+            <div class="tab-page" id="tabAnimate" data-tab="animate">
+                <p class="guide-tip">Vyber efekt a stiskni Play pro náhled. Nastavit můžeš délku a intenzitu animace. Exportuj jako MP4/MOV.</p>
+                <div class="ctrl-group">
+                    <div class="ctrl-group-title">Effect</div>
+                    <div class="anim-presets" id="animPresets">
+                        <button class="anim-preset active" data-anim="none">None</button>
+                        <button class="anim-preset" data-anim="typewriter">Type</button>
+                        <button class="anim-preset" data-anim="dissolve">Dissolve</button>
+                        <button class="anim-preset" data-anim="wave">Wave</button>
+                        <button class="anim-preset" data-anim="scan">Scan</button>
+                        <button class="anim-preset" data-anim="glitch">Glitch</button>
+                        <button class="anim-preset" data-anim="rain">Rain</button>
+                        <button class="anim-preset" data-anim="cell-shift">Shift</button>
+                        <button class="anim-preset" data-anim="maze-walker">Maze</button>
+                        <button class="anim-preset" data-anim="scroll-rewrite">Scroll</button>
+                        <button class="anim-preset" data-anim="cell-swap">Swap</button>
+                        <button class="anim-preset" data-anim="breathe">Breathe</button>
+                        <button class="anim-preset" data-anim="erosion">Erode</button>
+                        <button class="anim-preset" data-anim="pulse">Pulse</button>
+                        <button class="anim-preset" data-anim="cascade">Casc</button>
+                        <button class="anim-preset" data-anim="flicker">Flick</button>
+                        <button class="anim-preset" data-anim="gravity">Grav</button>
+                        <button class="anim-preset" data-anim="invert">Invert</button>
+                    </div>
+                </div>
+
+                <div class="ctrl-group">
+                    <div class="ctrl-group-title">Transport</div>
                     <div class="transport">
                         <button class="btn" id="btnPlay" title="Play/Pause">&#9654;</button>
                         <button class="btn" id="btnStop" title="Stop">&#9632;</button>
@@ -1155,25 +1281,40 @@ Otevřeno každou středu od 12–17</textarea>
                         <label>Intensity <span class="val" id="intensityVal">0.50</span></label>
                         <input type="range" id="intensity" min="0" max="1" step="0.01" value="0.5">
                     </div>
-                    <div class="cr">
-                        <label>Loop</label>
-                        <div class="res-presets" id="loopPresets">
-                            <button class="res-preset active" data-loop="1">1x</button>
-                            <button class="res-preset" data-loop="2">2x</button>
-                            <button class="res-preset" data-loop="3">3x</button>
-                            <button class="res-preset" data-loop="4">4x</button>
-                        </div>
-                        <p class="hint">Repeat frames in video export</p>
-                    </div>
                 </div>
-            </details>
 
-            <!-- EXPORT -->
-            <details class="section" open>
-                <summary title="Stáhni plakát jako PNG, PDF nebo video">Export <span class="section-desc">Stažení</span></summary>
-                <div class="section-body">
+                <div class="ctrl-group">
+                    <div class="ctrl-group-title">Loop</div>
+                    <div class="res-presets" id="loopPresets">
+                        <button class="res-preset active" data-loop="1">1x</button>
+                        <button class="res-preset" data-loop="2">2x</button>
+                        <button class="res-preset" data-loop="3">3x</button>
+                        <button class="res-preset" data-loop="4">4x</button>
+                    </div>
+                    <p class="hint">Repeat frames in video export</p>
+                </div>
+            </div>
+
+            <!-- ===== TAB: EXPORT ===== -->
+            <div class="tab-page" id="tabExport" data-tab="export">
+                <div class="ctrl-group">
+                    <div class="ctrl-group-title">Image</div>
                     <div class="btn-row">
                         <button class="btn btn-primary" id="exportPng" style="flex:2;">Download PNG</button>
+                    </div>
+                    <div class="cr" style="margin-top:10px;">
+                        <label>Long side <span class="val" id="exportResVal">3840</span>px</label>
+                        <div class="res-presets" id="exportResPresets">
+                            <button class="res-preset" data-px="1920">1920</button>
+                            <button class="res-preset active" data-px="3840">3840</button>
+                            <button class="res-preset" data-px="7680">7680</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ctrl-group">
+                    <div class="ctrl-group-title">PDF</div>
+                    <div class="btn-row">
                         <button class="btn btn-primary" id="exportPdf">PDF</button>
                         <select id="pdfPaper" style="width:auto;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:var(--r);padding:5px 8px;font-size:11px;">
                             <option value="A4" selected>A4</option>
@@ -1182,55 +1323,33 @@ Otevřeno každou středu od 12–17</textarea>
                             <option value="70x100">70x100</option>
                         </select>
                     </div>
-                    <div id="pdfTip" class="section-desc" style="margin-top:4px;font-size:10px;opacity:0.6;display:none;">A2/A3 works best with Poster aspect ratio</div>
-                    <details class="sub-advanced" style="margin-top: 10px;">
-                        <summary>More export options</summary>
-                        <div class="sub-advanced-body">
-                            <div class="cr">
-                                <label>Long side <span class="val" id="exportResVal">3840</span>px</label>
-                                <div class="res-presets" id="exportResPresets">
-                                    <button class="res-preset" data-px="1920">1920</button>
-                                    <button class="res-preset active" data-px="3840">3840</button>
-                                    <button class="res-preset" data-px="7680">7680</button>
-                                </div>
-                                <p class="hint">Long side in px, short side auto from aspect ratio</p>
-                            </div>
-                            <div class="btn-row" style="margin-top: 6px;">
-                                <button class="btn" id="exportMp4">MP4 Video</button>
-                                <button class="btn" id="exportMov">MOV Video</button>
-                            </div>
-                            <div class="btn-row" style="margin-top: 6px;">
-                                <button class="btn" id="exportPngSeq">PNG Sequence</button>
-                                <button class="btn" id="exportPngAlpha">PNG Alpha</button>
-                            </div>
-                        </div>
-                    </details>
+                    <div id="pdfTip" style="margin-top:4px;font-size:10px;color:var(--text4);display:none;">A2/A3 works best with Poster aspect ratio</div>
                 </div>
-            </details>
+
+                <div class="ctrl-group">
+                    <div class="ctrl-group-title">Video</div>
+                    <div class="btn-row">
+                        <button class="btn" id="exportMp4">MP4 Video</button>
+                        <button class="btn" id="exportMov">MOV Video</button>
+                    </div>
+                </div>
+
+                <div class="ctrl-group">
+                    <div class="ctrl-group-title">Sequence</div>
+                    <div class="btn-row">
+                        <button class="btn" id="exportPngSeq">PNG Sequence</button>
+                        <button class="btn" id="exportPngAlpha">PNG Alpha</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <footer class="site-footer">
-            <button id="toggleGuides" style="background:none;border:none;color:var(--text4);font-size:10px;cursor:pointer;padding:0;margin-bottom:4px;transition:color 0.15s;" onmouseover="this.style.color='var(--guide)'" onmouseout="this.style.color='var(--text4)'">Skrýt nápovědu</button>
-            <div><a href="https://kindl.work/" target="_blank" rel="noopener">kindl.work</a> &middot; PRO_STORY 2026</div>
-        </footer>
+        <div class="panel-footer">
+            <button id="toggleGuides" style="background:none;border:none;color:var(--text4);font-size:10px;cursor:pointer;padding:0;transition:color 0.15s;">Skrýt nápovědu</button>
+            <span><a href="https://kindl.work/" target="_blank" rel="noopener">kindl.work</a> &middot; PRO_STORY 2026</span>
+        </div>
     </aside>
-
-    <main class="viewport">
-        <div class="canvas-container" id="canvasContainer">
-            <canvas id="canvas"></canvas>
-        </div>
-        <div class="status-bar">
-            <span id="statusDims">80 x 53</span>
-            <span class="status-sep">&middot;</span>
-            <span id="statusPreset">Floor Plan</span>
-            <span class="status-sep">&middot;</span>
-            <span id="statusAnim">none</span>
-            <span class="status-sep">&middot;</span>
-            <span id="statusFrame">0/120</span>
-            <span class="status-sep">&middot;</span>
-            <span id="statusOutput">&mdash;</span>
-        </div>
-    </main>
 </div>
 
 <div class="export-progress hidden" id="exportProgress">
@@ -1239,7 +1358,9 @@ Otevřeno každou středu od 12–17</textarea>
 
 <script>
 /* ===================================================================
-   POSTER_ v14 — PRO_STORY Animated Generator
+   POSTER_ v16 — PRO_STORY Animated Generator
+   v16: Redesigned tabbed panel UI, responsive mobile layout, right-side panel
+   v15: Footer overlap fix, export safety
    v14: Free-text dates, bold/show toggles, resolution export, loop, alpha PNG, 2-page PDF
    =================================================================== */
 
@@ -1340,7 +1461,7 @@ const MODE_LAYOUTS = {
 function setMode(mode) {
     S.mode = mode;
     // Update mode toggle UI
-    document.querySelectorAll('#modeToggle .res-preset').forEach(function(b) {
+    document.querySelectorAll('#modeToggle .mode-tab').forEach(function(b) {
         b.classList.toggle('active', b.dataset.mode === mode);
     });
     // Lock aspect ratio for paper mode + white bg default
@@ -1386,6 +1507,32 @@ function setMode(mode) {
         var chkP2P = document.getElementById('chkPage2Paper'); if (chkP2P) chkP2P.checked = S.page2;
         var p2btn = document.getElementById('page2TabBtn'); if (p2btn) p2btn.style.display = S.page2 ? '' : 'none';
     }
+    // POSTER mode: reset from paper defaults
+    if (mode === 'poster') {
+        // If coming from paper layout, switch to default poster layout
+        if (S.preset === 'paper-split' || S.preset === 'paper-header') {
+            S.preset = 'floor-plan';
+        }
+        // Reset to poster color defaults (paper uses white bg)
+        S.bgColor = '#000000';
+        S.fgColor = '#ffffff';
+        document.getElementById('fgColor').value = S.fgColor;
+        document.querySelectorAll('#bgToggle .res-preset').forEach(function(b) {
+            b.classList.toggle('active', b.dataset.bg === S.bgColor);
+        });
+        // Sync poster content fields from S.content
+        document.getElementById('cGallery').value = S.content.gallery;
+        document.getElementById('cArtist').value = S.content.artist;
+        document.getElementById('cTitle').value = S.content.title;
+        document.getElementById('cTagline').value = S.content.tagline;
+        document.getElementById('cVernL').value = S.content.vernL;
+        document.getElementById('cVernD').value = S.content.vernD;
+        document.getElementById('cVystL').value = S.content.vystL;
+        document.getElementById('cVystD').value = S.content.vystD;
+        document.getElementById('cSocial').value = S.content.social;
+        document.getElementById('cAddr').value = S.content.addr;
+        document.getElementById('cBodyText').value = S.content.bodyText;
+    }
     // POST mode forces headingScale=4 for bigger message
     if (mode === 'post') {
         S.headingScale = 4;
@@ -1419,12 +1566,12 @@ function updateContentVisibility() {
     var contentSec = document.getElementById('contentSection');
     if (contentSec) contentSec.style.display = (mode === 'paper') ? 'none' : '';
 
-    // In paper mode: hide layout/aspect elements in Look section
+    // In paper mode: hide layout/format elements in Design tab
     if (mode === 'paper') {
-        // Hide aspect presets row
-        var aspectRow = document.getElementById('aspectPresets');
-        if (aspectRow && aspectRow.parentElement) aspectRow.parentElement.style.display = 'none';
-        // Hide layout preset grid
+        // Hide format group (aspect presets + columns)
+        var fmtGroup = document.getElementById('formatGroup');
+        if (fmtGroup) fmtGroup.style.display = 'none';
+        // Hide layout preset grid (parent ctrl-group)
         var pgrid = document.getElementById('presetGrid');
         if (pgrid && pgrid.parentElement) pgrid.parentElement.style.display = 'none';
         // Hide all-layouts expanded section
@@ -1432,17 +1579,23 @@ function updateContentVisibility() {
         if (aLay) aLay.style.display = 'none';
         // Hide "Show all layouts" button
         var togAll = document.getElementById('toggleAllLayouts');
-        if (togAll && togAll.parentElement) togAll.parentElement.style.display = 'none';
+        if (togAll) togAll.style.display = 'none';
     } else {
-        // Show aspect presets row
-        var aspectRow = document.getElementById('aspectPresets');
-        if (aspectRow && aspectRow.parentElement) aspectRow.parentElement.style.display = '';
+        // Show format group
+        var fmtGroup = document.getElementById('formatGroup');
+        if (fmtGroup) fmtGroup.style.display = '';
         // Show layout preset grid
         var pgrid = document.getElementById('presetGrid');
         if (pgrid && pgrid.parentElement) pgrid.parentElement.style.display = '';
         // Show "Show all layouts" button
         var togAll = document.getElementById('toggleAllLayouts');
-        if (togAll && togAll.parentElement) togAll.parentElement.style.display = '';
+        if (togAll) togAll.style.display = '';
+        // In post mode, auto-expand all layouts (most post presets are in expanded grid)
+        var aLay = document.getElementById('allLayoutsWrap');
+        if (mode === 'post') {
+            if (aLay) aLay.style.display = '';
+            if (togAll) togAll.textContent = 'Hide extra layouts';
+        }
     }
 
     // Poster-only fields (within Content section, visible only when Content is shown)
@@ -1472,12 +1625,14 @@ function updateLayoutButtons() {
     var allowed = MODE_LAYOUTS[mode];
     document.querySelectorAll('.preset-btn').forEach(function(btn) {
         var preset = btn.dataset.preset;
+        var hide;
         if (allowed === null) {
             // poster mode: show all except paper layouts
-            btn.style.display = (preset === 'paper-split' || preset === 'paper-header') ? 'none' : '';
+            hide = (preset === 'paper-split' || preset === 'paper-header');
         } else {
-            btn.style.display = (allowed.indexOf(preset) !== -1) ? '' : 'none';
+            hide = (allowed.indexOf(preset) === -1);
         }
+        btn.classList.toggle('hidden', hide);
     });
 }
 
@@ -1863,8 +2018,8 @@ function drawBox(grid, r, c, w, h) {
 // === DIMENSION CALC ===================================================
 
 function computeRows(cols, ar) {
-    var charAspect = S.leading / (S.fontSize * 0.6);
-    return Math.round(cols * (ar[1] / ar[0]) / charAspect);
+    var charAspect = S.leading / (S.fontSize * 0.6 || 1);
+    return Math.round(cols * (ar[1] / (ar[0] || 1)) / (charAspect || 1));
 }
 
 function autoColumns(ar) {
@@ -1872,7 +2027,7 @@ function autoColumns(ar) {
     // Reference: 90 cols at 3:4 (0.75). Wider ratios need more columns;
     // taller ratios need fewer. Linear interpolation:
     // 70:99→87, 9:16→78, 3:4→90, 1:1→106, 4:3→127, 16:9→155
-    var ratio = ar[0] / ar[1];
+    var ratio = ar[0] / (ar[1] || 1);
     var cols = Math.round(90 + (ratio - 0.75) * 63);
     return Math.max(40, Math.min(200, cols));
 }
@@ -2459,10 +2614,11 @@ const PRESETS = {
         if (ct.vernL) { placeText(grid, by, 0, cols, ct.vernL, ind, false, ct.boldVern); by++; placeText(grid, by, 0, cols, ct.vernD, ind); by += 2; }
         if (ct.vystL) { by += placeText(grid, by, 0, cols, ct.vystL, ind, false, ct.boldVyst); }
         if (ct.vystD) { by += placeText(grid, by, 0, cols, ct.vystD, ind); by++; }
-        // Social + address bottom
-        if (ct.social) placeText(grid, rows - 4, 0, cols, ct.social, ind);
-        if (ct.addr) placeText(grid, rows - 3, 0, cols, ct.addr, ind);
-        if (ct.hours) placeText(grid, rows - 2, 0, cols, ct.hours, ind);
+        // Social + address bottom — dynamic position after logistics
+        var footerY = Math.max(by, rows - 4);
+        if (ct.social) { placeText(grid, footerY, 0, cols, ct.social, ind); footerY++; }
+        if (ct.addr) { placeText(grid, footerY, 0, cols, ct.addr, ind); footerY++; }
+        if (ct.hours) { placeText(grid, footerY, 0, cols, ct.hours, ind); }
     }
 },
 
@@ -2779,9 +2935,10 @@ const PRESETS = {
         if (ct.vernL) { placeText(grid, by, 0, Math.round(cols * 0.5), ct.vernL, ind, false, ct.boldVern); by++; placeText(grid, by, 0, Math.round(cols * 0.5), ct.vernD, ind); by += 2; }
         if (ct.vystL) { by += placeText(grid, by, 0, Math.round(cols * 0.5), ct.vystL, ind, false, ct.boldVyst); }
         if (ct.vystD) { by += placeText(grid, by, 0, Math.round(cols * 0.5), ct.vystD, ind); by++; }
-        if (ct.social) placeText(grid, rows - 4, 0, cols, ct.social, ind);
-        if (ct.addr) placeText(grid, rows - 3, 0, cols, ct.addr, ind);
-        if (ct.hours) placeText(grid, rows - 2, 0, cols, ct.hours, ind);
+        var footerY = Math.max(by, rows - 4);
+        if (ct.social) { placeText(grid, footerY, 0, cols, ct.social, ind); footerY++; }
+        if (ct.addr) { placeText(grid, footerY, 0, cols, ct.addr, ind); footerY++; }
+        if (ct.hours) { placeText(grid, footerY, 0, cols, ct.hours, ind); }
     }
 },
 
@@ -2818,9 +2975,10 @@ const PRESETS = {
         if (ct.vernL) { placeText(grid, ly, 0, Math.round(cols * 0.5), ct.vernL, ind, false, ct.boldVern); ly++; placeText(grid, ly, 0, Math.round(cols * 0.5), ct.vernD, ind); ly += 2; }
         if (ct.vystL) { ly += placeText(grid, ly, 0, Math.round(cols * 0.5), ct.vystL, ind, false, ct.boldVyst); }
         if (ct.vystD) { ly += placeText(grid, ly, 0, Math.round(cols * 0.5), ct.vystD, ind); ly++; }
-        if (ct.social) placeText(grid, rows - 4, 0, cols, ct.social, ind);
-        if (ct.addr) placeText(grid, rows - 3, 0, cols, ct.addr, ind);
-        if (ct.hours) placeText(grid, rows - 2, 0, cols, ct.hours, ind);
+        var footerY = Math.max(ly, rows - 4);
+        if (ct.social) { placeText(grid, footerY, 0, cols, ct.social, ind); footerY++; }
+        if (ct.addr) { placeText(grid, footerY, 0, cols, ct.addr, ind); footerY++; }
+        if (ct.hours) { placeText(grid, footerY, 0, cols, ct.hours, ind); }
     }
 },
 
@@ -2866,8 +3024,9 @@ const PRESETS = {
         if (ct.vystL) { ly += placeText(grid, ly, 0, clearW, ct.vystL, ind, false, ct.boldVyst); }
         if (ct.vystD) { ly += placeText(grid, ly, 0, clearW, ct.vystD, ind); ly++; }
         if (ct.social) { placeText(grid, ly, 0, clearW, ct.social, ind); ly += 2; }
-        if (ct.addr) placeText(grid, rows - 3, 0, clearW, ct.addr, ind);
-        if (ct.hours) placeText(grid, rows - 2, 0, clearW, ct.hours, ind);
+        var footerY = Math.max(ly, rows - 3);
+        if (ct.addr) { placeText(grid, footerY, 0, clearW, ct.addr, ind); footerY++; }
+        if (ct.hours) { placeText(grid, footerY, 0, clearW, ct.hours, ind); }
     }
 },
 
@@ -2925,9 +3084,10 @@ const PRESETS = {
         if (ct.vernL) { placeText(grid, by, 0, Math.round(cols * 0.55), ct.vernL, ind, false, ct.boldVern); by++; placeText(grid, by, 0, Math.round(cols * 0.55), ct.vernD, ind); by += 2; }
         if (ct.vystL) { by += placeText(grid, by, 0, Math.round(cols * 0.55), ct.vystL, ind, false, ct.boldVyst); }
         if (ct.vystD) { by += placeText(grid, by, 0, Math.round(cols * 0.55), ct.vystD, ind); by++; }
-        if (ct.social) placeText(grid, rows - 3, 0, cols, ct.social, ind);
-        if (ct.addr) placeText(grid, rows - 2, 0, Math.round(cols * 0.5), ct.addr, ind);
-        if (ct.hours) placeText(grid, rows - 2, Math.round(cols * 0.5), cols - Math.round(cols * 0.5), ct.hours, ind);
+        var footerY = Math.max(by, rows - 3);
+        if (ct.social) { placeText(grid, footerY, 0, cols, ct.social, ind); footerY++; }
+        if (ct.addr) placeText(grid, footerY, 0, Math.round(cols * 0.5), ct.addr, ind);
+        if (ct.hours) placeText(grid, footerY, Math.round(cols * 0.5), cols - Math.round(cols * 0.5), ct.hours, ind);
     }
 },
 
@@ -2966,9 +3126,10 @@ const PRESETS = {
         if (ct.vernL) { placeText(grid, by, bx, bw, ct.vernL, 2, false, ct.boldVern); by++; placeText(grid, by, bx, bw, ct.vernD, 2); by += 2; }
         if (ct.vystL) { by += placeText(grid, by, bx, bw, ct.vystL, 2, false, ct.boldVyst); }
         if (ct.vystD) { by += placeText(grid, by, bx, bw, ct.vystD, 2); by++; }
-        if (ct.social) placeText(grid, rows - 3, bx, bw, ct.social, 2);
-        if (ct.addr) placeText(grid, rows - 2, bx, bw, ct.addr, 2);
-        if (ct.hours) placeText(grid, rows - 1, bx, bw, ct.hours, 2);
+        var footerY = Math.max(by, rows - 3);
+        if (ct.social) { placeText(grid, footerY, bx, bw, ct.social, 2); footerY++; }
+        if (ct.addr) { placeText(grid, footerY, bx, bw, ct.addr, 2); footerY++; }
+        if (ct.hours) { placeText(grid, footerY, bx, bw, ct.hours, 2); }
     }
 },
 
@@ -3016,9 +3177,10 @@ const PRESETS = {
         if (ct.vernL) { fillSolid(grid, by, 0, Math.round(cols * 0.5), 1, ' '); placeText(grid, by, 0, Math.round(cols * 0.5), ct.vernL, ind, false, ct.boldVern); by++; fillSolid(grid, by, 0, Math.round(cols * 0.5), 1, ' '); placeText(grid, by, 0, Math.round(cols * 0.5), ct.vernD, ind); by += 2; }
         if (ct.vystL) { fillSolid(grid, by, 0, Math.round(cols * 0.5), 1, ' '); by += placeText(grid, by, 0, Math.round(cols * 0.5), ct.vystL, ind, false, ct.boldVyst); }
         if (ct.vystD) { var dl = ct.vystD.split('\n'); for (var di = 0; di < dl.length; di++) { fillSolid(grid, by, 0, Math.round(cols * 0.5), 1, ' '); placeText(grid, by, 0, Math.round(cols * 0.5), dl[di], ind); by++; } by++; }
-        if (ct.social) { fillSolid(grid, rows - 4, 0, cols, 1, ' '); placeText(grid, rows - 4, 0, cols, ct.social, ind); }
-        if (ct.addr) { fillSolid(grid, rows - 2, 0, Math.round(cols * 0.5), 1, ' '); placeText(grid, rows - 2, 0, Math.round(cols * 0.5), ct.addr, ind); }
-        if (ct.hours) { fillSolid(grid, rows - 2, Math.round(cols * 0.5), cols - Math.round(cols * 0.5), 1, ' '); placeText(grid, rows - 2, Math.round(cols * 0.5), cols - Math.round(cols * 0.5), ct.hours, ind); }
+        var footerY = Math.max(by, rows - 4);
+        if (ct.social) { fillSolid(grid, footerY, 0, cols, 1, ' '); placeText(grid, footerY, 0, cols, ct.social, ind); footerY += 2; }
+        if (ct.addr) { fillSolid(grid, footerY, 0, Math.round(cols * 0.5), 1, ' '); placeText(grid, footerY, 0, Math.round(cols * 0.5), ct.addr, ind); }
+        if (ct.hours) { fillSolid(grid, footerY, Math.round(cols * 0.5), cols - Math.round(cols * 0.5), 1, ' '); placeText(grid, footerY, Math.round(cols * 0.5), cols - Math.round(cols * 0.5), ct.hours, ind); }
     }
 },
 
@@ -4302,6 +4464,7 @@ function drawImageLayer(targetCtx, logicalW, logicalH, marginPx, charW, charH, c
     // Cover fit: scale image to fill zone, preserving aspect ratio
     var srcW = img.naturalWidth;
     var srcH = img.naturalHeight;
+    if (srcW <= 0 || srcH <= 0) return;
     var srcAspect = srcW / srcH;
     var zoneAspect = zw / zh;
 
@@ -4574,7 +4737,7 @@ function render(frameOverride) {
         if (S.autoExtendLeft) { adjW += adjC; adjC = 0; }
         if (S.autoExtendBot) { adjH = rows - adjR; }
         if (S.autoExtendRight) { adjW = cols - adjC; }
-        lastZonePx = { x: Math.round(marginPx + adjC * charW), y: Math.round(marginPx + adjR * charH), w: Math.round(adjW * charW), h: Math.round(adjH * charH) };
+        lastZonePx = { x: Math.round(marginPx + adjC * charW), y: Math.round(marginPx + adjR * charH), w: Math.max(1, Math.round(adjW * charW)), h: Math.max(1, Math.round(adjH * charH)) };
     }
 
     // Render at DPR scale
@@ -4713,7 +4876,7 @@ function copyText() {
 
 // Compute export target dims from longside + grid aspect ratio
 function computeExportDims(longSide) {
-    var cols = currentCols, rows = currentRows;
+    var cols = currentCols || 1, rows = currentRows || 1;
     var tmpM = document.createElement('canvas').getContext('2d');
     tmpM.font = S.fontSize + 'px ' + getFont();
     var natCharW = tmpM.measureText('M').width;
@@ -5726,7 +5889,7 @@ function bindControls() {
     });
 
     // Mode toggle
-    document.querySelectorAll('#modeToggle .res-preset').forEach(function(btn) {
+    document.querySelectorAll('#modeToggle .mode-tab').forEach(function(btn) {
         btn.addEventListener('click', function() {
             setMode(btn.dataset.mode);
         });
@@ -5862,7 +6025,8 @@ function bindControls() {
                 document.getElementById('imageStatus').textContent = img.naturalWidth + 'x' + img.naturalHeight;
                 document.getElementById('imageControls').classList.remove('hidden');
                 document.getElementById('imageRemove').disabled = false;
-                document.getElementById('imageSection').open = true;
+                // Switch to Image tab
+                if (typeof switchTab === 'function') switchTab('image');
                 if (typeof updateCanvasCursor === 'function') updateCanvasCursor();
                 // Extract color swatches from image
                 var swatches = extractSwatches(img, 3);
@@ -6242,7 +6406,7 @@ function syncUI() {
     document.getElementById('duration').value = S.anim.duration;
     document.getElementById('durationVal').textContent = S.anim.duration.toFixed(1);
     // Mode toggle
-    document.querySelectorAll('#modeToggle .res-preset').forEach(function(b) {
+    document.querySelectorAll('#modeToggle .mode-tab').forEach(function(b) {
         b.classList.toggle('active', b.dataset.mode === S.mode);
     });
     // BG toggle
@@ -6355,8 +6519,8 @@ window.addEventListener('mousemove', function(e) {
     if (!imgDragActive) return;
     var dx = (e.clientX - imgDragStartX) / lastCanvasScale;
     var dy = (e.clientY - imgDragStartY) / lastCanvasScale;
-    S.image.offsetX = Math.max(-100, Math.min(100, imgDragStartOffX + (dx / lastZonePx.w) * 100));
-    S.image.offsetY = Math.max(-100, Math.min(100, imgDragStartOffY + (dy / lastZonePx.h) * 100));
+    S.image.offsetX = Math.max(-100, Math.min(100, imgDragStartOffX + (dx / (lastZonePx.w || 1)) * 100));
+    S.image.offsetY = Math.max(-100, Math.min(100, imgDragStartOffY + (dy / (lastZonePx.h || 1)) * 100));
     if (!dragRafId) {
         dragRafId = requestAnimationFrame(function() {
             render();
@@ -6388,8 +6552,8 @@ window.addEventListener('touchmove', function(e) {
     if (!imgDragActive || e.touches.length !== 1) return;
     var dx = (e.touches[0].clientX - imgDragStartX) / lastCanvasScale;
     var dy = (e.touches[0].clientY - imgDragStartY) / lastCanvasScale;
-    S.image.offsetX = Math.max(-100, Math.min(100, imgDragStartOffX + (dx / lastZonePx.w) * 100));
-    S.image.offsetY = Math.max(-100, Math.min(100, imgDragStartOffY + (dy / lastZonePx.h) * 100));
+    S.image.offsetX = Math.max(-100, Math.min(100, imgDragStartOffX + (dx / (lastZonePx.w || 1)) * 100));
+    S.image.offsetY = Math.max(-100, Math.min(100, imgDragStartOffY + (dy / (lastZonePx.h || 1)) * 100));
     if (!dragRafId) {
         dragRafId = requestAnimationFrame(function() {
             render();
@@ -6463,9 +6627,39 @@ document.getElementById('toggleAllLayouts').addEventListener('click', function()
 
 // Toggle guide tips visibility
 document.getElementById('toggleGuides').addEventListener('click', function() {
-    var sidebar = document.querySelector('.sidebar');
-    var hidden = sidebar.classList.toggle('hide-guides');
+    var panel = document.getElementById('mainPanel');
+    var hidden = panel.classList.toggle('hide-guides');
     this.textContent = hidden ? 'Zobrazit nápovědu' : 'Skrýt nápovědu';
+});
+
+// === TAB NAVIGATION ===
+function switchTab(tabName) {
+    document.querySelectorAll('#panelTabs .panel-tab').forEach(function(t) {
+        t.classList.toggle('active', t.dataset.tab === tabName);
+    });
+    document.querySelectorAll('.tab-page').forEach(function(page) {
+        page.classList.toggle('active', page.dataset.tab === tabName);
+    });
+}
+
+document.querySelectorAll('#panelTabs .panel-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+        switchTab(tab.dataset.tab);
+    });
+});
+
+// === PANEL TOGGLE ===
+document.getElementById('panelToggle').addEventListener('click', function() {
+    var panel = document.getElementById('mainPanel');
+    var app = document.querySelector('.app');
+    panel.classList.toggle('collapsed');
+    if (panel.classList.contains('collapsed')) {
+        app.style.gridTemplateColumns = '1fr 0px';
+    } else {
+        app.style.gridTemplateColumns = '';
+    }
+    // Re-render after transition to fit canvas
+    setTimeout(scheduleRender, 350);
 });
 
 updateFrameScrub();
