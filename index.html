@@ -1683,7 +1683,7 @@ const MARGIN = {
 };
 
 // Computed from duration * fps
-function totalFrames() { return Math.round(S.anim.duration * S.anim.fps); }
+function totalFrames() { return Math.floor(S.anim.duration * S.anim.fps); }
 
 // Heading positions collected during grid build
 let headings = [];
@@ -5150,17 +5150,21 @@ async function exportWebM() {
 
     var videoTrack = stream.getVideoTracks()[0];
 
-    for (var f = 0; f < total; f++) {
+    // For video sources, render all loops as actual frames
+    var renderTotal = (isVideoSource && S.loopCount > 1) ? total * S.loopCount : total;
+
+    for (var f = 0; f < renderTotal; f++) {
+        var animFrame = f % total;
         if (isVideoSource) {
             var targetTime = (f / fps) % videoDuration;
             await seekVideoFrame(loadedVideo, targetTime);
             ditherCache = null;
         }
-        var frameCanvas = renderExportFrame(f, videoLong);
+        var frameCanvas = renderExportFrame(animFrame, videoLong);
         recCtx.clearRect(0, 0, w, h);
         recCtx.drawImage(frameCanvas, 0, 0, frameCanvas.width, frameCanvas.height, 0, 0, w, h);
         if (videoTrack.requestFrame) videoTrack.requestFrame();
-        showProgress(Math.round((f / total) * 100));
+        showProgress(Math.round((f / renderTotal) * 100));
         await new Promise(function(r) { setTimeout(r, 1000 / fps); });
     }
 
@@ -5489,15 +5493,21 @@ async function exportVideoH264(format) {
         encCanvas.width = w; encCanvas.height = h;
         var encCtx = encCanvas.getContext('2d');
 
-        for (var f = 0; f < total; f++) {
+        // For video sources, render all loops as actual frames (no sample duplication)
+        var renderTotal = (isVideoSource && S.loopCount > 1) ? total * S.loopCount : total;
+
+        for (var f = 0; f < renderTotal; f++) {
             if (encodeError) break;
+
+            // Animation frame wraps within one loop cycle
+            var animFrame = f % total;
 
             if (isVideoSource) {
                 var targetTime = (f / fps) % videoDuration;
                 await seekVideoFrame(loadedVideo, targetTime);
                 ditherCache = null;
             }
-            var frameCanvas = renderExportFrame(f, videoLong);
+            var frameCanvas = renderExportFrame(animFrame, videoLong);
             encCtx.fillStyle = S.bgColor;
             encCtx.fillRect(0, 0, w, h);
             encCtx.drawImage(frameCanvas, 0, 0, frameCanvas.width, frameCanvas.height, 0, 0, w, h);
@@ -5510,7 +5520,7 @@ async function exportVideoH264(format) {
             encoder.encode(vf, { keyFrame: (f % gopSize === 0) });
             vf.close();
 
-            showProgress(Math.round((f / total) * 70));
+            showProgress(Math.round((f / renderTotal) * 70));
             if (f % 4 === 0) await new Promise(function(r) { setTimeout(r, 0); });
         }
 
@@ -5534,8 +5544,9 @@ async function exportVideoH264(format) {
         showProgress(85);
         await new Promise(function(r) { setTimeout(r, 50); });
 
-        // Looper: duplicate frames for loop count (v14)
-        if (S.loopCount > 1) {
+        // Looper: duplicate frames for loop count (only for non-video sources;
+        // video sources already render all loop frames above)
+        if (S.loopCount > 1 && !isVideoSource) {
             var origSamples = encodedSamples.slice();
             for (var lp = 1; lp < S.loopCount; lp++) {
                 for (var si = 0; si < origSamples.length; si++) {
@@ -5700,13 +5711,15 @@ async function exportSequence(format) {
 
     var zipFiles = [];
     var prefix = 'poster_' + S.preset + '_' + S.anim.effect;
-    for (var f = 0; f < total; f++) {
+    var renderTotal = (isVideoSource && S.loopCount > 1) ? total * S.loopCount : total;
+    for (var f = 0; f < renderTotal; f++) {
+        var animFrame = f % total;
         if (isVideoSource) {
             var targetTime = (f / fps) % videoDuration;
             await seekVideoFrame(loadedVideo, targetTime);
             ditherCache = null;
         }
-        var frameCanvas = renderExportFrame(f);
+        var frameCanvas = renderExportFrame(animFrame);
         var blob = await new Promise(function(resolve) {
             if (format === 'png') frameCanvas.toBlob(resolve, 'image/png');
             else frameCanvas.toBlob(resolve, 'image/jpeg', 0.92);
@@ -5714,7 +5727,7 @@ async function exportSequence(format) {
         var arrBuf = await blob.arrayBuffer();
         var pad = String(f).padStart(4, '0');
         zipFiles.push({ name: prefix + '_' + pad + '.' + format, data: new Uint8Array(arrBuf) });
-        showProgress(Math.round((f / total) * 90));
+        showProgress(Math.round((f / renderTotal) * 90));
         if (f % 4 === 0) await new Promise(function(r) { setTimeout(r, 0); });
     }
 
